@@ -1,5 +1,9 @@
 package config
 
+import "os"
+
+const ENV_PREFIX = "WONDERXSS_"
+
 type Config struct {
 
 	// The domain this application should respond
@@ -14,4 +18,18 @@ type Config struct {
 	// doing the HTTPS decryption. If you are using a cloud provider of some kind,
 	// with auto-managed https, it's probably best to disable it.
 	StandaloneHTTPS bool
+}
+
+func Load() *Config {
+	standaloneHTTPS := false
+	envHTTPS := os.Getenv(ENV_PREFIX + "HTTPS")
+	if envHTTPS == "true" {
+		standaloneHTTPS = true
+	}
+	cfg := Config{
+		Domain:          os.Getenv(ENV_PREFIX + "DOMAIN"),
+		Database:        os.Getenv(ENV_PREFIX + "STORE"),
+		StandaloneHTTPS: standaloneHTTPS,
+	}
+	return &cfg
 }

@@ -8,6 +8,7 @@ import (
 	"os/signal"
 
 	httpApi "github.com/edznux/wonder-xss/api/http"
+	"github.com/edznux/wonder-xss/config"
 	"github.com/gorilla/mux"
 )
 
@@ -19,14 +20,16 @@ func main() {
 	api.Handler(r)
 
 	http.Handle("/", r)
-	// log.Fatal(http.ListenAndServe(":3000", nil))
 
-	go func() {
-		err := http.ListenAndServeTLS(":443", "server.crt", "server.key", nil)
-		if err != nil {
-			log.Fatal("ListenAndServeTLS: ", err)
-		}
-	}()
+	cfg := config.Load()
+	if cfg.StandaloneHTTPS {
+		go func() {
+			err := http.ListenAndServeTLS(":443", "server.crt", "server.key", nil)
+			if err != nil {
+				log.Fatal("ListenAndServeTLS: ", err)
+			}
+		}()
+	}
 
 	go func() {
 		err := http.ListenAndServe(":80", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -38,7 +41,6 @@ func main() {
 		}
 	}()
 	gracefulShutdown()
-
 }
 
 func gracefulShutdown() {
