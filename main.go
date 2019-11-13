@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
 
 	httpApi "github.com/edznux/wonder-xss/api/http"
 	"github.com/gorilla/mux"
@@ -17,5 +19,33 @@ func main() {
 	api.Handler(r)
 
 	http.Handle("/", r)
-	log.Fatal(http.ListenAndServe(":3000", nil))
+	// log.Fatal(http.ListenAndServe(":3000", nil))
+
+	go func() {
+		err := http.ListenAndServeTLS(":443", "server.crt", "server.key", nil)
+		if err != nil {
+			log.Fatal("ListenAndServeTLS: ", err)
+		}
+	}()
+
+	go func() {
+		err := http.ListenAndServe(":80", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			http.Redirect(w, r, "https://"+r.Host+r.URL.String(), http.StatusMovedPermanently)
+		}))
+
+		if err != nil {
+			log.Fatal("ListenAndServe: ", err)
+		}
+	}()
+	gracefulShutdown()
+
+}
+
+func gracefulShutdown() {
+	// handle graceful shutdown
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	<-c
+	log.Println("shutting down")
+	os.Exit(0)
 }

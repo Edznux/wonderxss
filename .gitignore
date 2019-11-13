@@ -1,2 +1,4 @@
 wonder-xss
 db.sqlite
+*.crt
+*.key
