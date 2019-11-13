@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-APP_NAME="wonder-xss"
+APP_NAME="wonderxss"
 
 chmod +x $APP_NAME
 # Add the capability to run on port 80 and 443 without root privileges.

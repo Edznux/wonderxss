@@ -6,8 +6,8 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 
-	"github.com/edznux/wonder-xss/config"
-	"github.com/edznux/wonder-xss/storage/models"
+	"github.com/edznux/wonderxss/config"
+	"github.com/edznux/wonderxss/storage/models"
 )
 
 type Sqlite struct {

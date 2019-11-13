@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/edznux/wonder-xss/api"
-	"github.com/edznux/wonder-xss/storage/models"
+	"github.com/edznux/wonderxss/api"
+	"github.com/edznux/wonderxss/storage/models"
 	"github.com/gorilla/mux"
 )
 

@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/edznux/wonder-xss/config"
-	"github.com/edznux/wonder-xss/notification/interfaces"
+	"github.com/edznux/wonderxss/config"
+	"github.com/edznux/wonderxss/notification/interfaces"
 )
 
 type Slack struct {

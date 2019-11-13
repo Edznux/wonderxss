@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/edznux/wonder-xss/config"
-	"github.com/edznux/wonder-xss/storage/models"
-	"github.com/edznux/wonder-xss/storage/sqlite"
+	"github.com/edznux/wonderxss/config"
+	"github.com/edznux/wonderxss/storage/models"
+	"github.com/edznux/wonderxss/storage/sqlite"
 )
 
 var backend map[string]Storage

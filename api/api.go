@@ -1,6 +1,6 @@
 package api
 
-import "github.com/edznux/wonder-xss/storage"
+import "github.com/edznux/wonderxss/storage"
 
 var store storage.Storage
 

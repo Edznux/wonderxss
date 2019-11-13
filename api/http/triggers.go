@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/edznux/wonder-xss/api"
+	"github.com/edznux/wonderxss/api"
 	"github.com/gorilla/mux"
 )
 

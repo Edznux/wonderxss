@@ -3,7 +3,7 @@ package api
 import (
 	"time"
 
-	"github.com/edznux/wonder-xss/storage/models"
+	"github.com/edznux/wonderxss/storage/models"
 )
 
 type Response struct {

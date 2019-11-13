@@ -3,9 +3,9 @@ package api
 import (
 	"fmt"
 
-	"github.com/edznux/wonder-xss/crypto"
-	"github.com/edznux/wonder-xss/notification"
-	"github.com/edznux/wonder-xss/storage/models"
+	"github.com/edznux/wonderxss/crypto"
+	"github.com/edznux/wonderxss/notification"
+	"github.com/edznux/wonderxss/storage/models"
 	"github.com/google/uuid"
 )
 

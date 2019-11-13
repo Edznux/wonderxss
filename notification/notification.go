@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/edznux/wonder-xss/config"
-	"github.com/edznux/wonder-xss/notification/adapters/slack"
-	"github.com/edznux/wonder-xss/notification/interfaces"
-	"github.com/edznux/wonder-xss/storage/models"
+	"github.com/edznux/wonderxss/config"
+	"github.com/edznux/wonderxss/notification/adapters/slack"
+	"github.com/edznux/wonderxss/notification/interfaces"
+	"github.com/edznux/wonderxss/storage/models"
 )
 
 var RegisteredNotificationSystem []interfaces.NotificationSystem

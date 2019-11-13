@@ -1,4 +1,4 @@
-# Wonder-xss
+# wonderxss
 
 Blind-XSS tool.
 Work in progress
@@ -13,6 +13,22 @@ Features:
   - [ ] Web UI (websocket)
 - [ ] Payload Generator
 - [ ] One click deploy
+
+
+## Deploy & Run
+
+Deployment methods are WIP
+Currently, you will have to build the execute the project:
+
+```bash
+git clone https://github.com/Edznux/wonderxss
+cd wonderxss
+export WONDERXSS_HTTPS=true
+export WONDERXSS_DOMAIN=example.com
+go build
+sudo setcap 'cap_net_bind_service=+ep' ./wonderxss
+./wonderxss
+```
 
 
 # Fact

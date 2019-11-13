@@ -3,7 +3,7 @@ package api
 import (
 	"fmt"
 
-	"github.com/edznux/wonder-xss/storage/models"
+	"github.com/edznux/wonderxss/storage/models"
 	"github.com/google/uuid"
 )
 

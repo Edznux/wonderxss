@@ -7,8 +7,8 @@ import (
 	"os"
 	"os/signal"
 
-	httpApi "github.com/edznux/wonder-xss/api/http"
-	"github.com/edznux/wonder-xss/config"
+	httpApi "github.com/edznux/wonderxss/api/http"
+	"github.com/edznux/wonderxss/config"
 	"github.com/gorilla/mux"
 )
 
