@@ -7,8 +7,11 @@ import (
 	"os"
 	"os/signal"
 
+	apipkg "github.com/edznux/wonderxss/api"
 	httpApi "github.com/edznux/wonderxss/api/http"
 	"github.com/edznux/wonderxss/config"
+	"github.com/edznux/wonderxss/storage"
+	"github.com/edznux/wonderxss/ui"
 	"github.com/gorilla/mux"
 )
 
@@ -17,11 +20,19 @@ func main() {
 
 	r := mux.NewRouter()
 	api := httpApi.New()
-	api.Handler(r)
+	ui := ui.New()
+	api.Routes(r)
+	http.HandleFunc("/", ui.HandleIndex)
+	http.Handle(api.UrlPrefix, r)
 
-	http.Handle("/", r)
+	cfg, err := config.Load("")
+	if err != nil {
+		log.Fatal(err)
+	}
+	storage.InitStorage(cfg)
 
-	cfg := config.Load()
+	apipkg.InitApi()
+
 	if cfg.StandaloneHTTPS {
 		go func() {
 			err := http.ListenAndServeTLS(":443", "server.crt", "server.key", nil)

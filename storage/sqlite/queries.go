@@ -10,8 +10,8 @@ CREATE TABLE users (
 );
 `
 
-var CREATE_TABLE_LOOTS = `
-CREATE TABLE loots (
+var CREATE_TABLE_EXECUTIONS = `
+CREATE TABLE executions (
 	id            TEXT NOT NULL PRIMARY KEY,
 	payload_id    TEXT NOT NULL,
 	alias_id      TEXT NOT NULL,
@@ -43,6 +43,14 @@ CREATE TABLE payloads (
 );
 `
 
+var CREATE_TABLE_COLLECTORS = `
+CREATE TABLE collectors (
+	id          TEXT NOT NULL PRIMARY KEY,
+	content     TEXT NOT NULL,
+	created_at  DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+);
+`
+
 var SELECT_ALIAS_BY_SHORTNAME = `
 SELECT *
 FROM aliases
@@ -61,15 +69,15 @@ SELECT *
 FROM payloads;
 `
 
-var SELECT_LOOT = `
+var SELECT_EXECUTION = `
 SELECT id, payload_id, alias_id, triggered_at
-FROM loots
+FROM executions
 WHERE id = ?;
 `
 
-var SELECT_ALL_LOOTS = `
+var SELECT_ALL_EXECUTIONS = `
 SELECT id, payload_id, alias_id, triggered_at
-FROM loots;
+FROM executions;
 `
 
 var SELECT_ALL_ALIASES = `
@@ -88,10 +96,22 @@ SELECT id, name, hash, content, created_at, modified_at
 FROM payloads
 WHERE name = ?;
 `
+
 var SELECT_USER = `
 SELECT *
 FROM users
 WHERE id = ?;
+`
+
+var SELECT_COLLECTOR = `
+SELECT *
+FROM collectors
+WHERE id = ?;
+`
+
+var SELECT_ALL_COLLECTOR = `
+SELECT *
+FROM collectors;
 `
 
 var INSERT_PAYLOAD = `INSERT INTO payloads (id, name, hash, content) VALUES (?, ?, ?, ?);`
@@ -100,4 +120,6 @@ var INSERT_USER = `INSERT INTO users (id, username, password) VALUES (?, ?, ?);`
 
 var INSERT_ALIAS = `INSERT INTO aliases (id, payload_id, alias) VALUES (?, ?, ?);`
 
-var INSERT_LOOT = `INSERT INTO loots (id, payload_id, alias_id) VALUES (?, ?, ?);`
+var INSERT_EXECUTION = `INSERT INTO executions (id, payload_id, alias_id) VALUES (?, ?, ?);`
+
+var INSERT_COLLECTOR = `INSERT INTO collectors (id, payload_id, alias_id) VALUES (?, ?, ?);`

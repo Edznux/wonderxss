@@ -45,6 +45,39 @@ func (httpapi *HTTPApi) createPayload(w http.ResponseWriter, req *http.Request) 
 	json.NewEncoder(w).Encode(&res)
 }
 
+func (httpapi *HTTPApi) createCollectors(w http.ResponseWriter, req *http.Request) {
+
+	var data models.Collector
+	var res api.Response
+	vars := mux.Vars(req)
+
+	err := json.NewDecoder(req.Body).Decode(&data)
+	if err != nil {
+		res.Code = 1
+		res.Message = "Could not decode Collector"
+		_ = json.NewEncoder(w).Encode(&res)
+		return
+	}
+
+	// override the payloadID from the JSON if it's provided in the URL param.
+	payloadID := vars["id"]
+	if payloadID == "" {
+		payloadID = data.PayloadID
+	}
+
+	returnedCollector, err := api.AddCollector(payloadID, data.Data)
+	if err != nil {
+		res.Code = 1
+		res.Message = "Could not save Collector"
+		fmt.Println("AddCollector returned an error: ", err)
+		_ = json.NewEncoder(w).Encode(&res)
+		return
+	}
+
+	res = api.Response{Code: 1, Message: "OK", Data: returnedCollector}
+	json.NewEncoder(w).Encode(&res)
+}
+
 func (httpapi *HTTPApi) createAlias(w http.ResponseWriter, req *http.Request) {
 
 	var data api.Alias
@@ -74,7 +107,7 @@ func (httpapi *HTTPApi) createAlias(w http.ResponseWriter, req *http.Request) {
 
 func (httpapi *HTTPApi) getPayloads(w http.ResponseWriter, req *http.Request) {
 	var res api.Response
-	fmt.Println("getPayloads")
+	fmt.Println("httpapi.getPayloads")
 	payloads, err := api.GetPayloads()
 	if err != nil {
 		res = api.Response{Code: 1, Message: "Error getting the payloads"}
@@ -84,17 +117,28 @@ func (httpapi *HTTPApi) getPayloads(w http.ResponseWriter, req *http.Request) {
 	res = api.Response{Code: 1, Message: "OK", Data: payloads}
 	json.NewEncoder(w).Encode(&res)
 }
-
-func (httpapi *HTTPApi) getLoots(w http.ResponseWriter, req *http.Request) {
+func (httpapi *HTTPApi) getCollectors(w http.ResponseWriter, req *http.Request) {
 	var res api.Response
-	fmt.Println("getLoots")
-	payloads, err := api.GetLoots()
+	fmt.Println("getCollectors")
+	collectors, err := api.GetCollectors()
 	if err != nil {
-		res = api.Response{Code: 1, Message: "Error getting the payloads"}
+		res = api.Response{Code: 1, Message: "Error getting the collectors"}
 		json.NewEncoder(w).Encode(&res)
 		return
 	}
-	res = api.Response{Code: 1, Message: "OK", Data: payloads}
+	res = api.Response{Code: 1, Message: "OK", Data: collectors}
+	json.NewEncoder(w).Encode(&res)
+}
+func (httpapi *HTTPApi) getExecutions(w http.ResponseWriter, req *http.Request) {
+	var res api.Response
+	fmt.Println("getExecutions")
+	executions, err := api.GetExecutions()
+	if err != nil {
+		res = api.Response{Code: 1, Message: "Error getting the executions"}
+		json.NewEncoder(w).Encode(&res)
+		return
+	}
+	res = api.Response{Code: 1, Message: "OK", Data: executions}
 	json.NewEncoder(w).Encode(&res)
 }
 

@@ -1,0 +1,82 @@
+package ui
+
+import (
+	"fmt"
+	"log"
+	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
+
+	"github.com/edznux/wonderxss/api"
+	"github.com/edznux/wonderxss/config"
+	"github.com/edznux/wonderxss/storage/models"
+)
+
+type UI struct {
+	indexPath  string
+	staticPath string
+}
+
+func New() *UI {
+	ui := UI{}
+	ui.indexPath = "/index.html"
+	ui.staticPath = "ui/build"
+	return &ui
+}
+
+func (ui *UI) HandleIndex(w http.ResponseWriter, req *http.Request) {
+	log.Println(req.Host)
+	hostname := req.Host
+	subdomain := strings.TrimSuffix(hostname, "."+config.Current.Domain)
+	log.Println("hostname:", hostname)
+	log.Println("Subdomain:", subdomain)
+	content, err := api.ServePayload(subdomain)
+
+	// Index page, should return the UI
+	if subdomain == hostname && req.Method == http.MethodGet {
+		fmt.Println("Index page called, redirecting to UI")
+		ui.ServeUI(w, req)
+		return
+	}
+	if err == models.NoSuchItem {
+		w.Write([]byte("No such payload"))
+		return
+	}
+	if err != nil {
+		w.Write([]byte("Encountered an error :/"))
+		return
+	}
+	w.Write([]byte(content))
+}
+
+func (ui *UI) ServeUI(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Serving UI")
+	// get the absolute path to prevent directory traversal
+	path, err := filepath.Abs(r.URL.Path)
+	if err != nil {
+		// if we failed to get the absolute path respond with a 400 bad request
+		// and stop
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	// prepend the path with the path to the static directory
+	path = filepath.Join(ui.staticPath, path)
+	fmt.Println("Path:", path)
+
+	// check whether a file exists at the given path
+	_, err = os.Stat(path)
+	if os.IsNotExist(err) {
+		// file does not exist, serve index.html
+		http.ServeFile(w, r, filepath.Join(ui.staticPath, ui.indexPath))
+		return
+	} else if err != nil {
+		// if we got an error (that wasn't that the file doesn't exist) stating the
+		// file, return a 500 internal server error and stop
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// otherwise, use http.FileServer to serve the static dir
+	http.FileServer(http.Dir(ui.staticPath)).ServeHTTP(w, r)
+}

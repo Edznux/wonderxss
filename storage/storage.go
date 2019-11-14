@@ -24,17 +24,20 @@ type Storage interface {
 	CreatePayload(models.Payload) (models.Payload, error)
 	CreateUser(models.User) (models.User, error)
 	CreateAlias(models.Alias) (models.Alias, error)
-	CreateLoot(loot models.Loot, payloadIDOrAlias string) (models.Loot, error)
+	CreateExecution(execution models.Execution, payloadIDOrAlias string) (models.Execution, error)
+	CreateCollector(collector models.Collector) (models.Collector, error)
 
 	// Read
+	GetUser(id string) (models.User, error)
 	GetPayloads() ([]models.Payload, error)
 	GetPayload(id string) (models.Payload, error)
+	GetPayloadByAlias(short string) (models.Payload, error)
 	GetAliases() ([]models.Alias, error)
 	GetAlias(id string) (models.Alias, error)
-	GetLoot(id string) (models.Loot, error)
-	GetLoots() ([]models.Loot, error)
-	GetPayloadByAlias(short string) (models.Payload, error)
-	GetUser(id string) (models.User, error)
+	GetExecutions() ([]models.Execution, error)
+	GetExecution(id string) (models.Execution, error)
+	GetCollectors() ([]models.Collector, error)
+	GetCollector(id string) (models.Collector, error)
 
 	// Update
 	UpdatePayload(models.Payload) error
@@ -45,15 +48,14 @@ type Storage interface {
 	DeleteUser(models.User) error
 }
 
-func init() {
+func InitStorage(cfg config.Config) {
 	backend = map[string]Storage{}
-	fmt.Println("Init databases:")
-	s, err := sqlite.New(config.Config{Domain: "localhost", Database: "db.sqlite", StandaloneHTTPS: true})
+	fmt.Printf("Init databases: %+v\n", cfg)
+	s, err := sqlite.New(cfg)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Error while initializing storage:", err)
 	}
 	backend["sqlite"] = s
-	fmt.Println(backend)
 }
 
 func GetDB() Storage {

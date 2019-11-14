@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func (httpapi *HTTPApi) Handler(router *mux.Router) {
+func (httpapi *HTTPApi) Routes(router *mux.Router) {
 	router.Use(httpapi.jsonMiddleware)
 	// Return real payload
 	router.HandleFunc("/p/{id}", httpapi.handlePayloadByID)
@@ -34,8 +34,12 @@ func (httpapi *HTTPApi) Handler(router *mux.Router) {
 	router.HandleFunc(httpapi.UrlPrefix+"/aliases", httpapi.getAliases).Methods("GET")
 	router.HandleFunc(httpapi.UrlPrefix+"/aliases/{id}", httpapi.getAlias).Methods("GET")
 
-	// Loots CRUD
-	router.HandleFunc(httpapi.UrlPrefix+"/loots", httpapi.getLoots).Methods("GET")
+	// Executions CRUD
+	router.HandleFunc(httpapi.UrlPrefix+"/executions", httpapi.getExecutions).Methods("GET")
+
+	// Colletors CRUD
+	router.HandleFunc(httpapi.UrlPrefix+"/collectors", httpapi.getCollectors).Methods("GET")
+	router.HandleFunc(httpapi.UrlPrefix+"/collectors", httpapi.createCollectors).Methods("POST")
 }
 
 func (httpapi *HTTPApi) NotImplementedYet(w http.ResponseWriter, r *http.Request) {

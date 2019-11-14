@@ -15,17 +15,16 @@ type Sqlite struct {
 	db   *sql.DB
 }
 
-func New(config config.Config) (*Sqlite, error) {
-	fmt.Println("Setup SQLite")
-	fmt.Printf("%+v", config)
-	s := Sqlite{file: "db.sqlite"}
-	s.Init(config)
+func New(cfg config.Config) (*Sqlite, error) {
+	file := cfg.Storages["sqlite"].File
+	fmt.Printf("Setup SQLite, using file: %+v\n", file)
+	s := Sqlite{file: file}
+	s.Init(cfg)
 
 	fmt.Println(s)
-	// Check if tables are created to we don't override
+	// Check if tables are created so we don't override
 	needSetup := false
-	rows, err := s.db.Query(SELECT_ALL_PAYLOADS)
-	fmt.Println(rows, err)
+	_, err := s.db.Query(SELECT_ALL_PAYLOADS)
 	if err != nil {
 		needSetup = true
 	}
@@ -36,8 +35,7 @@ func New(config config.Config) (*Sqlite, error) {
 	}
 
 	fmt.Println("Set up done")
-	rows, err = s.db.Query(SELECT_ALL_PAYLOADS)
-	fmt.Println(rows, err)
+	_, err = s.db.Query(SELECT_ALL_PAYLOADS)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -75,8 +73,8 @@ func (s *Sqlite) Setup() error {
 		fmt.Println(err)
 	}
 
-	fmt.Println("Creating loots' table")
-	_, err = s.db.Exec(CREATE_TABLE_LOOTS)
+	fmt.Println("Creating Execution' table")
+	_, err = s.db.Exec(CREATE_TABLE_EXECUTIONS)
 	fmt.Println(err)
 	if err != nil {
 		fmt.Println(err)
@@ -117,22 +115,32 @@ func (s *Sqlite) CreateAlias(alias models.Alias) (models.Alias, error) {
 	return s.GetAlias(alias.ID)
 }
 
-func (s *Sqlite) CreateLoot(loot models.Loot, payloadIDOrAlias string) (models.Loot, error) {
-	// id, payload_id, alias_id
-	// TODO : store the alias_ID and not the alias directly
-	_, err := s.db.Exec(INSERT_LOOT, loot.ID, loot.PayloadID, payloadIDOrAlias)
+func (s *Sqlite) CreateCollector(collector models.Collector) (models.Collector, error) {
+	_, err := s.db.Exec(INSERT_COLLECTOR, collector.ID, collector.PayloadID, collector.Data)
 	if err != nil {
 		fmt.Println(err)
-		return models.Loot{}, err
+		return models.Collector{}, err
 	}
 
-	return s.GetLoot(loot.ID)
+	return s.GetCollector(collector.ID)
+}
+
+func (s *Sqlite) CreateExecution(execution models.Execution, payloadIDOrAlias string) (models.Execution, error) {
+	// id, payload_id, alias_id
+	// TODO : store the alias_ID and not the alias directly
+	_, err := s.db.Exec(INSERT_EXECUTION, execution.ID, execution.PayloadID, payloadIDOrAlias)
+	if err != nil {
+		fmt.Println(err)
+		return models.Execution{}, err
+	}
+
+	return s.GetExecution(execution.ID)
 }
 
 // Read
 func (s *Sqlite) GetPayloads() ([]models.Payload, error) {
 
-	fmt.Println("GetPayloads")
+	fmt.Println("sqlite.GetPayloads")
 	res := []models.Payload{}
 
 	rows, err := s.db.Query(SELECT_ALL_PAYLOADS)
@@ -211,37 +219,37 @@ func (s *Sqlite) GetAlias(alias string) (models.Alias, error) {
 	return res, nil
 }
 
-func (s *Sqlite) GetLoot(id string) (models.Loot, error) {
+func (s *Sqlite) GetExecution(id string) (models.Execution, error) {
 
-	fmt.Println("GetLoot(", id, ")")
-	row := s.db.QueryRow(SELECT_LOOT, id)
+	fmt.Println("GetExecution(", id, ")")
+	row := s.db.QueryRow(SELECT_EXECUTION, id)
 
-	var res models.Loot
+	var res models.Execution
 	err := row.Scan(&res.ID, &res.PayloadID, &res.AliasID, &res.TriggeredAt)
 	if err == sql.ErrNoRows {
-		return models.Loot{}, models.NoSuchItem
+		return models.Execution{}, models.NoSuchItem
 	}
 
 	if err != nil {
 		fmt.Println(err)
-		return models.Loot{}, err
+		return models.Execution{}, err
 	}
 	return res, nil
 }
 
-func (s *Sqlite) GetLoots() ([]models.Loot, error) {
+func (s *Sqlite) GetExecutions() ([]models.Execution, error) {
 
-	fmt.Println("GetLoots")
+	fmt.Println("GetExecutions")
 
-	res := []models.Loot{}
+	res := []models.Execution{}
 
-	rows, err := s.db.Query(SELECT_ALL_LOOTS)
+	rows, err := s.db.Query(SELECT_ALL_EXECUTIONS)
 	if err != nil {
-		fmt.Println("Error querying the db (loots):", err)
+		fmt.Println("Error querying the db (Execution):", err)
 		return nil, err
 	}
 
-	var tmpRes models.Loot
+	var tmpRes models.Execution
 	for rows.Next() {
 		rows.Scan(&tmpRes.ID, &tmpRes.PayloadID, &tmpRes.AliasID, &tmpRes.TriggeredAt)
 		res = append(res, tmpRes)
@@ -259,6 +267,56 @@ func (s *Sqlite) GetLoots() ([]models.Loot, error) {
 	fmt.Println(res)
 	return res, nil
 }
+
+func (s *Sqlite) GetCollector(id string) (models.Collector, error) {
+
+	fmt.Println("GetCollector(", id, ")")
+	row := s.db.QueryRow(SELECT_COLLECTOR, id)
+
+	var res models.Collector
+	err := row.Scan(&res.ID, &res.PayloadID, &res.Data, &res.CreatedAt)
+	if err == sql.ErrNoRows {
+		return models.Collector{}, models.NoSuchItem
+	}
+
+	if err != nil {
+		fmt.Println(err)
+		return models.Collector{}, err
+	}
+	return res, nil
+}
+
+func (s *Sqlite) GetCollectors() ([]models.Collector, error) {
+
+	fmt.Println("GetCollectors")
+
+	res := []models.Collector{}
+
+	rows, err := s.db.Query(SELECT_ALL_COLLECTOR)
+	if err != nil {
+		fmt.Println("Error querying the db (Collector):", err)
+		return nil, err
+	}
+
+	var tmpRes models.Collector
+	for rows.Next() {
+		rows.Scan(&tmpRes.ID, &tmpRes.PayloadID, &tmpRes.Data, &tmpRes.CreatedAt)
+		res = append(res, tmpRes)
+	}
+
+	if err == sql.ErrNoRows {
+		return nil, models.NoSuchItem
+	}
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	fmt.Println(res)
+	return res, nil
+}
+
 func (s *Sqlite) GetAliases() ([]models.Alias, error) {
 
 	fmt.Println("GetAliases")

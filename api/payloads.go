@@ -10,6 +10,8 @@ import (
 )
 
 func GetPayloads() ([]Payload, error) {
+	fmt.Println("api.GetPayloads")
+	fmt.Println(store)
 	data, err := store.GetPayloads()
 	if err != nil {
 		return nil, err
@@ -35,13 +37,16 @@ func ServePayload(idOrAlias string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	fmt.Println("=================================")
-	fmt.Println("Notification should be sent now !")
-	notification.SendNotifications(payload)
-	fmt.Println("=================================")
-	fmt.Println("Saving loot")
-	AddLoot(payload.ID, idOrAlias)
-	fmt.Println("=================================")
+	// Run alert and store in DB without blocking.
+	go func() {
+		fmt.Println("=================================")
+		fmt.Println("Notification should be sent now !")
+		notification.SendNotifications(payload)
+		fmt.Println("=================================")
+		fmt.Println("Saving execution")
+		AddExecution(payload.ID, idOrAlias)
+		fmt.Println("=================================")
+	}()
 	return payload.Content, nil
 }
 

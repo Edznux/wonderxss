@@ -52,19 +52,36 @@ func (p Alias) fromStorage(s models.Alias) Alias {
 	return p
 }
 
-// Loot represent the structure of the frontend-facing Loots. Not the stored one.
+// Execution represent the structure of the frontend-facing Executions. Not the stored one.
 // It offers an `fromStorage` function to convert itself from the storage payload.
-type Loot struct {
+type Execution struct {
 	ID          string    `json:"id"`
 	PayloadID   string    `json:"payload_id"`
 	AliasID     string    `json:"alias_id"`
 	TriggeredAt time.Time `json:"triggered_at"`
 }
 
-func (l Loot) fromStorage(s models.Loot) Loot {
+func (l Execution) fromStorage(s models.Execution) Execution {
 	l.ID = s.ID
 	l.PayloadID = s.PayloadID
 	l.AliasID = s.AliasID
 	l.TriggeredAt = s.TriggeredAt
+	return l
+}
+
+// Execution represent the structure of the frontend-facing Executions. Not the stored one.
+// It offers an `fromStorage` function to convert itself from the storage payload.
+type Collector struct {
+	ID        string    `json:"id"`
+	PayloadID string    `json:"payload_id"`
+	Data      string    `json:"data"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+func (l Collector) fromStorage(s models.Collector) Collector {
+	l.ID = s.ID
+	l.PayloadID = s.PayloadID
+	l.CreatedAt = s.CreatedAt
+	l.Data = s.Data
 	return l
 }
