@@ -54,7 +54,7 @@ GET  /api/v1/aliases
 GET  /api/v1/aliases/{id}
 POST /api/v1/aliases
 
-GET  /loots
+GET  /api/v1/collectors
 ```
 
 Examples:
@@ -68,7 +68,7 @@ curl -X POST $DOMAIN/api/v1/aliases --data '{"alias":"a", "payload_id":"b4221cb8
 # Get all payloads
 curl $DOMAIN/api/v1/payloads
 # Get all aliases
-curl $DOMAIN/api/v1/alias
+curl $DOMAIN/api/v1/aliases
 # Get all loots
 curl $DOMAIN/api/v1/collectors
 ```
