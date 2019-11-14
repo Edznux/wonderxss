@@ -70,11 +70,46 @@ curl $DOMAIN/api/v1/payloads
 # Get all aliases
 curl $DOMAIN/api/v1/alias
 # Get all loots
-curl $DOMAIN/api/v1/loots
+curl $DOMAIN/api/v1/collectors
 ```
 
 
 ## Configuration
+
+Example configuration file (`cp wonderxss.conf.example wonderxss.conf`)
+
+```toml
+# Domain to listen on. (Usefull only for sudomains paylaod aliases)
+domain = "localhost"
+# Type of database
+database = "sqlite"
+# true will enable listening on HTTPS (without a reverse proxy). Disabled by default.
+# This will require certificates:
+# self signed RSA: `openssl req -x509 -nodes -newkey rsa:2048 -keyout server.key -out server.crt -days 3650`
+# Use letsencrypt or other trusted provider for production environment
+standalone_https = true
+
+# Lists of notification systems
+[notifications]
+  # slack-webhook is an arbitrary name. Use whatever you prefer.
+  # TODO:
+  # You can use multiple times the same kind of notification
+  # For example, multiple slack channels
+  [notifications.slack-webhook]
+    name    = "slack"
+    # Change this token
+    token   = "test"
+    # Globaly disable this kind of notifications
+    enabled = true
+
+# Databases definitions
+[storages]
+  [storages.sqlite]
+    adapter = "sqlite"
+    # name of the sqlite file
+    file    = "db.sqlite"
+
+```
 
 Environment variables:
 
