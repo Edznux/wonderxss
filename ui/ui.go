@@ -21,7 +21,7 @@ type UI struct {
 func New() *UI {
 	ui := UI{}
 	ui.indexPath = "/index.html"
-	ui.staticPath = "ui/build"
+	ui.staticPath = "ui/wonderxss/build"
 	return &ui
 }
 
