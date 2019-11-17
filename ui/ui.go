@@ -21,7 +21,7 @@ type UI struct {
 func New() *UI {
 	ui := UI{}
 	ui.indexPath = "/index.html"
-	ui.staticPath = "ui/wonderxss/build"
+	ui.staticPath = "/wonderxss/build"
 	return &ui
 }
 
@@ -29,12 +29,13 @@ func (ui *UI) HandleIndex(w http.ResponseWriter, req *http.Request) {
 	log.Println(req.Host)
 	hostname := req.Host
 	subdomain := strings.TrimSuffix(hostname, "."+config.Current.Domain)
+	log.Println("req.URL.Path:", req.URL.Path)
 	log.Println("hostname:", hostname)
 	log.Println("Subdomain:", subdomain)
 	content, err := api.ServePayload(subdomain)
 
 	// Index page, should return the UI
-	if subdomain == hostname && req.Method == http.MethodGet {
+	if subdomain == hostname {
 		fmt.Println("Index page called, redirecting to UI")
 		ui.ServeUI(w, req)
 		return

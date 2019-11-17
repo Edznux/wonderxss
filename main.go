@@ -22,8 +22,8 @@ func main() {
 	api := httpApi.New()
 	ui := ui.New()
 	api.Routes(r)
-	http.HandleFunc("/", ui.HandleIndex)
-	http.Handle(api.UrlPrefix, r)
+	http.Handle("/", r)
+	http.HandleFunc("/ui", ui.HandleIndex)
 
 	cfg, err := config.Load("")
 	if err != nil {

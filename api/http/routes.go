@@ -12,6 +12,7 @@ import (
 
 func (httpapi *HTTPApi) Routes(router *mux.Router) {
 	router.Use(httpapi.jsonMiddleware)
+	router.Use(httpapi.CORSMiddleware)
 	// Return real payload
 	router.HandleFunc("/p/{id}", httpapi.handlePayloadByID)
 
