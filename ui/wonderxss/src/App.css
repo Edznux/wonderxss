@@ -19,6 +19,22 @@ body{
   color: #09d3ac;
 }
 
-table {
-  color:#FFF;
+#container{
+  width: 80%;
+  padding: 10%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+}
+
+.ellipsis{
+  overflow: hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  display:inline-block;
+}
+
+.row-id{
+  width: 10%;
 }

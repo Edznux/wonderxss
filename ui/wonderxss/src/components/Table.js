@@ -206,8 +206,8 @@ export default function EnhancedTable(props) {
                                                 row.map((column, column_index) => {
                                                     if (column_index === 0 ) {
                                                         return (
-                                                            <TableCell component="th" id={labelId} scope="row" padding="none">
-                                                                {column}
+                                                            <TableCell component="th" id={labelId} scope="row" padding="none" className="row-id">
+                                                                <span className="ellipsis">{column}</span>
                                                             </TableCell>
                                                         )
                                                     } else {

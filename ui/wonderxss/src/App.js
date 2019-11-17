@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import Payloads from './components/Payloads';
+
 
 function App() {
   return (
@@ -10,8 +10,9 @@ function App() {
           WonderXSS
         </p>
       </header>
-      
-      <Payloads></Payloads>
+      <div id="container">
+        {/* <Payloads></Payloads> */}
+      </div>
     </div>
   );
 }

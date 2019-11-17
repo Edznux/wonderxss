@@ -1,10 +1,10 @@
 import React from 'react';
 import EnhancedTable from './Table';
-const API_ROOT = "https://localhost/api/v1"
+import { API_PAYLOADS } from "../helpers/constants"
 
 
 
-export default class Payloads extends React.Component {
+export default class PayloadsTable extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -20,8 +20,7 @@ export default class Payloads extends React.Component {
     };
 
     componentDidMount(){
-        const url = `${API_ROOT}/payloads`
-        fetch(url).then(res => {
+        fetch(API_PAYLOADS).then(res => {
             if (res.status !== 200){
                 throw new Error("Couldn't load payloads")
             }else{
