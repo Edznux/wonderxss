@@ -1,6 +1,7 @@
 // DEBUG (FIXME)
-// const URL = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port
-const URL = "https://" + window.location.hostname
+// export const URL = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port
+export const URL = "https://" + window.location.hostname
+export const URL_PAYLOAD = URL + "/p/"
 
 export const API_BASE = URL + "/api/v1"
 export const API_PAYLOADS = API_BASE + "/payloads"

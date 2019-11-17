@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { Route, Link, BrowserRouter as Router, Switch } from 'react-router-dom'
+import App from './pages/App';
 import Payloads from './pages/Payloads';
 import PayloadEditor from './pages/PayloadEditor';
 import NotFound from './pages/NotFound';

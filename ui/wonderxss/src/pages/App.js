@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-
+import InjectionsList from '../components/InjectionsList';
 
 function App() {
   return (
@@ -11,7 +11,7 @@ function App() {
         </p>
       </header>
       <div id="container">
-        {/* <Payloads></Payloads> */}
+        <InjectionsList></InjectionsList>
       </div>
     </div>
   );
