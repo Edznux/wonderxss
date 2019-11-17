@@ -11,7 +11,7 @@ Features:
   - [x] Slack
   - [ ] Email
   - [ ] Web UI (websocket)
-- [ ] Payload Generator
+- [x] Payload Generator
 - [ ] One click deploy
   - [ ] Terraform
   - [ ] Docker
@@ -35,6 +35,20 @@ go build
 # You can also directly use `sudo ./wonderxss`
 sudo setcap 'cap_net_bind_service=+ep' ./wonderxss
 ./wonderxss
+```
+
+### Frontend
+
+The frontend UI is really WIP. You will need to run the following commands to get it running:
+```
+cd ui/wonderxss/
+npm install
+
+# this next command will serve the app on a different port.
+npm start # If you get some permission error, run as sudo ;)
+
+# Later, we will bundle the frontend with the rest of the app. We will use:
+npm build
 ```
 
 ## API
