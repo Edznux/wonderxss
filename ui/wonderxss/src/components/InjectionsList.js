@@ -42,22 +42,30 @@ export default class InjectionsList extends React.Component {
             rows.data.map((row) => {
                 return tmp.push([
                     row.id,
+                    row.name
                 ])
             })
             this.setState({
                 aliasesOrPayloadsIDs: tmp
-            })
+            });
+            this.getReplacement()
         });
     };
     createInjection = (injection) => {
-        console.log("injection:", injection)
         var url = ""
         if (this.state.useSubdomain) {
-            url = "https://" + this.state.currentAlias + "." + window.location.hostname + ":" + window.location.port;
+            url = "https://" + this.state.currentAlias + "." + window.location.hostname // + ":" + window.location.port;
         }else {
             url = URL_PAYLOAD + this.state.currentAlias;
         }
         return injection.replace(REPLACE_TAG, url)
+    }
+    formatPayloadName = (payloadID, payloadName) => {
+        console.log(payloadID, payloadName)
+        if(payloadID && payloadName){
+            return payloadID.slice(0,8) + `... (${payloadName})`
+        }
+        return ""
     }
     render() {
         return (
@@ -68,7 +76,7 @@ export default class InjectionsList extends React.Component {
                     {
                         this.state.aliasesOrPayloadsIDs.map((aop) => {
                             return (
-                                <option>{aop}</option>
+                                <option value={aop[0]}>{this.formatPayloadName(aop[0], aop[1])}</option>
                             )
                         })
                     }
