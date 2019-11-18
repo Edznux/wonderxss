@@ -19,6 +19,7 @@ type Storage interface {
 	Setup() error
 	// Open the connection, open the file...
 	Init(config.Config) error
+
 	// CRUD interface
 	// Create
 	CreatePayload(models.Payload) (models.Payload, error)
@@ -29,13 +30,19 @@ type Storage interface {
 
 	// Read
 	GetUser(id string) (models.User, error)
+
 	GetPayloads() ([]models.Payload, error)
 	GetPayload(id string) (models.Payload, error)
 	GetPayloadByAlias(short string) (models.Payload, error)
+
 	GetAliases() ([]models.Alias, error)
 	GetAlias(id string) (models.Alias, error)
+	GetAliasByID(id string) (models.Alias, error)
+	GetAliasByPayloadID(payloadID string) (models.Alias, error)
+
 	GetExecutions() ([]models.Execution, error)
 	GetExecution(id string) (models.Execution, error)
+
 	GetCollectors() ([]models.Collector, error)
 	GetCollector(id string) (models.Collector, error)
 

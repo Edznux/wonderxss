@@ -57,6 +57,19 @@ FROM aliases
 WHERE alias = ?;
 `
 
+var SELECT_ALIAS_BY_PAYLOAD_ID = `
+SELECT aliases.id, aliases.payload_id, aliases.alias, aliases.created_at, aliases.modified_at
+FROM aliases, payloads
+WHERE aliases.payload_id = ?
+AND aliases.payload_id = payloads.id;
+`
+
+var SELECT_ALIAS_BY_ID = `
+SELECT *
+FROM aliases
+WHERE id = ?;
+`
+
 var SELECT_PAYLOAD_BY_ALIAS = `
 SELECT payloads.id, payloads.name, payloads.hash, payloads.content, payloads.created_at, payloads.modified_at
 FROM aliases, payloads

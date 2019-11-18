@@ -219,6 +219,40 @@ func (s *Sqlite) GetAlias(alias string) (models.Alias, error) {
 	return res, nil
 }
 
+func (s *Sqlite) GetAliasByID(id string) (models.Alias, error) {
+
+	row := s.db.QueryRow(SELECT_ALIAS_BY_ID, id)
+
+	var res models.Alias
+	err := row.Scan(&res.ID, &res.PayloadID, &res.Short, &res.CreatedAt, &res.ModifiedAt)
+	if err == sql.ErrNoRows {
+		return models.Alias{}, models.NoSuchItem
+	}
+
+	if err != nil {
+		fmt.Println(err)
+		return models.Alias{}, err
+	}
+	return res, nil
+}
+
+func (s *Sqlite) GetAliasByPayloadID(id string) (models.Alias, error) {
+
+	row := s.db.QueryRow(SELECT_ALIAS_BY_PAYLOAD_ID, id)
+
+	var res models.Alias
+	err := row.Scan(&res.ID, &res.PayloadID, &res.Short, &res.CreatedAt, &res.ModifiedAt)
+	if err == sql.ErrNoRows {
+		return models.Alias{}, models.NoSuchItem
+	}
+
+	if err != nil {
+		fmt.Println(err)
+		return models.Alias{}, err
+	}
+	return res, nil
+}
+
 func (s *Sqlite) GetExecution(id string) (models.Execution, error) {
 
 	fmt.Println("GetExecution(", id, ")")

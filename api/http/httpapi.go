@@ -173,7 +173,35 @@ func (httpapi *HTTPApi) getPayload(w http.ResponseWriter, req *http.Request) {
 func (httpapi *HTTPApi) getAlias(w http.ResponseWriter, req *http.Request) {
 	var res api.Response
 	vars := mux.Vars(req)
-	returnedAlias, err := api.GetAlias(vars["id"])
+	returnedAlias, err := api.GetAlias(vars["alias"])
+	if err != nil {
+		res.Code = 1
+		res.Message = "Could not find Alias"
+		_ = json.NewEncoder(w).Encode(&res)
+		return
+	}
+	res = api.Response{Code: 1, Message: "OK", Data: returnedAlias}
+	json.NewEncoder(w).Encode(&res)
+}
+
+func (httpapi *HTTPApi) getAliasByID(w http.ResponseWriter, req *http.Request) {
+	var res api.Response
+	vars := mux.Vars(req)
+	returnedAlias, err := api.GetAliasByID(vars["id"])
+	if err != nil {
+		res.Code = 1
+		res.Message = "Could not find Alias"
+		_ = json.NewEncoder(w).Encode(&res)
+		return
+	}
+	res = api.Response{Code: 1, Message: "OK", Data: returnedAlias}
+	json.NewEncoder(w).Encode(&res)
+}
+
+func (httpapi *HTTPApi) getAliasByPayloadID(w http.ResponseWriter, req *http.Request) {
+	var res api.Response
+	vars := mux.Vars(req)
+	returnedAlias, err := api.GetAliasByPayloadID(vars["id"])
 	if err != nil {
 		res.Code = 1
 		res.Message = "Could not find Alias"

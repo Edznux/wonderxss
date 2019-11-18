@@ -33,7 +33,9 @@ func (httpapi *HTTPApi) Routes(router *mux.Router) {
 	// Aliases CRUD
 	router.HandleFunc(httpapi.UrlPrefix+"/aliases", httpapi.createAlias).Methods("POST")
 	router.HandleFunc(httpapi.UrlPrefix+"/aliases", httpapi.getAliases).Methods("GET")
-	router.HandleFunc(httpapi.UrlPrefix+"/aliases/{id}", httpapi.getAlias).Methods("GET")
+	router.HandleFunc(httpapi.UrlPrefix+"/aliases/{alias}", httpapi.getAlias).Methods("GET")
+	router.HandleFunc(httpapi.UrlPrefix+"/aliases/id/{id}", httpapi.getAliasByID).Methods("GET")
+	router.HandleFunc(httpapi.UrlPrefix+"/aliases/payload/{id}", httpapi.getAliasByPayloadID).Methods("GET")
 
 	// Executions CRUD
 	router.HandleFunc(httpapi.UrlPrefix+"/executions", httpapi.getExecutions).Methods("GET")
