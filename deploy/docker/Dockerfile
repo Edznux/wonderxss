@@ -1,9 +1,9 @@
-FROM golang:alpine AS BUILDER
-RUN apk add --update ca-certificates git
+FROM golang:1.13-alpine AS BUILDER
+RUN apk add --update ca-certificates git build-base
 RUN set -ex && \
     git clone https://github.com/edznux/wonderxss && \
     cd wonderxss && \
-    go build && \
+    go build -v && \
     mv wonderxss /usr/bin/wonderxss
 
 FROM alpine
