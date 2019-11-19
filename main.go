@@ -19,20 +19,19 @@ import (
 
 func main() {
 	fmt.Println("Starting web server")
+	cfg, err := config.Load("")
+	if err != nil {
+		log.Fatal(err)
+	}
+	storage.InitStorage(cfg)
 
-	notification.Setup()
+	notification.Setup(cfg)
 	r := mux.NewRouter()
 	api := httpApi.New()
 	ui := ui.New()
 	api.Routes(r)
 	http.Handle("/", r)
 	http.HandleFunc("/ui", ui.HandleIndex)
-
-	cfg, err := config.Load("")
-	if err != nil {
-		log.Fatal(err)
-	}
-	storage.InitStorage(cfg)
 
 	apipkg.InitApi()
 
