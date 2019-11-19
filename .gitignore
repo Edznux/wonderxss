@@ -3,3 +3,4 @@ db.sqlite
 *.crt
 *.key
 wonderxss.conf
+vendor
