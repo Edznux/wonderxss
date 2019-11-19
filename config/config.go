@@ -28,9 +28,15 @@ type Config struct {
 	// doing the HTTPS decryption. If you are using a cloud provider of some kind,
 	// with auto-managed https, it's probably best to disable it.
 	StandaloneHTTPS bool `toml:"standalone_https"`
-	//Notifications represents all the configurations for the differents notification systems
+	// HTTPPort is the port number for the HTTP listenner
+	HTTPPOrt int `toml:"http_port"`
+	// HTTPsPort is the port number for the HTTPS listenner. Only used if StandaloneHTTPS is set to true
+	HTTPSPOrt int `toml:"https_port"`
+	// Notifications represents all the configurations for the differents notification systems
 	Notifications map[string]Notification `toml:"notifications"`
-	Storages      map[string]Storage      `toml:"storages"`
+	// Storage is the list of all the storages providers available.
+	// We might add other in the future to be able to integrate more easily to existing systems.
+	Storages map[string]Storage `toml:"storages"`
 }
 
 // Notifications represents the configuration for every notification systems

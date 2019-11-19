@@ -7,6 +7,8 @@ database = "sqlite"
 # self signed RSA: `openssl req -x509 -nodes -newkey rsa:2048 -keyout server.key -out server.crt -days 3650`
 # Use letsencrypt or other trusted provider for production environment
 standalone_https = true
+http_port = 80
+https_port= 443
 
 # Lists of notification systems
 [notifications]

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 
 	apipkg "github.com/edznux/wonderxss/api"
 	httpApi "github.com/edznux/wonderxss/api/http"
@@ -37,7 +38,7 @@ func main() {
 
 	if cfg.StandaloneHTTPS {
 		go func() {
-			err := http.ListenAndServeTLS(":443", "server.crt", "server.key", nil)
+			err := http.ListenAndServeTLS(":"+strconv.Itoa(cfg.HTTPSPOrt), "server.crt", "server.key", nil)
 			if err != nil {
 				log.Fatal("ListenAndServeTLS: ", err)
 			}
@@ -45,7 +46,7 @@ func main() {
 	}
 
 	go func() {
-		err := http.ListenAndServe(":80", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		err := http.ListenAndServe(":"+strconv.Itoa(cfg.HTTPPOrt), http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "https://"+r.Host+r.URL.String(), http.StatusMovedPermanently)
 		}))
 
