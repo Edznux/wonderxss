@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/edznux/wonderxss/crypto"
-	"github.com/edznux/wonderxss/notification"
+	"github.com/edznux/wonderxss/events"
 	"github.com/edznux/wonderxss/storage/models"
 	"github.com/google/uuid"
 )
@@ -41,7 +41,7 @@ func ServePayload(idOrAlias string) (string, error) {
 	go func() {
 		fmt.Println("=================================")
 		fmt.Println("Notification should be sent now !")
-		notification.SendNotifications(payload)
+		events.Events.Pub(payload, events.TOPIC_PAYLOAD_DELIVERED)
 		fmt.Println("=================================")
 		fmt.Println("Saving execution")
 		AddExecution(payload.ID, idOrAlias)
@@ -62,11 +62,11 @@ func GetPayload(id string) (Payload, error) {
 //AddPayload is the API to add a new payload
 func AddPayload(name string, content string) (models.Payload, error) {
 	fmt.Printf("AddPayload(\"%s\", \"%s\")\n", name, content)
-	hash := crypto.Hash(content, "sha256")
+	hashes := crypto.GenerateSRIHashes(content)
 	p := models.Payload{
 		ID:      uuid.New().String(),
 		Name:    name,
-		Hash:    hash,
+		Hash:    hashes.String(),
 		Content: content,
 	}
 	fmt.Println(p)

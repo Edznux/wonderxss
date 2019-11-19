@@ -1,7 +1,6 @@
 package storage
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/edznux/wonderxss/config"
@@ -57,7 +56,6 @@ type Storage interface {
 
 func InitStorage(cfg config.Config) {
 	backend = map[string]Storage{}
-	fmt.Printf("Init databases: %+v\n", cfg)
 	s, err := sqlite.New(cfg)
 	if err != nil {
 		log.Fatal("Error while initializing storage:", err)

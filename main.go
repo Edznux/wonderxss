@@ -10,6 +10,7 @@ import (
 	apipkg "github.com/edznux/wonderxss/api"
 	httpApi "github.com/edznux/wonderxss/api/http"
 	"github.com/edznux/wonderxss/config"
+	"github.com/edznux/wonderxss/notification"
 	"github.com/edznux/wonderxss/storage"
 	"github.com/edznux/wonderxss/ui"
 	"github.com/gorilla/mux"
@@ -18,6 +19,7 @@ import (
 func main() {
 	fmt.Println("Starting web server")
 
+	notification.Setup()
 	r := mux.NewRouter()
 	api := httpApi.New()
 	ui := ui.New()
