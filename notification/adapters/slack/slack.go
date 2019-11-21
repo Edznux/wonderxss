@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/edznux/wonderxss/events"
-	"github.com/edznux/wonderxss/notification/interfaces"
 	"github.com/edznux/wonderxss/storage/models"
 )
 
@@ -21,7 +20,7 @@ type SlackRequestBody struct {
 	Text string `json:"text"`
 }
 
-func New(config Config) interfaces.NotificationSystem {
+func New(config Config) *Slack {
 	fmt.Println("New Notification Handler: slack")
 	s := Slack{Name: "Slack"}
 	ch := events.Events.Sub(events.TOPIC_PAYLOAD_DELIVERED)
@@ -32,7 +31,7 @@ func New(config Config) interfaces.NotificationSystem {
 				fmt.Printf("Received %s, times.\n", msg)
 				payload := msg.(models.Payload)
 				notif := "A payload was triggered : " + payload.Name + " at " + time.Now().String()
-				s.SendMessage(notif, config.WebHookURL)
+				s.sendMessage(notif, config.WebHookURL)
 			} else {
 				fmt.Println("not ok")
 				break
@@ -43,7 +42,7 @@ func New(config Config) interfaces.NotificationSystem {
 	return &s
 }
 
-func (s *Slack) SendMessage(data string, destination string) error {
+func (s *Slack) sendMessage(data string, destination string) error {
 	slackBody, _ := json.Marshal(SlackRequestBody{Text: data})
 	req, err := http.NewRequest(http.MethodPost, destination, bytes.NewBuffer(slackBody))
 	if err != nil {

@@ -10,6 +10,7 @@ import (
 
 	apipkg "github.com/edznux/wonderxss/api"
 	httpApi "github.com/edznux/wonderxss/api/http"
+	"github.com/edznux/wonderxss/api/websocket"
 	"github.com/edznux/wonderxss/config"
 	"github.com/edznux/wonderxss/notification"
 	"github.com/edznux/wonderxss/storage"
@@ -29,14 +30,17 @@ func main() {
 	r := mux.NewRouter()
 	api := httpApi.New()
 	ui := ui.New()
+	ws := websocket.New()
 	api.Routes(r)
 	http.Handle("/", r)
 	http.HandleFunc("/ui", ui.HandleIndex)
+	http.HandleFunc("/ws", ws.Handle)
 
 	apipkg.InitApi()
 
 	if cfg.StandaloneHTTPS {
 		go func() {
+			fmt.Println("Listenning HTTPS on port :", cfg.HTTPSPOrt)
 			err := http.ListenAndServeTLS(":"+strconv.Itoa(cfg.HTTPSPOrt), "server.crt", "server.key", nil)
 			if err != nil {
 				log.Fatal("ListenAndServeTLS: ", err)
@@ -45,6 +49,7 @@ func main() {
 	}
 
 	go func() {
+		fmt.Println("Listenning HTTP on port :", cfg.HTTPPOrt)
 		err := http.ListenAndServe(":"+strconv.Itoa(cfg.HTTPPOrt), http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "https://"+r.Host+r.URL.String(), http.StatusMovedPermanently)
 		}))

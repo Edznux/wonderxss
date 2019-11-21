@@ -5,14 +5,10 @@ import (
 	"github.com/edznux/wonderxss/notification/adapters/slack"
 )
 
-// var RegisteredNotificationSystem []interfaces.NotificationSystem
-
 func Setup(cfg config.Config) {
-	// RegisteredNotificationSystem = []interfaces.NotificationSystem{}
-	for _, ns := range cfg.Notifications {
-		if ns.Name == "slack" {
-			_ = slack.New(slack.Config{WebHookURL: ns.Token})
+	for _, nsCfg := range cfg.Notifications {
+		if nsCfg.Name == "slack" {
+			_ = slack.New(slack.Config{WebHookURL: nsCfg.Token})
 		}
 	}
-	// RegisteredNotificationSystem = append(RegisteredNotificationSystem, slackNS)
 }
