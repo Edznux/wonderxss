@@ -19,10 +19,13 @@ https_port= 443
   [notifications.slack-webhook]
     name    = "slack"
     # Change this token
-    token   = "test"
+    token   = "CHANGEME"
     # Globaly disable this kind of notifications
     enabled = true
-
+  [notifications.discord-webhook]
+    name    = "discord"
+    token   = "CHANGEME"
+    enabled = false
 # Databases definitions
 [storages]
   [storages.sqlite]
