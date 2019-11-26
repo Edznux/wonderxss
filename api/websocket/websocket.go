@@ -26,6 +26,8 @@ func New() *WSApi {
 }
 
 func (wsapi *WSApi) Handle(w http.ResponseWriter, req *http.Request) {
+	//allow cross origin websocket
+	wsapi.upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 	conn, err := wsapi.upgrader.Upgrade(w, req, nil)
 	if err != nil {
 		fmt.Println(err)

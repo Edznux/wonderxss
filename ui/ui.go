@@ -21,7 +21,7 @@ type UI struct {
 func New() *UI {
 	ui := UI{}
 	ui.indexPath = "/index.html"
-	ui.staticPath = "/wonderxss/build"
+	ui.staticPath = "ui/wonderxss/build"
 	return &ui
 }
 
@@ -68,8 +68,9 @@ func (ui *UI) ServeUI(w http.ResponseWriter, r *http.Request) {
 	// check whether a file exists at the given path
 	_, err = os.Stat(path)
 	if os.IsNotExist(err) {
-		// file does not exist, serve index.html
-		http.ServeFile(w, r, filepath.Join(ui.staticPath, ui.indexPath))
+		fullIndexPath := filepath.Join(ui.staticPath, ui.indexPath)
+		fmt.Println("Non existing path, returning indexPath", fullIndexPath)
+		http.ServeFile(w, r, fullIndexPath)
 		return
 	} else if err != nil {
 		// if we got an error (that wasn't that the file doesn't exist) stating the

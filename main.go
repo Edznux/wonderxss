@@ -28,12 +28,14 @@ func main() {
 
 	notification.Setup(cfg)
 	r := mux.NewRouter()
+
+	apiRouter := r.PathPrefix("/api/v1").Subrouter()
 	api := httpApi.New()
+	api.Routes(apiRouter)
+
 	ui := ui.New()
 	ws := websocket.New()
-	api.Routes(r)
-	http.Handle("/", r)
-	http.HandleFunc("/ui", ui.HandleIndex)
+	http.HandleFunc("/", ui.HandleIndex)
 	http.HandleFunc("/ws", ws.Handle)
 
 	apipkg.InitApi()

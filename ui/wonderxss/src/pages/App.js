@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import InjectionsList from '../components/InjectionsList';
+import Alert from '../components/Alert';
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
           WonderXSS
         </p>
       </header>
+      <Alert></Alert>
       <div id="container">
         <InjectionsList></InjectionsList>
       </div>

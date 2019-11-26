@@ -8,6 +8,9 @@ import Payloads from './pages/Payloads';
 import PayloadEditor from './pages/PayloadEditor';
 import NotFound from './pages/NotFound';
 
+window.ws = new WebSocket("wss://localhost:4443/ws")
+
+
 const routing = (
 <Router>
     <ul>
