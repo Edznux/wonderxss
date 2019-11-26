@@ -4,14 +4,16 @@ class Alert extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            alertMsg = ""
+            alertMsg: ""
         }
     }
     componentDidMount() {
+        console.log("Mount alert")
         window.ws.onmessage = function (msg) {
+            console.log("Recieved message !", msg)
             var jsonMsg = JSON.parse(msg)
             alert(msg)
-            this.state.alertMsg = jsonMsg.content
+            this.setState({"alertMsg":jsonMsg.content})
         }
     }
     render() {

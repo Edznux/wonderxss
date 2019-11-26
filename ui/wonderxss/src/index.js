@@ -8,8 +8,16 @@ import Payloads from './pages/Payloads';
 import PayloadEditor from './pages/PayloadEditor';
 import NotFound from './pages/NotFound';
 
-window.ws = new WebSocket("wss://localhost:4443/ws")
-
+window.ws = new WebSocket("wss://localhost/ws")
+window.ws.onerror = function(event){
+    console.error("WebSocket error observed:", event);
+}
+window.ws.onclose = function(event){
+    console.error("WebSocket closed:", event);
+}
+window.ws.onopen = function(event){
+    console.error("WebSocket open:", event);
+}
 
 const routing = (
 <Router>
