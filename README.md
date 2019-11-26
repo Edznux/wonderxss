@@ -9,6 +9,7 @@ Features:
 - [x] Extensible
 - [ ] Notification services
   - [x] Slack
+  - [x] Discord
   - [ ] Email
   - [ ] Web UI (websocket)
 - [x] Payload Generator
