@@ -27,23 +27,25 @@ func main() {
 	storage.InitStorage(cfg)
 
 	notification.Setup(cfg)
-	r := mux.NewRouter()
 
-	apiRouter := r.PathPrefix("/api/v1").Subrouter()
+	router := mux.NewRouter()
 	api := httpApi.New()
-	api.Routes(apiRouter)
-
 	ui := ui.New()
 	ws := websocket.New()
-	http.HandleFunc("/", ui.HandleIndex)
-	http.HandleFunc("/ws", ws.Handle)
+
+	fmt.Println("WHAT THE FUCK", api.UrlPrefix)
+	apiRouter := router.PathPrefix(api.UrlPrefix).Subrouter()
+	api.Routes(apiRouter)
+
+	router.HandleFunc("/ws", ws.Handle)
+	router.PathPrefix("/").HandlerFunc(ui.HandleIndex)
 
 	apipkg.InitApi()
 
 	if cfg.StandaloneHTTPS {
 		go func() {
 			fmt.Println("Listenning HTTPS on port :", cfg.HTTPSPOrt)
-			err := http.ListenAndServeTLS(":"+strconv.Itoa(cfg.HTTPSPOrt), "server.crt", "server.key", nil)
+			err := http.ListenAndServeTLS(":"+strconv.Itoa(cfg.HTTPSPOrt), "server.crt", "server.key", router)
 			if err != nil {
 				log.Fatal("ListenAndServeTLS: ", err)
 			}

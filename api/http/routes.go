@@ -17,32 +17,32 @@ func (httpapi *HTTPApi) Routes(router *mux.Router) {
 	router.HandleFunc("/p/{id}", httpapi.handlePayloadByID)
 
 	// HealthZ endpoint.
-	router.HandleFunc(httpapi.UrlPrefix+"/healthz", httpapi.healthz)
+	router.HandleFunc("/healthz", httpapi.healthz)
 
 	// Authentication
 	router.HandleFunc("/login", httpapi.NotImplementedYet).Methods("POST")
 	router.HandleFunc("/logout", httpapi.NotImplementedYet).Methods("POST")
 
 	// Payload CRUD
-	router.HandleFunc(httpapi.UrlPrefix+"/payloads", httpapi.createPayload).Methods("POST")
-	router.HandleFunc(httpapi.UrlPrefix+"/payloads", httpapi.getPayloads).Methods("GET")
-	router.HandleFunc(httpapi.UrlPrefix+"/payloads/{id}", httpapi.getPayload).Methods("GET")
-	router.HandleFunc(httpapi.UrlPrefix+"/payloads/{id}", httpapi.updatePayload).Methods("PUT")
-	router.HandleFunc(httpapi.UrlPrefix+"/payloads/{id}", httpapi.deletePayload).Methods("DELETE")
+	router.HandleFunc("/payloads", httpapi.createPayload).Methods("POST")
+	router.HandleFunc("/payloads", httpapi.getPayloads).Methods("GET")
+	router.HandleFunc("/payloads/{id}", httpapi.getPayload).Methods("GET")
+	router.HandleFunc("/payloads/{id}", httpapi.updatePayload).Methods("PUT")
+	router.HandleFunc("/payloads/{id}", httpapi.deletePayload).Methods("DELETE")
 
 	// Aliases CRUD
-	router.HandleFunc(httpapi.UrlPrefix+"/aliases", httpapi.createAlias).Methods("POST")
-	router.HandleFunc(httpapi.UrlPrefix+"/aliases", httpapi.getAliases).Methods("GET")
-	router.HandleFunc(httpapi.UrlPrefix+"/aliases/{alias}", httpapi.getAlias).Methods("GET")
-	router.HandleFunc(httpapi.UrlPrefix+"/aliases/id/{id}", httpapi.getAliasByID).Methods("GET")
-	router.HandleFunc(httpapi.UrlPrefix+"/aliases/payload/{id}", httpapi.getAliasByPayloadID).Methods("GET")
+	router.HandleFunc("/aliases", httpapi.createAlias).Methods("POST")
+	router.HandleFunc("/aliases", httpapi.getAliases).Methods("GET")
+	router.HandleFunc("/aliases/{alias}", httpapi.getAlias).Methods("GET")
+	router.HandleFunc("/aliases/id/{id}", httpapi.getAliasByID).Methods("GET")
+	router.HandleFunc("/aliases/payload/{id}", httpapi.getAliasByPayloadID).Methods("GET")
 
 	// Executions CRUD
-	router.HandleFunc(httpapi.UrlPrefix+"/executions", httpapi.getExecutions).Methods("GET")
+	router.HandleFunc("/executions", httpapi.getExecutions).Methods("GET")
 
 	// Colletors CRUD
-	router.HandleFunc(httpapi.UrlPrefix+"/collectors", httpapi.getCollectors).Methods("GET")
-	router.HandleFunc(httpapi.UrlPrefix+"/collectors", httpapi.createCollectors).Methods("POST")
+	router.HandleFunc("/collectors", httpapi.getCollectors).Methods("GET")
+	router.HandleFunc("/collectors", httpapi.createCollectors).Methods("POST")
 }
 
 func (httpapi *HTTPApi) NotImplementedYet(w http.ResponseWriter, r *http.Request) {

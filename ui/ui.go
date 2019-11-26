@@ -66,15 +66,17 @@ func (ui *UI) ServeUI(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Path:", path)
 
 	// check whether a file exists at the given path
-	_, err = os.Stat(path)
+	stat, err := os.Stat(path)
+	fmt.Println(stat.Name())
 	if os.IsNotExist(err) {
 		fullIndexPath := filepath.Join(ui.staticPath, ui.indexPath)
-		fmt.Println("Non existing path, returning indexPath", fullIndexPath)
+		fmt.Println("Non-existing path, returning indexPath", fullIndexPath)
 		http.ServeFile(w, r, fullIndexPath)
 		return
 	} else if err != nil {
 		// if we got an error (that wasn't that the file doesn't exist) stating the
 		// file, return a 500 internal server error and stop
+		fmt.Println("Some error, wtf?", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
