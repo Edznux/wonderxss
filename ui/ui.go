@@ -26,7 +26,6 @@ func New() *UI {
 }
 
 func (ui *UI) HandleIndex(w http.ResponseWriter, req *http.Request) {
-	log.Println(req.Host)
 	hostname := req.Host
 	subdomain := strings.TrimSuffix(hostname, "."+config.Current.Domain)
 	log.Println("req.URL.Path:", req.URL.Path)
@@ -66,8 +65,7 @@ func (ui *UI) ServeUI(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Path:", path)
 
 	// check whether a file exists at the given path
-	stat, err := os.Stat(path)
-	fmt.Println(stat.Name())
+	_, err = os.Stat(path)
 	if os.IsNotExist(err) {
 		fullIndexPath := filepath.Join(ui.staticPath, ui.indexPath)
 		fmt.Println("Non-existing path, returning indexPath", fullIndexPath)
