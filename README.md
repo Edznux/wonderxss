@@ -21,6 +21,18 @@ Features:
 Roadmap:
 - [] DNS Listenner
 
+## How to
+
+1. Start the application (edit the `wonderxss.conf` file if needed)
+2. Create a new payload by visiting `https://yourdomain.tld/editor` and filling up the form.
+   1. Add an optional alias. Let's say `a` so you get a short injection payload.
+3. Go back to the home page and select the payload you want to create an injection for.
+   1. Check or uncheck the use of the subdomain
+   2. Copy paste the injection
+4. Inject your payload in some vulnerable application
+5. Wait to the application to trigger your payload.
+   1. If you have set up a notification system, you will also get a notification on trigger
+
 ## Deploy & Run
 
 Deployment methods are WIP
@@ -45,10 +57,11 @@ cd ui/wonderxss/
 npm install
 
 # this next command will serve the app on a different port.
+# You may have CORS and/or port issue
 npm start # If you get some permission error, run as sudo ;)
 
 # Later, we will bundle the frontend with the rest of the app. We will use:
-npm build
+npm run build
 ```
 
 ## API
