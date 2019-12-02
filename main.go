@@ -8,15 +8,17 @@ import (
 	"os/signal"
 	"strconv"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/edznux/wonderxss/api"
-	apipkg "github.com/edznux/wonderxss/api"
-	httpApi "github.com/edznux/wonderxss/api/http"
 	"github.com/edznux/wonderxss/api/websocket"
 	"github.com/edznux/wonderxss/config"
 	"github.com/edznux/wonderxss/notification"
 	"github.com/edznux/wonderxss/storage"
 	"github.com/edznux/wonderxss/ui"
 	"github.com/gorilla/mux"
+
+	apipkg "github.com/edznux/wonderxss/api"
+	httpApi "github.com/edznux/wonderxss/api/http"
 )
 
 // This shouldn't be here. I know. But it doesn't belong to api/http either
@@ -35,6 +37,47 @@ func handlePayloadByID(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	w.Write([]byte(text))
+}
+
+var myHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	user := r.Context().Value("user")
+	fmt.Fprintf(w, "This is an authenticated request")
+	fmt.Fprintf(w, "Claim content:\n")
+	for k, v := range user.(*jwt.Token).Claims.(jwt.MapClaims) {
+		fmt.Fprintf(w, "%s :\t%#v\n", k, v)
+	}
+})
+
+func serve(cfg config.Config, router *mux.Router) {
+	if cfg.StandaloneHTTPS {
+		go func() {
+			fmt.Println("Listenning HTTPS on port :", cfg.HTTPSPOrt)
+			err := http.ListenAndServeTLS(":"+strconv.Itoa(cfg.HTTPSPOrt), "server.crt", "server.key", router)
+			if err != nil {
+				log.Fatal("ListenAndServeTLS: ", err)
+			}
+		}()
+	}
+
+	go func() {
+		fmt.Println("Listenning HTTP on port :", cfg.HTTPPOrt)
+		err := http.ListenAndServe(":"+strconv.Itoa(cfg.HTTPPOrt), http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			http.Redirect(w, r, "https://"+r.Host+r.URL.String(), http.StatusMovedPermanently)
+		}))
+
+		if err != nil {
+			log.Fatal("ListenAndServe: ", err)
+		}
+	}()
+}
+
+func gracefulShutdown() {
+	// handle graceful shutdown
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	<-c
+	log.Println("shutting down")
+	os.Exit(0)
 }
 
 func main() {
@@ -63,34 +106,6 @@ func main() {
 
 	apipkg.InitApi()
 
-	if cfg.StandaloneHTTPS {
-		go func() {
-			fmt.Println("Listenning HTTPS on port :", cfg.HTTPSPOrt)
-			err := http.ListenAndServeTLS(":"+strconv.Itoa(cfg.HTTPSPOrt), "server.crt", "server.key", router)
-			if err != nil {
-				log.Fatal("ListenAndServeTLS: ", err)
-			}
-		}()
-	}
-
-	go func() {
-		fmt.Println("Listenning HTTP on port :", cfg.HTTPPOrt)
-		err := http.ListenAndServe(":"+strconv.Itoa(cfg.HTTPPOrt), http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			http.Redirect(w, r, "https://"+r.Host+r.URL.String(), http.StatusMovedPermanently)
-		}))
-
-		if err != nil {
-			log.Fatal("ListenAndServe: ", err)
-		}
-	}()
+	serve(cfg, router)
 	gracefulShutdown()
-}
-
-func gracefulShutdown() {
-	// handle graceful shutdown
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-	<-c
-	log.Println("shutting down")
-	os.Exit(0)
 }

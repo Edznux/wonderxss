@@ -37,6 +37,8 @@ type Config struct {
 	// Storage is the list of all the storages providers available.
 	// We might add other in the future to be able to integrate more easily to existing systems.
 	Storages map[string]Storage `toml:"storages"`
+	// JWTToken is the *SECRET* JWT Token.
+	JWTToken string `toml:"jwt_token"`
 }
 
 // Notifications represents the configuration for every notification systems
@@ -86,18 +88,3 @@ func Load(file string) (Config, error) {
 	Current = config
 	return config, nil
 }
-
-/*
-func Load() *Config {
-	standaloneHTTPS := false
-	envHTTPS := os.Getenv(ENV_PREFIX + "HTTPS")
-	if envHTTPS == "true" {
-		standaloneHTTPS = true
-	}
-	cfg := Config{
-		Domain:          os.Getenv(ENV_PREFIX + "DOMAIN"),
-		Database:        os.Getenv(ENV_PREFIX + "STORE"),
-		StandaloneHTTPS: standaloneHTTPS,
-	}
-	return &cfg
-}*/

@@ -6,6 +6,9 @@ Blind-XSS tool.
 Features:
 - [x] 0 runtime dependencies
 - [ ] Realtime (websocket)
+- [ ] Authentication
+  - [ ] JWT
+  - [ ] Oauth2
 - [x] Extensible
 - [ ] Notification services
   - [x] Slack
@@ -21,6 +24,7 @@ Features:
 
 Roadmap:
 - [] DNS Listenner
+- [] Authorization
 
 ## How to
 

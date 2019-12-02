@@ -9,6 +9,9 @@ database = "sqlite"
 standalone_https = true
 http_port = 80
 https_port= 443
+# Generate a new token with
+# OpenSSL: openssl rand -hex 20
+jwt_token= "lolChangeMeForF***Sake"
 
 # Lists of notification systems
 [notifications]

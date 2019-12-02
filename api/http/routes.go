@@ -13,6 +13,7 @@ import (
 func (httpapi *HTTPApi) Routes(router *mux.Router) {
 	router.Use(httpapi.jsonMiddleware)
 	router.Use(httpapi.CORSMiddleware)
+	router.Use(httpapi.authMiddleware)
 
 	// HealthZ endpoint.
 	router.HandleFunc("/healthz", httpapi.healthz)
