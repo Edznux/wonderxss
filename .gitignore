@@ -4,3 +4,4 @@ db.sqlite
 *.key
 wonderxss.conf
 vendor
+.vscode
