@@ -29,6 +29,7 @@ type Storage interface {
 
 	// Read
 	GetUser(id string) (models.User, error)
+	GetUserByName(name string) (models.User, error)
 
 	GetPayloads() ([]models.Payload, error)
 	GetPayload(id string) (models.Payload, error)

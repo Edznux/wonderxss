@@ -21,7 +21,7 @@ type SafeUser struct {
 }
 
 //GetUser returns a user model safe to return to the frontend
-func GetUser(u User) SafeUser {
+func (u *User) GetUser() SafeUser {
 	su := SafeUser{}
 
 	su.Username = u.Username

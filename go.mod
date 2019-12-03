@@ -11,4 +11,5 @@ require (
 	github.com/gorilla/mux v1.7.3
 	github.com/gorilla/websocket v1.4.1
 	github.com/mattn/go-sqlite3 v1.13.0
+	golang.org/x/crypto v0.0.0-20191202143827-86a70503ff7e
 )

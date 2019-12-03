@@ -116,6 +116,12 @@ FROM users
 WHERE id = ?;
 `
 
+var SELECT_USER_BY_NAME = `
+SELECT *
+FROM users
+WHERE username = ?;
+`
+
 var SELECT_COLLECTOR = `
 SELECT *
 FROM collectors

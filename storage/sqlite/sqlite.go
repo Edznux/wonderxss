@@ -399,6 +399,23 @@ func (s *Sqlite) GetUser(id string) (models.User, error) {
 	return user, nil
 }
 
+func (s *Sqlite) GetUserByName(name string) (models.User, error) {
+	var user models.User
+
+	row := s.db.QueryRow(SELECT_USER_BY_NAME, name)
+
+	err := row.Scan(&user)
+	if err == sql.ErrNoRows {
+		return user, models.NoSuchItem
+	}
+
+	if err != nil {
+		fmt.Println(err)
+		return user, err
+	}
+	return user, nil
+}
+
 //Update
 func (s *Sqlite) UpdatePayload(models.Payload) error {
 	return nil
