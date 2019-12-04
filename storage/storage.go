@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/edznux/wonderxss/config"
@@ -55,7 +56,13 @@ type Storage interface {
 	DeleteUser(models.User) error
 }
 
-func InitStorage(cfg config.Config) {
+func init() {
+	// FIXME, we should use a singleton for the config.
+	// A Single instance for the whole project
+	cfg, err := config.Load("")
+	if err != nil {
+		fmt.Println("Error loading config file")
+	}
 	backend = map[string]Storage{}
 	s, err := sqlite.New(cfg)
 	if err != nil {

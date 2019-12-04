@@ -46,7 +46,7 @@ func (api *HTTPApi) authMiddleware(next http.Handler) http.Handler {
 		}
 
 		token := strings.Split(tokenHeader, "Bearer ")[1]
-		claims, err := crypto.VerifyToken(token)
+		claims, err := crypto.VerifyJWTToken(token)
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			res.Code = 2

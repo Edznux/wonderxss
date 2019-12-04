@@ -17,13 +17,13 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	loginParam := vars["login"]
 	passwordParam := vars["password"]
-	
+
 	user, err := api.VerifyUserPassword(loginParam, passwordParam)
 	if err != nil {
 		res.Code = 0
-		res.Message = err
+		res.Message = err.Error()
 		json.NewEncoder(w).Encode(&res)
-		return 
+		return
 	}
 
 	// Get a new JWT Token if the user is validated
