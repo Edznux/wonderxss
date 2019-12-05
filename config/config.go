@@ -3,9 +3,9 @@ package config
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 
-	"github.com/BurntSushi/toml"
+	"github.com/fsnotify/fsnotify"
+	"github.com/spf13/viper"
 )
 
 // Current is a global variables storing the current configuration of the application.
@@ -63,28 +63,26 @@ type Storage struct {
 	Server   string `toml:"server"`
 }
 
-// LoadConfig loads the configuration file and return a new Config
-func Load(file string) (Config, error) {
-	fmt.Println("Loading config")
-	var configPath string
-	var config Config
-
-	if file == "" {
-		dir, err := os.Getwd()
-
-		if err != nil {
-			return config, err
-		}
-		configPath = filepath.Join(dir, "wonderxss.conf")
-	} else {
-		configPath = file
+func Setup() {
+	viper.SetConfigType("toml")
+	viper.SetConfigName("wonderxss")
+	viper.AddConfigPath(".")
+	viper.WatchConfig()
+	err := viper.ReadInConfig() // Find and read the config file
+	if err != nil {             // Handle errors reading the config file
+		panic(fmt.Errorf("Fatal error config file: %s \n", err))
 	}
-
-	_, err := toml.DecodeFile(configPath, &config)
+	err = viper.Unmarshal(&Current)
 	if err != nil {
-		return config, err
+		fmt.Println(err.Error())
+		os.Exit(1)
 	}
-	fmt.Printf("Loaded config: %+v\n", config)
-	Current = config
-	return config, nil
+
+	fmt.Println("Config file loaded !")
+	fmt.Println("=====================================")
+	fmt.Println("Database : ", Current.Database)
+	fmt.Println("=====================================")
+	viper.OnConfigChange(func(e fsnotify.Event) {
+		fmt.Println("Config file changed:", e.Name)
+	})
 }

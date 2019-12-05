@@ -2,6 +2,6 @@
 db.sqlite
 *.crt
 *.key
-wonderxss.conf
+wonderxss.toml
 vendor
 .vscode
