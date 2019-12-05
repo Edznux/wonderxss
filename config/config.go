@@ -17,28 +17,28 @@ var Current Config
 type Config struct {
 
 	// The domain this application should respond
-	Domain string `toml:"domain"`
+	Domain string `mapstructure:"domain"`
 	// DatabaseFile represents the filename of the storage system.
 	// It depends on your database type:
 	// It can be a connection string (postgres, mysql)
 	// or a simple filename (sqlite, json...)
-	Database string `toml:"database"`
+	Database string `mapstructure:"database"`
 	// This enable the HTTPs webserver
 	// This will allow this webserver to run by itself, without any reverse proxy
 	// doing the HTTPS decryption. If you are using a cloud provider of some kind,
 	// with auto-managed https, it's probably best to disable it.
-	StandaloneHTTPS bool `toml:"standalone_https"`
+	StandaloneHTTPS bool `mapstructure:"standalone_https"`
 	// HTTPPort is the port number for the HTTP listenner
-	HTTPPOrt int `toml:"http_port"`
+	HTTPPOrt int `mapstructure:"http_port"`
 	// HTTPsPort is the port number for the HTTPS listenner. Only used if StandaloneHTTPS is set to true
-	HTTPSPOrt int `toml:"https_port"`
+	HTTPSPOrt int `mapstructure:"https_port"`
 	// Notifications represents all the configurations for the differents notification systems
-	Notifications map[string]Notification `toml:"notifications"`
+	Notifications map[string]Notification `mapstructure:"notifications"`
 	// Storage is the list of all the storages providers available.
 	// We might add other in the future to be able to integrate more easily to existing systems.
-	Storages map[string]Storage `toml:"storages"`
+	Storages map[string]Storage `mapstructure:"storages"`
 	// JWTToken is the *SECRET* JWT Token.
-	JWTToken string `toml:"jwt_token"`
+	JWTToken string `mapstructure:"jwt_token"`
 }
 
 // Notifications represents the configuration for every notification systems
@@ -81,6 +81,7 @@ func Setup() {
 	fmt.Println("Config file loaded !")
 	fmt.Println("=====================================")
 	fmt.Println("Database : ", Current.Database)
+	fmt.Println("HTTPPOrt : ", Current.HTTPPOrt)
 	fmt.Println("=====================================")
 	viper.OnConfigChange(func(e fsnotify.Event) {
 		fmt.Println("Config file changed:", e.Name)

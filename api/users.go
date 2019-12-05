@@ -52,7 +52,7 @@ func CreateUser(username, password string) (models.User, error) {
 		return u, errors.New("Invalid password")
 	}
 
-	existingUser, err := store.GetUserByName(username)
+	existingUser, err := GetUserByName(username)
 	if err != nil {
 		// If the error is just an empty response, ignore
 		if err != models.NoSuchItem {

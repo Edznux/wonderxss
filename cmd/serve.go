@@ -43,8 +43,10 @@ func entrypoint() {
 
 	// Return real payload
 	router.HandleFunc("/p/{id}", webserver.HandlePayloadByID)
-
 	router.HandleFunc("/ws", ws.Handle)
+	router.HandleFunc("/login", webserver.Login)
+	router.HandleFunc("/logout", webserver.Logout)
+
 	router.PathPrefix("/").HandlerFunc(ui.HandleIndex)
 
 	webserver.Serve(router)

@@ -2,6 +2,7 @@ package webserver
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -12,12 +13,14 @@ import (
 )
 
 func Login(w http.ResponseWriter, r *http.Request) {
-	log.Printf("Request URL : %s, not implemented", r.RequestURI)
+	log.Printf("Login request")
+	log.Printf("r: %+v\n", r)
+
 	res := api.Response{}
 	vars := mux.Vars(r)
 	loginParam := vars["login"]
 	passwordParam := vars["password"]
-
+	fmt.Println("login, passwd", loginParam, passwordParam)
 	user, err := api.VerifyUserPassword(loginParam, passwordParam)
 	if err != nil {
 		res.Code = 0
