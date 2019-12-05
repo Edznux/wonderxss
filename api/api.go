@@ -4,6 +4,6 @@ import "github.com/edznux/wonderxss/storage"
 
 var store storage.Storage
 
-func InitApi() {
+func Init() {
 	store = storage.GetDB()
 }

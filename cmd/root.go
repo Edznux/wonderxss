@@ -2,22 +2,13 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 
-	"github.com/edznux/wonderxss/config"
+	"github.com/edznux/wonderxss/storage"
 	"github.com/spf13/cobra"
 )
 
-var cfg config.Config
-
-func init() {
-	var err error
-	cfg, err = config.Load("")
-	if err != nil {
-		log.Fatal(err)
-	}
-}
+var db storage.Storage
 
 var rootCmd = &cobra.Command{
 	Use:   "wonderxss",
@@ -29,6 +20,10 @@ var rootCmd = &cobra.Command{
 }
 
 func Execute() {
+	// set the db globaly. It's already initialised, just "globalify" the object...
+	db = storage.GetDB()
+	db.Init()
+
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)

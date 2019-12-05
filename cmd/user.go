@@ -3,9 +3,11 @@ package cmd
 import (
 	"fmt"
 	"log"
+	"syscall"
 
 	"github.com/edznux/wonderxss/api"
 	"github.com/spf13/cobra"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 // userCmd represents the user command
@@ -25,14 +27,28 @@ var createCmd = &cobra.Command{
 	Long:  `Create a new user by providing a username and filling out informations`,
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		user := args[0]
-		fmt.Println("create called", user)
-		password := "test"
-		u, err := api.CreateUser(user, password)
-		if err != nil {
-			log.Fatal("Could not create user")
+
+		username := args[0]
+		api.Init()
+		user, err := api.GetUserByName(username)
+		if user.ID != "" {
+			fmt.Println("User already exist.")
+			return
 		}
-		fmt.Printf("User created: [%s] %s", u.ID, u.Username)
+
+		fmt.Println("Please enter a password:")
+		bytePassword, err := terminal.ReadPassword(int(syscall.Stdin))
+		if err != nil {
+			log.Fatal("Could not read password", err)
+		}
+		password := string(bytePassword)
+
+		u, err := api.CreateUser(username, password)
+
+		if err != nil {
+			log.Fatal("Could not create user ", err)
+		}
+		fmt.Printf("User created: [%s] %s\n", u.ID, u.Username)
 	},
 }
 

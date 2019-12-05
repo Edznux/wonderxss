@@ -6,7 +6,8 @@ import (
 	"github.com/edznux/wonderxss/notification/adapters/slack"
 )
 
-func Setup(cfg config.Config) {
+func Setup() {
+	cfg := config.Current
 	for _, nsCfg := range cfg.Notifications {
 		if nsCfg.Enabled {
 			if nsCfg.Name == "slack" {

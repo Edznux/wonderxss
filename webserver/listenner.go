@@ -10,7 +10,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func Serve(cfg config.Config, router *mux.Router) {
+func Serve(router *mux.Router) {
+	cfg := config.Current
 	if cfg.StandaloneHTTPS {
 		go func() {
 			fmt.Println("Listenning HTTPS on port :", cfg.HTTPSPOrt)

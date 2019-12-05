@@ -8,8 +8,8 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/edznux/wonderxss/api"
 	"github.com/edznux/wonderxss/api/websocket"
-	"github.com/edznux/wonderxss/config"
 	"github.com/edznux/wonderxss/notification"
 	"github.com/edznux/wonderxss/ui"
 	"github.com/edznux/wonderxss/webserver"
@@ -29,12 +29,9 @@ func gracefulShutdown() {
 
 func entrypoint() {
 	fmt.Println("Starting web server")
-	cfg, err := config.Load("")
-	if err != nil {
-		log.Fatal(err)
-	}
 
-	notification.Setup(cfg)
+	notification.Setup()
+	api.Init()
 
 	router := mux.NewRouter()
 	api := httpApi.New()
@@ -50,7 +47,7 @@ func entrypoint() {
 	router.HandleFunc("/ws", ws.Handle)
 	router.PathPrefix("/").HandlerFunc(ui.HandleIndex)
 
-	webserver.Serve(cfg, router)
+	webserver.Serve(router)
 	gracefulShutdown()
 }
 

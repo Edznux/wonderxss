@@ -15,34 +15,17 @@ type Sqlite struct {
 	db   *sql.DB
 }
 
-func New(cfg config.Config) (*Sqlite, error) {
+func New() (*Sqlite, error) {
+	cfg := config.Current
 	file := cfg.Storages["sqlite"].File
 	fmt.Printf("Setup SQLite, using file: %+v\n", file)
 	s := Sqlite{file: file}
-	s.Init(cfg)
 
-	fmt.Println(s)
-	// Check if tables are created so we don't override
-	needSetup := false
-	_, err := s.db.Query(SELECT_ALL_PAYLOADS)
-	if err != nil {
-		needSetup = true
-	}
-
-	if needSetup {
-		fmt.Println("Need setup")
-		s.Setup()
-	}
-
-	fmt.Println("Set up done")
-	_, err = s.db.Query(SELECT_ALL_PAYLOADS)
-	if err != nil {
-		fmt.Println(err)
-	}
 	return &s, nil
 }
 
-func (s *Sqlite) Init(config config.Config) error {
+func (s *Sqlite) Init() error {
+	fmt.Println("Init sqlite")
 	var err error
 	s.db, err = sql.Open("sqlite3", s.file)
 	if err != nil {
@@ -52,6 +35,12 @@ func (s *Sqlite) Init(config config.Config) error {
 }
 
 func (s *Sqlite) Setup() error {
+
+	// _, err := s.db.Query(SELECT_ALL_PAYLOADS)
+	// if err != nil {
+	// 	return err
+	// }
+
 	fmt.Println("Creating users' table")
 	_, err := s.db.Exec(CREATE_TABLE_USERS)
 	fmt.Println(err)
@@ -387,7 +376,7 @@ func (s *Sqlite) GetUser(id string) (models.User, error) {
 
 	row := s.db.QueryRow(SELECT_USER, id)
 
-	err := row.Scan(&user)
+	err := row.Scan(&user.ID, &user.Username, &user.Password, &user.CreatedAt, &user.ModifiedAt)
 	if err == sql.ErrNoRows {
 		return user, models.NoSuchItem
 	}
@@ -404,7 +393,7 @@ func (s *Sqlite) GetUserByName(name string) (models.User, error) {
 
 	row := s.db.QueryRow(SELECT_USER_BY_NAME, name)
 
-	err := row.Scan(&user)
+	err := row.Scan(&user.ID, &user.Username, &user.Password, &user.CreatedAt, &user.ModifiedAt)
 	if err == sql.ErrNoRows {
 		return user, models.NoSuchItem
 	}

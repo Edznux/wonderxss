@@ -111,13 +111,13 @@ WHERE name = ?;
 `
 
 var SELECT_USER = `
-SELECT *
+SELECT id, username, password, created_at, modified_at
 FROM users
 WHERE id = ?;
 `
 
 var SELECT_USER_BY_NAME = `
-SELECT *
+SELECT id, username, password, created_at, modified_at
 FROM users
 WHERE username = ?;
 `

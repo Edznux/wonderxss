@@ -18,7 +18,7 @@ type Storage interface {
 	// First time setup (create tables, create file...)
 	Setup() error
 	// Open the connection, open the file...
-	Init(config.Config) error
+	Init() error
 
 	// CRUD interface
 	// Create
@@ -56,15 +56,10 @@ type Storage interface {
 	DeleteUser(models.User) error
 }
 
-func init() {
-	// FIXME, we should use a singleton for the config.
-	// A Single instance for the whole project
-	cfg, err := config.Load("")
-	if err != nil {
-		fmt.Println("Error loading config file")
-	}
+func Init() {
+	fmt.Println("Init storage")
 	backend = map[string]Storage{}
-	s, err := sqlite.New(cfg)
+	s, err := sqlite.New()
 	if err != nil {
 		log.Fatal("Error while initializing storage:", err)
 	}
@@ -72,7 +67,6 @@ func init() {
 }
 
 func GetDB() Storage {
-	selectedBackend := "sqlite"
-	currentStorage = backend[selectedBackend]
+	currentStorage = backend[config.Current.Database]
 	return currentStorage
 }
