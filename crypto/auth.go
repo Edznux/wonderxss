@@ -12,7 +12,7 @@ func GetJWTToken(user models.User) (string, error) {
 		"user_id": user.ID,
 		"role":    "admin", // maybe we will add authz later on.
 	})
-	tokenString, err := token.SignedString(signingKey)
+	tokenString, err := token.SignedString([]byte(signingKey))
 	return tokenString, err
 }
 

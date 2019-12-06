@@ -24,9 +24,7 @@ func Serve(router *mux.Router) {
 
 	go func() {
 		fmt.Println("Listenning HTTP on port :", cfg.HTTPPOrt)
-		err := http.ListenAndServe(":"+strconv.Itoa(cfg.HTTPPOrt), http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			http.Redirect(w, r, "https://"+r.Host+r.URL.String(), http.StatusMovedPermanently)
-		}))
+		err := http.ListenAndServe(":"+strconv.Itoa(cfg.HTTPPOrt), router)
 
 		if err != nil {
 			log.Fatal("ListenAndServe: ", err)
