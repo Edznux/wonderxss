@@ -1,4 +1,6 @@
 import React from 'react';
+import axios from 'axios';
+
 import { API_PAYLOADS, URL_PAYLOAD} from "../helpers/constants"
 
 const REPLACE_TAG = "##URL_ID_PAYLOAD_OR_ALIAS##"
@@ -31,11 +33,12 @@ export default class InjectionsList extends React.Component {
     componentDidMount() {
         //TODO: fetch a new endpoint which lists all the injections payload.
         let tmp = [];
-        fetch(API_PAYLOADS).then(res => {
+        axios.get(API_PAYLOADS)
+        .then(res => {
             if (res.status !== 200) {
                 throw new Error("Couldn't load payloads")
             } else {
-                return res.json()
+                return res.data
             }
         }).then((rows) => {
             console.log("Payloads: ", rows.data)

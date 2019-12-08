@@ -1,5 +1,6 @@
 import React from 'react'
 import AceEditor from "react-ace";
+import axios from 'axios';
 
 import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/theme-github";
@@ -28,14 +29,10 @@ class PayloadEditor extends React.Component {
         console.log("Payload content:");
         console.log(payload);
 
-        fetch(API_PAYLOADS, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ name: payloadName, content: payload })
+        axios.post(API_PAYLOADS, {
+            name: payloadName,
+            content: payload
         })
-        .then(res => res.json())
         .then(res => {
             var alias = ""
             var payload_id = ""

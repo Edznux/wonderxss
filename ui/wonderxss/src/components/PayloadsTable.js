@@ -1,7 +1,8 @@
 import React from 'react';
+import axios from 'axios';
+
 import EnhancedTable from './Table';
 import { API_PAYLOADS } from "../helpers/constants"
-
 
 
 export default class PayloadsTable extends React.Component {
@@ -20,11 +21,11 @@ export default class PayloadsTable extends React.Component {
     };
 
     componentDidMount(){
-        fetch(API_PAYLOADS).then(res => {
+        axios.get(API_PAYLOADS).then(res => {
             if (res.status !== 200){
                 throw new Error("Couldn't load payloads")
             }else{
-                return res.json()
+                return res.data
             }
         }).then((rows) => {
             console.log(rows.data)
