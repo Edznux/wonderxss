@@ -6,6 +6,40 @@ import (
 	"github.com/edznux/wonderxss/storage/models"
 )
 
+// APIError defines all the errors that can be sent by the API.
+type APIError int
+
+const (
+	Success APIError = iota
+	NotFound
+	DatabaseError
+	InvalidInput
+	MissingAuthorization
+	InvalidAuthorization
+	NotImplementedYet
+)
+
+func (s APIError) Error() string {
+	switch s {
+	case Success:
+		return "OK"
+	case NotFound:
+		return "Not found"
+	case DatabaseError:
+		return "The database encoutered an unexpected error"
+	case InvalidInput:
+		return "Invalid input"
+	case MissingAuthorization:
+		return "Missing authorization"
+	case InvalidAuthorization:
+		return "Invalid authorization"
+	case NotImplementedYet:
+		return "This feature is not implemented yet"
+	default:
+		return "Unknown APIError Code  (The developer forgot to add it to the String() switch ?)"
+	}
+}
+
 type Response struct {
 	Code    int         `json:"code"`
 	Message string      `json:"message,omitempty"`

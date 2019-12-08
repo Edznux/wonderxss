@@ -3,14 +3,14 @@ package models
 type StorageError uint
 
 const (
-	Sucess StorageError = iota
+	Success StorageError = iota
 	NoSuchItem
 	StorageFailure
 )
 
 func (s StorageError) Error() string {
 	switch s {
-	case Sucess:
+	case Success:
 		return "OK"
 	case NoSuchItem:
 		return "No such item"

@@ -54,7 +54,6 @@ func (api *HTTPApi) authMiddleware(next http.Handler) http.Handler {
 			json.NewEncoder(w).Encode(&res)
 			return
 		}
-
 		fmt.Println(claims)
 
 		next.ServeHTTP(w, r)

@@ -2,7 +2,6 @@ package webserver
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -13,13 +12,10 @@ import (
 
 func Login(w http.ResponseWriter, req *http.Request) {
 	log.Printf("Login request")
-	log.Printf("r: %+v\n", req)
 
 	res := api.Response{}
 	loginParam := req.FormValue("login")
 	passwordParam := req.FormValue("password")
-
-	fmt.Println("login, passwd", loginParam, passwordParam)
 	user, err := api.VerifyUserPassword(loginParam, passwordParam)
 	if err != nil {
 		res.Code = 0
@@ -44,6 +40,9 @@ func Login(w http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(w).Encode(&res)
 }
 
+// Doing logout, server side with JWT is a bit tricky.
+// We might want to add blacklisting but it's overkill for this usage IMO
+// There should be an enforcement in the validity duration of each token tho.
 func Logout(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Request URL : %s, not implemented", r.RequestURI)
 	res := api.Response{}
