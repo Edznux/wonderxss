@@ -9,6 +9,7 @@ import Login from './pages/Login';
 import PayloadEditor from './pages/PayloadEditor';
 import NotFound from './pages/NotFound';
 import { setAuthToken } from './helpers/auth';
+import { Box, Container } from '@material-ui/core';
 
 window.ws = new WebSocket("wss://localhost/ws")
 window.ws.onerror = function(event){
@@ -25,23 +26,23 @@ setAuthToken(localStorage.getItem("jwt"))
 
 const routing = (
 <Router>
-    <ul>
-        <li>
+    <div id="menu">
+        <Box flexGrow={1}>
             <Link to="/">Home</Link>
-        </li>
-        <li>
-            <Link to="/login">Login</Link>
-        </li>
-        <li>
+        </Box>
+        <Box flexGrow={1}>
             <Link to="/payloads">Payloads</Link>
-        </li>
-        <li>
+        </Box>
+        <Box flexGrow={1}>
             <Link to="/editor">Payload Editor</Link>
-        </li>
-        <li>
+        </Box>
+        <Box flexGrow={1}>
             <Link to="/aliases">Aliases</Link>
-        </li>
-    </ul>
+        </Box>
+            <Box flexDirection="row-reverse" flexGrow={1}>
+            <Link to="/login">Login</Link>
+        </Box>
+    </div>
     <Switch>
         <Route exact path="/" component={App} />
         <Route path="/login" component={Login} />

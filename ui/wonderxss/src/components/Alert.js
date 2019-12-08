@@ -19,7 +19,6 @@ class Alert extends React.Component {
     render() {
         return (
             <div>
-                Payload triggered!
                 <span>
                     {this.state.alertMsg}
                 </span>

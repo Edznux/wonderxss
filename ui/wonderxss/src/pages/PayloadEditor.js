@@ -1,9 +1,10 @@
 import React from 'react'
 import AceEditor from "react-ace";
 import axios from 'axios';
-
+import { Container, Input, Button } from '@material-ui/core';
 import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/theme-github";
+
 import { API_PAYLOADS } from '../helpers/constants';
 
 
@@ -39,10 +40,10 @@ class PayloadEditor extends React.Component {
 
             console.log(res)
 
-            if(res.data && res.data.id != ""){
+            if(res.data && res.data.id !== ""){
                 payload_id = res.data.id
                 alias = document.getElementById("payload-alias").value
-                if ( alias != ""){
+                if ( alias !== ""){
                     this.createAlias(payload_id, alias)
                 }
             }
@@ -50,19 +51,19 @@ class PayloadEditor extends React.Component {
     };
     render() {
         return (
-            <div>
-                <h1>Payload Editor</h1>
-                <input id="payload-name" type="text" placeholder="Payload name"></input>
+            <Container className="container">
                 <AceEditor
                     ref="aceEditor"
                     mode="javascript"
                     theme="github"
                     name="editor"
                     editorProps={{ $blockScrolling: true}}
-                />,
-                <button onClick={this.createPayload}>Create paylaod</button>
-                Create an alias (optional) <input id="payload-alias" type="text" placeholder="short-alias"></input>
-            </div>
+                    />
+                <Input id="payload-name" type="text" placeholder="Payload name"></Input>
+                <Input id="payload-alias" type="text" placeholder="short-alias"></Input>
+                
+                <Button onClick={this.createPayload}>Create paylaod</Button>
+            </Container>
         )
     }
 }
