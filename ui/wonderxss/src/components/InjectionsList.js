@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 
 import { API_PAYLOADS, URL_PAYLOAD} from "../helpers/constants"
-import { Table, TableCell, TableRow, TableHead, Checkbox, Select} from '@material-ui/core';
+import { Table, TableCell, TableRow, TableHead, Checkbox, Select, Container, FormLabel} from '@material-ui/core';
 
 const REPLACE_TAG = "##URL_ID_PAYLOAD_OR_ALIAS##"
 
@@ -78,34 +78,39 @@ export default class InjectionsList extends React.Component {
     }
     render() {
         return (
-            <div>
-                <div>Injections:</div>
-                Payload ID and/or alias:
-                <Select onChange={this.getReplacement}>
-                    {
-                        this.state.aliasesOrPayloadsIDs.map((aop) => {
-                            return (
-                                <option value={aop[0]}>{this.formatPayloadName(aop[0], aop[1])}</option>
-                            )
-                        })
-                    }
-                </Select>
-                <br />
-                Use subdomain:
-                <Checkbox
-                    value="useSubdomain"
-                    inputProps={{ 'aria-label': 'Use Subdomain' }}
-                    onChange={this.toggleSubdomain}
-                    color="default"
-                />
-                Use HTTPS:
-                <Checkbox
-                    value="useHTTPS"
-                    inputProps={{ 'aria-label': 'Use HTTPS' }}
-                    onChange={this.toggleHTTPS}
-                    color="default"
-                    defaultChecked
-                />
+            <Container>
+                <FormLabel>
+                    Payload ID and/or alias:
+                    <Select onChange={this.getReplacement}>
+                        {
+                            this.state.aliasesOrPayloadsIDs.map((aop) => {
+                                return (
+                                    <option value={aop[0]}>{this.formatPayloadName(aop[0], aop[1])}</option>
+                                    )
+                                })
+                            }
+                    </Select>
+                </FormLabel>
+                <br/>
+                <FormLabel>
+                    Use subdomain:
+                    <Checkbox
+                        value="useSubdomain"
+                        inputProps={{ 'aria-label': 'Use Subdomain' }}
+                        onChange={this.toggleSubdomain}
+                        color="default"
+                        />
+                </FormLabel>
+                <FormLabel>
+                    Use HTTPS:
+                    <Checkbox
+                        value="useHTTPS"
+                        inputProps={{ 'aria-label': 'Use HTTPS' }}
+                        onChange={this.toggleHTTPS}
+                        color="default"
+                        defaultChecked
+                        />
+                </FormLabel>
                 {/* <input type="checkbox" id="useSubdomain" onChange={this.toggleSubdomain}></input> */}
                 <Table className="table" aria-label="simple table">
                     <TableHead>
@@ -115,7 +120,7 @@ export default class InjectionsList extends React.Component {
                     {
                         this.state.injections.map((injection) => {
                             return (
-                            <TableRow>
+                                <TableRow>
                                 <TableCell>{injection.title}</TableCell>
                                 <TableCell>{this.createInjection(injection.content)}</TableCell>
                             </TableRow>
@@ -123,7 +128,7 @@ export default class InjectionsList extends React.Component {
                         })
                     }
                 </Table>
-            </div>
+            </Container>
         );
     };
 }

@@ -1,8 +1,6 @@
 body{
   background-color: #282c34;
-}
-.App {
-  text-align: center;
+  color:  #FFF;
 }
 
 .App-header {
@@ -40,4 +38,9 @@ body{
 
 .row-id{
   width: 10%;
+}
+
+#error {
+    text-align: center;
+    background-color: #F33;
 }

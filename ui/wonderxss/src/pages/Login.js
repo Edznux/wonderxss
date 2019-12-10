@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import TextField from '@material-ui/core/TextField';
+import { Container, InputLabel } from '@material-ui/core';
 
 
 import { setAuthToken } from "../helpers/auth";
@@ -37,28 +38,44 @@ class Login extends React.Component {
                 this.setState({error:true})
             }
         })
+        .catch(err => {
+            this.setState({error:true})
+        })
     }
     render() {
         return (
-            <div>
-                <div id="bad-credentials" hidden={!this.state.error}>Bad credentials</div>
-                <form onSubmit={(event) => this.handleSubmit(event)}>
-                    Username: 
-                    <TextField
-                        hintText="Enter your username"
-                        floatingLabelText="login"
-                        onChange={(event) => this.setState({ login: event.target.value })}
-                    />
-                    Password:
-                    <TextField
-                        type="password"
-                        hintText="Enter your password"
-                        floatingLabelText="password"
-                        onChange={(event) => this.setState({ password: event.target.value })}
-                    />
-                    <input type="submit" value="Submit" />
-                </form>
-            </div>
+            <Container>
+                <div id="error" hidden={!this.state.error}>Bad credentials</div>
+                <div id="login-form">
+                    {/* <FormGroup onSubmit={(event) => this.handleSubmit(event)}> */}
+
+                    <form className="login-flex-container" onSubmit={(event) => this.handleSubmit(event)}>
+                        <InputLabel className="login-field">
+                            <span className="login-text">Username:</span>
+                            <TextField
+                                className="login-field"
+                                hintText="Enter your username"
+                                floatingLabelText="login"
+                                onChange={(event) => this.setState({ login: event.target.value })}
+                                classes="login-field"
+                            />
+                        </InputLabel>
+                        <InputLabel className="login-field"> 
+                            <span className="login-text">Password:</span>
+                            <TextField
+                                className="login-field"
+                                type="password"
+                                hintText="Enter your password"
+                                floatingLabelText="password"
+                                classes="login-field"
+                                onChange={(event) => this.setState({ password: event.target.value })}
+                            />
+                        </InputLabel> 
+                        <input type="submit" value="Submit" class="login-field"/>
+                    {/* </FormGroup> */}
+                    </form>
+                </div>
+            </Container>
         )
     }
 }

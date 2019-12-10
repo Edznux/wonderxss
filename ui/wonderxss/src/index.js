@@ -9,7 +9,7 @@ import Login from './pages/Login';
 import PayloadEditor from './pages/PayloadEditor';
 import NotFound from './pages/NotFound';
 import { setAuthToken } from './helpers/auth';
-import { Box, Container } from '@material-ui/core';
+import { Box } from '@material-ui/core';
 
 window.ws = new WebSocket("wss://localhost/ws")
 window.ws.onerror = function(event){

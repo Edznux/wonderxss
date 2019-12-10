@@ -1,4 +1,21 @@
-#bad-credentials {
-    text-align: center;
-    background-color: #F33;
+#login-form{
+    margin: 10vh auto;
+    width: 50%;
+    background-color: #383e49;
+    box-shadow: 0px 0px 2px 2px #1c1e24;
+    color:#FFF;
+    padding: 1em;
+}
+.login-field{
+    width: 100%;
+}
+
+.login-text{
+    color: #FFF;
+    line-height: 1.5em;
+}
+.login-flex-container{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 }

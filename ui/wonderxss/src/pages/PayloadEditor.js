@@ -53,6 +53,7 @@ class PayloadEditor extends React.Component {
         return (
             <Container className="container">
                 <AceEditor
+                    width="100%"
                     ref="aceEditor"
                     mode="javascript"
                     theme="github"

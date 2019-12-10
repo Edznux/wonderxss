@@ -47,7 +47,6 @@ export default class PayloadsTable extends React.Component {
     render(){
         return (
         <div className="Payloads">
-            <span>Payloads:</span>
             <EnhancedTable headCells={this.state.headCells} data={this.state.payloads}></EnhancedTable>
         </div>
         );
