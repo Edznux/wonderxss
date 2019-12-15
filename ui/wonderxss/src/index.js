@@ -2,14 +2,16 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
-import { Route, Link, BrowserRouter as Router, Switch } from 'react-router-dom'
+import { Route, Link, BrowserRouter as Router, Switch, Redirect} from 'react-router-dom'
 import App from './pages/App';
 import Payloads from './pages/Payloads';
 import Login from './pages/Login';
+import Logout from './pages/Logout';
 import PayloadEditor from './pages/PayloadEditor';
 import NotFound from './pages/NotFound';
-import { setAuthToken } from './helpers/auth';
+import { isLoggedIn } from './helpers/auth';
 import { Box } from '@material-ui/core';
+import Aliases from './pages/Aliases';
 
 window.ws = new WebSocket("wss://localhost/ws")
 window.ws.onerror = function(event){
@@ -22,7 +24,15 @@ window.ws.onopen = function(event){
     console.error("WebSocket open:", event);
 }
 
-setAuthToken(localStorage.getItem("jwt"))
+
+const PrivateRoute = ({ component: Component, ...rest }) => (
+    <Route {...rest} render={(props) => (
+        isLoggedIn() === true
+            ? <Component {...props} />
+            : <Redirect to='/login' />
+    )} />
+)
+
 
 const routing = (
 <Router>
@@ -40,15 +50,21 @@ const routing = (
             <Link to="/aliases">Aliases</Link>
         </Box>
             <Box flexDirection="row-reverse" flexGrow={1}>
-            <Link to="/login">Login</Link>
+            {
+                !isLoggedIn() && <Link to="/login">Login</Link>
+            }
+            {
+                isLoggedIn() && <Link to="/logout">Logout</Link>
+            }
         </Box>
     </div>
     <Switch>
-        <Route exact path="/" component={App} />
         <Route path="/login" component={Login} />
-        <Route path="/payloads" component={Payloads} />
-        <Route path="/editor" component={PayloadEditor} />
-        <Route path="/alias" component={Payloads} />
+        <PrivateRoute exact path="/" component={App} />
+        <PrivateRoute path="/payloads" component={Payloads} />
+        <PrivateRoute path="/editor" component={PayloadEditor} />
+        <PrivateRoute path="/aliases" component={Aliases} />
+        <PrivateRoute path="/logout" component={Logout} />
         <Route component={NotFound} />
     </Switch>
 </Router>

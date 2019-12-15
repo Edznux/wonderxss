@@ -27,13 +27,12 @@ class Login extends React.Component {
             },
             data: "login="+ this.state.login+"&password="+ this.state.password,
         })
-        // .then(res => res)
         .then(res => {
             console.log(res)
             let data = res.data
             if (data.data) {
                 setAuthToken(data.data)
-                // redirectHome()
+                this.props.history.push(`/`)
             } else {
                 this.setState({error:true})
             }
@@ -71,7 +70,7 @@ class Login extends React.Component {
                                 onChange={(event) => this.setState({ password: event.target.value })}
                             />
                         </InputLabel> 
-                        <input type="submit" value="Submit" class="login-field"/>
+                        <input type="submit" value="Submit" className="login-field"/>
                     {/* </FormGroup> */}
                     </form>
                 </div>

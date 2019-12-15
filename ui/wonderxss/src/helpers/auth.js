@@ -6,16 +6,30 @@ export function setAuthToken (JWTToken){
         localStorage.setItem("jwt", JWTToken) 
         axios.defaults.headers.common['Authorization'] = "Bearer " + JWTToken;
     } else {
-        localStorage.setItem("jwt", "") 
+        localStorage.removeItem("jwt") 
         delete axios.defaults.headers.common['Authorization'];
     }
 };
 
+export function isLoggedIn(){
+    let jwt = localStorage.getItem("jwt")
+    if (isTokenExpired(jwt)) {
+        return false;
+    } else {
+        setAuthToken(jwt)
+        return true
+    }
+}
+
 export function isTokenExpired(JWTToken){
-    let decoded;
-    let data = JWTToken.split(".")[1]
+    let decoded, data;
+    if (JWTToken === null){
+        return true
+    }
+    data = JWTToken.split(".")[1]
+
     try {
-        decoded = JSON.parse(btoa(data))
+        decoded = JSON.parse(atob(data))
     } catch(e){
         console.log(e)
         // If the json parse is crashing, expire the token.

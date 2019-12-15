@@ -13,4 +13,5 @@ RUN apk add --update ca-certificates
 COPY --from=BUILDER /usr/bin/wonderxss /usr/bin/wonderxss
 
 # Set the binary as the entrypoint of the container
-ENTRYPOINT [ "/usr/bin/wonderxss" ]
+ENTRYPOINT [ "/usr/bin/wonderxss"]
+CMD ["/usr/bin/wonderxss", "serve"]

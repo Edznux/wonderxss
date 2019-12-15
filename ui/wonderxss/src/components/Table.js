@@ -159,7 +159,6 @@ export default function EnhancedTable(props) {
 
     const isSelected = name => selected.indexOf(name) !== -1;
 
-
     return (
         <div className={classes.root}>
             <Paper className={classes.paper}>
