@@ -8,7 +8,7 @@ type Payload struct {
 	ID         string
 	Name       string
 	Content    string
-	Hash       string
+	Hashes     SRIHashes
 	CreatedAt  time.Time
 	ModifiedAt time.Time
 }

@@ -2,7 +2,9 @@ package sqlite
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"log"
 
 	_ "github.com/mattn/go-sqlite3"
 
@@ -74,7 +76,7 @@ func (s *Sqlite) Setup() error {
 
 //Create
 func (s *Sqlite) CreatePayload(payload models.Payload) (models.Payload, error) {
-	_, err := s.db.Exec(INSERT_PAYLOAD, payload.ID, payload.Name, payload.Hash, payload.Content)
+	_, err := s.db.Exec(INSERT_PAYLOAD, payload.ID, payload.Name, payload.Hashes, payload.Content)
 	fmt.Println(err)
 	if err != nil {
 		fmt.Println(err)
@@ -139,8 +141,14 @@ func (s *Sqlite) GetPayloads() ([]models.Payload, error) {
 	}
 
 	var tmpRes models.Payload
+	var hashes string
+
 	for rows.Next() {
-		rows.Scan(&tmpRes.ID, &tmpRes.Name, &tmpRes.Hash, &tmpRes.Content, &tmpRes.CreatedAt, &tmpRes.ModifiedAt)
+		rows.Scan(&tmpRes.ID, &tmpRes.Name, &hashes, &tmpRes.Content, &tmpRes.CreatedAt, &tmpRes.ModifiedAt)
+		err := json.Unmarshal([]byte(hashes), &tmpRes.Hashes)
+		if err != nil {
+			log.Println(err)
+		}
 		res = append(res, tmpRes)
 	}
 
@@ -162,13 +170,20 @@ func (s *Sqlite) GetPayload(id string) (models.Payload, error) {
 	row := s.db.QueryRow(SELECT_PAYLOAD_BY_ID, id)
 
 	var res models.Payload
-	err := row.Scan(&res.ID, &res.Name, &res.Hash, &res.Content, &res.CreatedAt, &res.ModifiedAt)
+	var hashes string
+	err := row.Scan(&res.ID, &res.Name, &hashes, &res.Content, &res.CreatedAt, &res.ModifiedAt)
 	if err == sql.ErrNoRows {
 		return models.Payload{}, models.NoSuchItem
 	}
 
 	if err != nil {
 		fmt.Println(err)
+		return models.Payload{}, err
+	}
+
+	err = json.Unmarshal([]byte(hashes), &res.Hashes)
+	if err != nil {
+		log.Println(err)
 		return models.Payload{}, err
 	}
 	return res, nil
@@ -179,13 +194,19 @@ func (s *Sqlite) GetPayloadByAlias(short string) (models.Payload, error) {
 	row := s.db.QueryRow(SELECT_PAYLOAD_BY_ALIAS, short)
 
 	var res models.Payload
-	err := row.Scan(&res.ID, &res.Name, &res.Hash, &res.Content, &res.CreatedAt, &res.ModifiedAt)
+	var hashes string
+	err := row.Scan(&res.ID, &res.Name, &hashes, &res.Content, &res.CreatedAt, &res.ModifiedAt)
 	if err == sql.ErrNoRows {
 		return models.Payload{}, models.NoSuchItem
 	}
 
 	if err != nil {
 		fmt.Println(err)
+		return models.Payload{}, err
+	}
+	err = json.Unmarshal([]byte(hashes), &res.Hashes)
+	if err != nil {
+		log.Println(err)
 		return models.Payload{}, err
 	}
 	return res, nil

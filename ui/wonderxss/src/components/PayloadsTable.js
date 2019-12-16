@@ -19,7 +19,15 @@ export default class PayloadsTable extends React.Component {
             ],
         }
     };
-
+    formatSRI(hashes){
+        let res = [];
+        for (var key in hashes) {
+            if (hashes.hasOwnProperty(key)) {
+                res.push(<li> {hashes[key]} </li>)
+            }
+        }
+        return res
+    }
     componentDidMount(){
         axios.get(API_PAYLOADS).then(res => {
             if (res.status !== 200){
@@ -35,7 +43,7 @@ export default class PayloadsTable extends React.Component {
                     row.id,
                     row.name,
                     row.content,
-                    row.hash,
+                    this.formatSRI(row.hashes),
                     row.created_at,
                 ])
             })

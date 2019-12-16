@@ -1,7 +1,7 @@
 import React from 'react'
 import { Container, TextField, Select } from '@material-ui/core';
 import EnhancedTable from '../components/Table';
-import { API_ALIASES } from '../helpers/constants';
+import { API_ALIASES, API_PAYLOADS } from '../helpers/constants';
 import axios from 'axios';
 
 export default class Aliases extends React.Component {
@@ -15,11 +15,27 @@ export default class Aliases extends React.Component {
         { id: 'Payload', numeric: false, disablePadding: false, label: 'Content', ellipsis: true },
         { id: 'Created_At', numeric: false, disablePadding: false, label: 'Created At', ellipsis: true },
       ],
-      aliases: []
+      aliases: [],
+      payloads: []
     }
   } 
-
+  setCurrentPayload(event){
+    this.setState({"currentPayload": event.target.value})
+  }
   componentDidMount() {
+    axios.get(API_PAYLOADS).then(res => {
+      if (res.status !== 200) {
+        throw new Error("Couldn't load payloads")
+      } else {
+        return res.data
+      }
+    }).then((rows) => {
+      console.log("rows.data payload: ", rows.data)
+      this.setState({
+        payloads: rows.data
+      })
+    });
+    
     axios.get(API_ALIASES).then(res => {
       if (res.status !== 200) {
         throw new Error("Couldn't load payloads")
@@ -53,8 +69,12 @@ export default class Aliases extends React.Component {
           onChange={(event) => this.setState({ newAlias: event.target.value })}
         />
         Payload : 
-        <Select>
-          <option value="a">a</option>
+        <Select onChange={this.setCurrentPayload}>
+          {
+            this.state.payloads.map((payload) => {
+              return <option value={payload.id}>{payload.name}</option>
+            })
+          }
         </Select>
         <input type="submit" value="Submit" />
       </Container>

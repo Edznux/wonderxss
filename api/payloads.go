@@ -66,7 +66,7 @@ func AddPayload(name string, content string) (models.Payload, error) {
 	p := models.Payload{
 		ID:      uuid.New().String(),
 		Name:    name,
-		Hash:    hashes.String(),
+		Hashes:  hashes,
 		Content: content,
 	}
 	fmt.Println(p)

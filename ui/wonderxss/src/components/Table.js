@@ -136,7 +136,7 @@ export default function EnhancedTable(props) {
         }
         setSelected([]);
     };
-
+    
     const handleClick = (event, name) => {
         const selectedIndex = selected.indexOf(name);
         let newSelected = [];

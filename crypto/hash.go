@@ -4,9 +4,10 @@ import (
 	"crypto/sha256"
 	"crypto/sha512"
 	"encoding/base64"
-	"encoding/json"
 	"fmt"
 	"hash"
+
+	"github.com/edznux/wonderxss/storage/models"
 )
 
 func Hash(data string, hashType string) []byte {
@@ -28,24 +29,10 @@ func Hash(data string, hashType string) []byte {
 	return hash.Sum(nil)
 }
 
-type SRIHashes struct {
-	SHA256 string `json:"sha256"`
-	SHA384 string `json:"sha384"`
-	SHA512 string `json:"sha512"`
-}
-
-func GenerateSRIHashes(data string) SRIHashes {
-	return SRIHashes{
+func GenerateSRIHashes(data string) models.SRIHashes {
+	return models.SRIHashes{
 		SHA256: "sha256-" + base64.StdEncoding.EncodeToString(Hash(data, "sha256")),
 		SHA384: "sha384-" + base64.StdEncoding.EncodeToString(Hash(data, "sha384")),
 		SHA512: "sha512-" + base64.StdEncoding.EncodeToString(Hash(data, "sha512")),
 	}
-}
-
-func (sh *SRIHashes) String() string {
-	js, err := json.Marshal(sh)
-	if err != nil {
-		panic("Could not stringify the SRIHashes struct")
-	}
-	return string(js)
 }
