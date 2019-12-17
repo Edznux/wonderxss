@@ -5,6 +5,7 @@ type StorageError uint
 const (
 	Success StorageError = iota
 	NoSuchItem
+	AlreadyExist
 	StorageFailure
 )
 
@@ -14,6 +15,8 @@ func (s StorageError) Error() string {
 		return "OK"
 	case NoSuchItem:
 		return "No such item"
+	case AlreadyExist:
+		return "Already exists"
 	case StorageFailure:
 		return "The data store has encountered an unexpected failure"
 	default:

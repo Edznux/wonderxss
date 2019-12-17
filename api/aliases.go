@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/edznux/wonderxss/storage/models"
 	"github.com/google/uuid"
@@ -55,9 +56,9 @@ func AddAlias(name string, payloadId string) (models.Alias, error) {
 		Short:     name,
 		PayloadID: payloadId,
 	}
-	fmt.Println(p)
 	returnedAlias, err := store.CreateAlias(p)
 	if err != nil {
+		log.Println("could not add alias:", err)
 		return models.Alias{}, err
 	}
 

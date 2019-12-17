@@ -88,10 +88,22 @@ func (httpapi *HTTPApi) createAlias(w http.ResponseWriter, req *http.Request) {
 		sendResponse(api.InvalidInput, nil, w)
 		return
 	}
-	fmt.Println("Data recieved & parsed : ", data)
+
+	log.Println("Data recieved & parsed : ", data)
+	if data.Alias == "" || data.PayloadID == "" {
+		log.Println("Empty data")
+		sendResponse(api.InvalidInput, nil, w)
+		return
+	}
+
 	returnedAlias, err := api.AddAlias(data.Alias, data.PayloadID)
+	if err == models.AlreadyExist {
+		log.Println("Returned alias error: ", err)
+		sendResponse(api.AlreadyExist, nil, w)
+		return
+	}
 	if err != nil {
-		log.Println(err)
+		log.Println("Returned alias DatabaseError", err)
 		sendResponse(api.DatabaseError, nil, w)
 		return
 	}

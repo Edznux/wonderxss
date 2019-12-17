@@ -8,7 +8,8 @@ export default class Aliases extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      newAlias: "",
+      currentPayload: "",
+      currentAlias: "",
       headCells : [
         { id: 'ID', numeric: false, disablePadding: true, label: 'ID', ellipsis: true },
         { id: 'Name', numeric: false, disablePadding: false, label: 'Name' },
@@ -19,8 +20,33 @@ export default class Aliases extends React.Component {
       payloads: []
     }
   } 
-  setCurrentPayload(event){
+  setCurrentPayload = (event) =>{
     this.setState({"currentPayload": event.target.value})
+  }
+  formatPayloadContent = (payloadID) => {
+    // FIXME
+    // This is sooooo ugly
+    // In a perfect world, we should just have a map[payloadID]payload
+    // This way, formating with the payloadID would only be this.state.payloads[id].name
+    let fmt = ""
+    let res = this.state.payloads.filter(payload => {
+      if(payload.id == payloadID){
+        return payload
+      }
+    })[0]
+    if (res){
+      fmt = `[${res.name}] ${res.content.slice(0, 50)}`
+    }
+    return fmt
+  }
+  createAlias = () => {    
+    axios.post(API_ALIASES, {
+      alias: this.state.currentAlias,
+      payload_id: this.state.currentPayload
+    })
+    .then(res => {
+      console.log(res)
+    });
   }
   componentDidMount() {
     axios.get(API_PAYLOADS).then(res => {
@@ -31,9 +57,7 @@ export default class Aliases extends React.Component {
       }
     }).then((rows) => {
       console.log("rows.data payload: ", rows.data)
-      this.setState({
-        payloads: rows.data
-      })
+      this.setState({ payloads: rows.data})
     });
     
     axios.get(API_ALIASES).then(res => {
@@ -48,8 +72,8 @@ export default class Aliases extends React.Component {
       rows.data.map((row) => {
         return tmp.push([
           row.id,
-          row.name,
-          row.payload,
+          row.alias,
+          this.formatPayloadContent(row.payload_id),
           row.created_at,
         ])
       })
@@ -66,7 +90,7 @@ export default class Aliases extends React.Component {
         Alias : <TextField
           className="alias-field"
           type="text"
-          onChange={(event) => this.setState({ newAlias: event.target.value })}
+          onChange={(event) => this.setState({ currentAlias: event.target.value })}
         />
         Payload : 
         <Select onChange={this.setCurrentPayload}>
@@ -76,7 +100,7 @@ export default class Aliases extends React.Component {
             })
           }
         </Select>
-        <input type="submit" value="Submit" />
+        <input type="submit" value="Submit" onClick={this.createAlias} />
       </Container>
     )
   }

@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"log"
 
-	_ "github.com/mattn/go-sqlite3"
-
 	"github.com/edznux/wonderxss/config"
 	"github.com/edznux/wonderxss/storage/models"
+
+	sqlite3 "github.com/mattn/go-sqlite3"
 )
 
 type Sqlite struct {
@@ -37,11 +37,6 @@ func (s *Sqlite) Init() error {
 }
 
 func (s *Sqlite) Setup() error {
-
-	// _, err := s.db.Query(SELECT_ALL_PAYLOADS)
-	// if err != nil {
-	// 	return err
-	// }
 
 	fmt.Println("Creating users' table")
 	_, err := s.db.Exec(CREATE_TABLE_USERS)
@@ -77,7 +72,6 @@ func (s *Sqlite) Setup() error {
 //Create
 func (s *Sqlite) CreatePayload(payload models.Payload) (models.Payload, error) {
 	_, err := s.db.Exec(INSERT_PAYLOAD, payload.ID, payload.Name, payload.Hashes, payload.Content)
-	fmt.Println(err)
 	if err != nil {
 		fmt.Println(err)
 		return models.Payload{}, err
@@ -98,8 +92,14 @@ func (s *Sqlite) CreateUser(user models.User) (models.User, error) {
 
 func (s *Sqlite) CreateAlias(alias models.Alias) (models.Alias, error) {
 	_, err := s.db.Exec(INSERT_ALIAS, alias.ID, alias.PayloadID, alias.Short)
+	if sqliteErr, ok := err.(sqlite3.Error); ok {
+		if sqliteErr.ExtendedCode == sqlite3.ErrConstraintUnique {
+			log.Println(err)
+			return models.Alias{}, models.AlreadyExist
+		}
+	}
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return models.Alias{}, err
 	}
 

@@ -12,6 +12,7 @@ type APIError int
 const (
 	Success APIError = iota
 	NotFound
+	AlreadyExist
 	DatabaseError
 	InvalidInput
 	MissingAuthorization
@@ -25,6 +26,8 @@ func (s APIError) Error() string {
 		return "OK"
 	case NotFound:
 		return "Not found"
+	case AlreadyExist:
+		return "Already exists"
 	case DatabaseError:
 		return "The database encoutered an unexpected error"
 	case InvalidInput:
