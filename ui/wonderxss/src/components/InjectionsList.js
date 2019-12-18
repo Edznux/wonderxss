@@ -14,7 +14,7 @@ export default class InjectionsList extends React.Component {
         super(props)
         this.state = {
             headCells: [
-                { id: 'Name', field:"title", numeric: false, disablePadding: true, label: 'Name', ellipsis: true },
+                { id: 'Name', field:"name", numeric: false, disablePadding: true, label: 'Name', ellipsis: true },
                 { id: 'Injection', field: "content", numeric: false, disablePadding: false, label: 'Injection' },
                 { id: 'Created_At', field: "created_at", numeric: false, disablePadding: false, label: 'Created At', ellipsis: true },
             ],
