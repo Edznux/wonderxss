@@ -23,7 +23,9 @@ func New() *HTTPApi {
 
 func sendResponse(status api.APIError, data interface{}, w http.ResponseWriter) error {
 	var res api.Response
-	res.Error = status.Error()
+	if status != api.Success {
+		res.Error = status.Error()
+	}
 	res.Data = data
 
 	err := json.NewEncoder(w).Encode(&res)
