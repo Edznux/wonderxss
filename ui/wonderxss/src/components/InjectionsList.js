@@ -15,7 +15,7 @@ export default class InjectionsList extends React.Component {
         this.state = {
             headCells: [
                 { id: 'Name', field:"name", numeric: false, disablePadding: true, label: 'Name', ellipsis: true },
-                { id: 'Injection', field: "content", numeric: false, disablePadding: false, label: 'Injection' },
+                { id: 'Injection', field: "formatedContent", numeric: false, disablePadding: false, label: 'Injection' },
                 { id: 'Created_At', field: "created_at", numeric: false, disablePadding: false, label: 'Created At', ellipsis: true },
             ],
             newTitle: "",
@@ -38,6 +38,7 @@ export default class InjectionsList extends React.Component {
             s = ""
         }
         this.setState({currentAlias: s});
+        this.updateInjections()
     }
     setCurrentSRI = (event) => {
         let s = event.target.value
@@ -47,12 +48,15 @@ export default class InjectionsList extends React.Component {
             return
         }
         this.setState({ SRIKind: SRIKinds[0]});
+        this.updateInjections()
     }
     toggleSubdomain = (event) =>{
         this.setState({ useSubdomain: event.target.checked });
+        this.updateInjections()
     }
     toggleHTTPS = (event) =>{
         this.setState({ useHTTPS: event.target.checked });
+        this.updateInjections()
     }
     componentDidMount() {
         //TODO: fetch a new endpoint which lists all the injections payload.
@@ -85,21 +89,39 @@ export default class InjectionsList extends React.Component {
                 return res.data
             }
         }).then((rows) => {
+            rows.data.map(injection => {
+                injection.formatedContent = this.formatInjection(injection.content)
+                return injection
+            })
             this.setState({
                 injections: rows.data
             });
+            this.updateInjections()
         });
     };
+    updateInjections = () => {
+        let injections = this.state.injections.map(injection => {
+            injection.formatedContent = this.formatInjection(injection.content)
+            return injection
+        })
+        console.log(injections)
+        this.setState({
+            injections: injections
+        });
+    }
     formatInjection = (injection) => {
+        console.log("injection:", injection)
         let url = ""
         let res = ""
+        let proto = "http" + (this.state.useHTTPS ? "s" : "") + ":"
         if (this.state.useSubdomain) {
-            url = "http"+(this.state.useHTTPS ? "s":"")+"://" + this.state.currentAlias + "." + window.location.hostname // + ":" + window.location.port;
+            url = proto + "//" + this.state.currentAlias + "." + window.location.hostname // + ":" + window.location.port;
         }else {
-            url = URL_PAYLOAD + this.state.currentAlias;
+            url = proto + URL_PAYLOAD + this.state.currentAlias;
         }
         res = injection.replace(REPLACE_URL_TAG, url)
         res = res.replace(REPLACE_SRI_TAG, this.state.SRIKind)
+        console.log("res:", res)
         return res
     }
     formatPayloadName = (payloadID, payloadName) => {
@@ -108,19 +130,11 @@ export default class InjectionsList extends React.Component {
         }
         return ""
     }
-    newTableRow = (injection) => {
-        return (
-            <TableRow>
-                <TableCell>{injection.title}</TableCell>
-                <TableCell>{this.formatInjection(injection.content)}</TableCell>
-            </TableRow>
-        )
-    }
     newInjection = (event) => {
         let injections = this.state.injections
         injections.push({ "title": this.state.newTitle, "content": this.state.newContent })
         this.setState({"injections": injections})
-
+        this.updateInjections()
         axios.post(API_INJECTIONS, {
             name: this.state.newTitle,
             content: this.state.newContent

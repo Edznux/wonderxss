@@ -62,7 +62,6 @@ export default class Aliases extends React.Component {
           return res.data
         }
       }).then((rows) => {
-        console.log(rows.data)
         rows.data.map((row) => {
             row.payload_id = this.formatPayloadContent(row.payload_id)
             return row

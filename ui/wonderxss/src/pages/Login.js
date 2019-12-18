@@ -28,7 +28,6 @@ class Login extends React.Component {
             data: "login="+ this.state.login+"&password="+ this.state.password,
         })
         .then(res => {
-            console.log(res)
             let data = res.data
             if (data.data) {
                 setAuthToken(data.data)

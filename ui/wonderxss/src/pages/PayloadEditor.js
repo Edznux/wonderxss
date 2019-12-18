@@ -13,38 +13,31 @@ class PayloadEditor extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
+            currentAlias:"",
+            currentPayload:"",
+            currentPayloadName:""
         }
     };
     createAlias = (payload_id, alias) => {
         console.log(payload_id, alias)
     };
     createPayload = () => {
-        var payloadName = document.getElementById("payload-name").value;
-        var payload = this.refs.aceEditor.editor.getValue()
-        if(payloadName === ""){
+        if (this.state.currentPayloadName === ""){
             alert("please provide a payload name.")
             return
         }
         
-        console.log("Payload name:", payloadName)
-        console.log("Payload content:");
-        console.log(payload);
-
         axios.post(API_PAYLOADS, {
-            name: payloadName,
-            content: payload
+            name: this.state.currentPayloadName,
+            content: this.state.currentPayload
         })
         .then(res => {
-            var alias = ""
-            var payload_id = ""
+            let payload_id = ""
 
-            console.log(res)
-
-            if(res.data && res.data.id !== ""){
+            if(res.data && !res.error){
                 payload_id = res.data.id
-                alias = document.getElementById("payload-alias").value
-                if ( alias !== ""){
-                    this.createAlias(payload_id, alias)
+                if ( this.state.currentAlias !== ""){
+                    this.createAlias(payload_id, this.state.currentAlias)
                 }
             }
         });
@@ -59,9 +52,10 @@ class PayloadEditor extends React.Component {
                     theme="github"
                     name="editor"
                     editorProps={{ $blockScrolling: true}}
+                    onChange={(value, event) => { this.setState({ "currentPayload": value }) }}
                     />
-                <Input id="payload-name" type="text" placeholder="Payload name"></Input>
-                <Input id="payload-alias" type="text" placeholder="short-alias"></Input>
+                <Input type="text" placeholder="Payload name" onChange={(event) => { this.setState({ "currentPayloadName": event.target.value }) }}></Input>
+                <Input type="text" placeholder="short-alias" onChange={(event) => { this.setState({ "currentAlias": event.target.value }) }}></Input>
                 
                 <Button onClick={this.createPayload}>Create paylaod</Button>
             </Container>

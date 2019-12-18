@@ -1,6 +1,6 @@
 // DEBUG (FIXME)
 // export const URL = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port
-export const URL = "https://" + window.location.hostname
+export const URL = "//" + window.location.hostname
 export const URL_LOGIN = URL + "/login"
 export const URL_PAYLOAD = URL + "/p/"
 
