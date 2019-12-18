@@ -6,6 +6,7 @@ export const URL_PAYLOAD = URL + "/p/"
 
 export const API_BASE = URL + "/api/v1"
 export const API_PAYLOADS = API_BASE + "/payloads"
+export const API_INJECTIONS = API_BASE + "/injections"
 export const API_ALIASES = API_BASE + "/aliases"
 export const API_COLLECTORS = API_BASE + "/collectors"
 export const API_EXECUTIONS = API_BASE + "/executions"

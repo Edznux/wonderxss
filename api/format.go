@@ -44,9 +44,8 @@ func (s APIError) Error() string {
 }
 
 type Response struct {
-	Code    int         `json:"code"`
-	Message string      `json:"message,omitempty"`
-	Data    interface{} `json:"data,omitempty"`
+	Error string      `json:"error,omitempty"`
+	Data  interface{} `json:"data,omitempty"`
 }
 
 // Payload represent the structure of the frontend-facing payload. Not the stored one.

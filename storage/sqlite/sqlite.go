@@ -126,7 +126,7 @@ func (s *Sqlite) CreateCollector(collector models.Collector) (models.Collector, 
 func (s *Sqlite) CreateInjection(injection models.Injection) (models.Injection, error) {
 	_, err := s.db.Exec(INSERT_INJECTION, injection.ID, injection.Name, injection.Content)
 	if err != nil {
-		log.Println(err)
+		log.Println("CreateInjection failed:", err)
 		return models.Injection{}, err
 	}
 
@@ -229,9 +229,24 @@ func (s *Sqlite) GetPayloadByAlias(short string) (models.Payload, error) {
 	return res, nil
 }
 
-func (s *Sqlite) GetInjection(injection string) (models.Injection, error) {
+func (s *Sqlite) GetInjection(id string) (models.Injection, error) {
+	row := s.db.QueryRow(SELECT_INJECTION, id)
 
-	row := s.db.QueryRow(SELECT_INJECTION_BY_NAME, injection)
+	var res models.Injection
+	err := row.Scan(&res.ID, &res.Name, &res.Content, &res.CreatedAt, &res.ModifiedAt)
+	if err == sql.ErrNoRows {
+		return models.Injection{}, models.NoSuchItem
+	}
+
+	if err != nil {
+		log.Println(err)
+		return models.Injection{}, err
+	}
+	return res, nil
+}
+
+func (s *Sqlite) GetInjectionByName(name string) (models.Injection, error) {
+	row := s.db.QueryRow(SELECT_INJECTION_BY_NAME, name)
 
 	var res models.Injection
 	err := row.Scan(&res.ID, &res.Name, &res.Content, &res.CreatedAt, &res.ModifiedAt)

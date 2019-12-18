@@ -11,11 +11,11 @@ export default class PayloadsTable extends React.Component {
         this.state = {
             payloads: [],
             headCells : [
-                { id: 'ID', numeric: false, disablePadding: true, label: 'ID', ellipsis:true },
-                { id: 'Name', numeric: false, disablePadding: false, label: 'Name' },
-                { id: 'Content', numeric: false, disablePadding: false, label: 'Content', ellipsis: true  },
-                { id: 'Hashes', numeric: false, disablePadding: false, label: 'Hashes', ellipsis: true  },
-                { id: 'Created_At', numeric: false, disablePadding: false, label: 'Created At', ellipsis: true  },
+                { id: 'ID', field:"id", numeric: false, disablePadding: true, label: 'ID', ellipsis:true },
+                { id: 'Name', field: "name", numeric: false, disablePadding: false, label: 'Name' },
+                { id: 'Content', field:"content", numeric: false, disablePadding: false, label: 'Content', ellipsis: true  },
+                { id: 'Hashes', field:"hashes", numeric: false, disablePadding: false, label: 'Hashes', ellipsis: true  },
+                { id: 'Created_At', field:"created_at", numeric: false, disablePadding: false, label: 'Created At', ellipsis: true  },
             ],
         }
     };
@@ -23,7 +23,7 @@ export default class PayloadsTable extends React.Component {
         let res = [];
         for (var key in hashes) {
             if (hashes.hasOwnProperty(key)) {
-                res.push(<li> {hashes[key]} </li>)
+                res.push(<li>{hashes[key]}</li>)
             }
         }
         return res
@@ -36,19 +36,12 @@ export default class PayloadsTable extends React.Component {
                 return res.data
             }
         }).then((rows) => {
-            console.log(rows.data)
-            let tmp = [];
-            rows.data.map((row) => {
-                return tmp.push([
-                    row.id,
-                    row.name,
-                    row.content,
-                    this.formatSRI(row.hashes),
-                    row.created_at,
-                ])
-            })
+            // This override the SRIHashes object to a HTML List.
+            for(var row in rows.data){
+                rows.data[row].hashes = this.formatSRI(rows.data[row].hashes)
+            }
             this.setState({
-                payloads: tmp
+                payloads: rows.data
             })
         });
     }

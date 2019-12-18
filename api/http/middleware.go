@@ -39,8 +39,7 @@ func (api *HTTPApi) authMiddleware(next http.Handler) http.Handler {
 		tokenHeader := r.Header.Get("Authorization")
 		if len(tokenHeader) == 0 {
 			w.WriteHeader(http.StatusUnauthorized)
-			res.Code = 2
-			res.Message = "Missing Authorization Header"
+			res.Error = "Missing Authorization Header"
 			json.NewEncoder(w).Encode(&res)
 			return
 		}
@@ -49,8 +48,7 @@ func (api *HTTPApi) authMiddleware(next http.Handler) http.Handler {
 		claims, err := crypto.VerifyJWTToken(token)
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
-			res.Code = 2
-			res.Message = "Error verifying JWT token: " + err.Error()
+			res.Error = "Error verifying JWT token: " + err.Error()
 			json.NewEncoder(w).Encode(&res)
 			return
 		}

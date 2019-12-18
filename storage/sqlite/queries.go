@@ -141,6 +141,11 @@ var SELECT_ALL_COLLECTOR = `
 SELECT *
 FROM collectors;
 `
+var SELECT_INJECTION = `
+SELECT id, name, content, created_at, modified_at
+FROM injections
+WHERE id = ?;
+`
 var SELECT_INJECTION_BY_NAME = `
 SELECT id, name, content, created_at, modified_at
 FROM injections

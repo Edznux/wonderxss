@@ -121,7 +121,6 @@ export default function EnhancedTable(props) {
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('created_at');
     const [selected, setSelected] = React.useState([]);
-
     const handleRequestSort = (event, property) => {
         const isDesc = orderBy === property && order === 'desc';
         setOrder(isDesc ? 'asc' : 'desc');
@@ -157,8 +156,45 @@ export default function EnhancedTable(props) {
         setSelected(newSelected);
     };
 
-    const isSelected = name => selected.indexOf(name) !== -1;
+    const isSelected = name => {
+        return selected.indexOf(name) !== -1;
+    }
 
+    const generateRow = (row, index) => {
+        const isItemSelected = isSelected("row-id-" + index);
+        const labelId = `enhanced-table-checkbox-${index}`;
+        let cells = []
+        for (let headCell in headCells){
+            if (headCells.hasOwnProperty(headCell)) {
+                cells.push(
+                    <TableCell component="th" id={labelId} scope="row" padding="none" className="row-id">
+                        <span className="ellipsis">{row[headCells[headCell].field]}</span>
+                    </TableCell>
+                )
+            }
+        }
+        return (
+            <TableRow
+                hover
+                onClick={event => handleClick(event, "row-id-" + index)}
+                role="checkbox"
+                aria-checked={isItemSelected}
+                tabIndex={-1}
+                key={"row-id-" + index}
+                selected={isItemSelected}
+            >
+                <TableCell padding="checkbox">
+                    <Checkbox
+                        checked={isItemSelected}
+                        inputProps={{ 'aria-labelledby': labelId }}
+                    />
+                </TableCell>
+                {
+                    cells
+                }
+            </TableRow>
+        );
+    }
     return (
         <div className={classes.root}>
             <Paper className={classes.paper}>
@@ -180,42 +216,12 @@ export default function EnhancedTable(props) {
                             rowCount={data.length}
                         />
                         <TableBody>
-                            {stableSort(data, getSorting(order, orderBy))
+                            {
+                            stableSort(data, getSorting(order, orderBy))
                                 .map((row, index) => {
-                                    const isItemSelected = isSelected("row-id-" + row[0]);
-                                    const labelId = `enhanced-table-checkbox-${index}`;
-                                    return (
-                                        <TableRow
-                                            hover
-                                            onClick={event => handleClick(event, "row-id-" + row[0])}
-                                            role="checkbox"
-                                            aria-checked={isItemSelected}
-                                            tabIndex={-1}
-                                            key={"row-id-" + row[0]}
-                                            selected={isItemSelected}
-                                        >
-                                            <TableCell padding="checkbox">
-                                                <Checkbox
-                                                    checked={isItemSelected}
-                                                    inputProps={{ 'aria-labelledby': labelId }}
-                                                />
-                                            </TableCell>
-                                            {
-                                                row.map((column, column_index) => {
-                                                    if (column_index === 0 ) {
-                                                        return (
-                                                            <TableCell component="th" id={labelId} scope="row" padding="none" className="row-id">
-                                                                <span className="ellipsis">{column}</span>
-                                                            </TableCell>
-                                                        )
-                                                    } else {
-                                                        return (<TableCell align="right">{column}</TableCell>)
-                                                    }
-                                                })
-                                            }
-                                        </TableRow>
-                                    );
-                                })}
+                                    return generateRow(row, index)
+                                })
+                            }
                         </TableBody>
                     </Table>
                 </div>

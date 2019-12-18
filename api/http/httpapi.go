@@ -23,9 +23,9 @@ func New() *HTTPApi {
 
 func sendResponse(status api.APIError, data interface{}, w http.ResponseWriter) error {
 	var res api.Response
-	res.Code = int(status)
-	res.Message = status.Error()
+	res.Error = status.Error()
 	res.Data = data
+
 	err := json.NewEncoder(w).Encode(&res)
 	return err
 }
@@ -241,11 +241,11 @@ func (httpapi *HTTPApi) getAliasByPayloadID(w http.ResponseWriter, req *http.Req
 }
 
 func (httpapi *HTTPApi) updatePayload(w http.ResponseWriter, req *http.Request) {
-	res, _ := json.Marshal(api.Response{Code: 1, Message: "Not Implemented yet"})
+	res, _ := json.Marshal(api.Response{Error: "Not Implemented yet"})
 	w.Write(res)
 }
 
 func (httpapi *HTTPApi) deletePayload(w http.ResponseWriter, req *http.Request) {
-	res, _ := json.Marshal(api.Response{Code: 2, Message: "Not Implemented yet"})
+	res, _ := json.Marshal(api.Response{Error: "Not Implemented yet"})
 	w.Write(res)
 }

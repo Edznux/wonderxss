@@ -11,10 +11,9 @@ export default class Aliases extends React.Component {
       currentPayload: "",
       currentAlias: "",
       headCells : [
-        { id: 'ID', numeric: false, disablePadding: true, label: 'ID', ellipsis: true },
-        { id: 'Name', numeric: false, disablePadding: false, label: 'Name' },
-        { id: 'Payload', numeric: false, disablePadding: false, label: 'Content', ellipsis: true },
-        { id: 'Created_At', numeric: false, disablePadding: false, label: 'Created At', ellipsis: true },
+        { id: 'Name', field: "alias", numeric: false, disablePadding: true, label: 'Name' },
+        { id: 'Payload', field: "payload_id", numeric: false, disablePadding: true, label: 'Content', ellipsis: true },
+        { id: 'Created_At', field: "created_at", numeric: false, disablePadding: true, label: 'Created At', ellipsis: true },
       ],
       aliases: [],
       payloads: []
@@ -64,17 +63,12 @@ export default class Aliases extends React.Component {
         }
       }).then((rows) => {
         console.log(rows.data)
-        let tmp = [];
         rows.data.map((row) => {
-          return tmp.push([
-            row.id,
-            row.alias,
-            this.formatPayloadContent(row.payload_id),
-            row.created_at,
-          ])
+            row.payload_id = this.formatPayloadContent(row.payload_id)
+            return row
         })
         this.setState({
-          aliases: tmp
+          aliases: rows.data
         })
       });
     });

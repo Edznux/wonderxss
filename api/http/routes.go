@@ -48,12 +48,11 @@ func (httpapi *HTTPApi) Routes(router *mux.Router) {
 func (httpapi *HTTPApi) NotImplementedYet(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Request URL : %s, not implemented", r.RequestURI)
 	res := api.Response{}
-	res.Code = 0
-	res.Message = "Not implemented yet"
+	res.Error = "Not implemented yet"
 	json.NewEncoder(w).Encode(&res)
 }
 
 func (httpapi *HTTPApi) healthz(w http.ResponseWriter, req *http.Request) {
-	res := api.Response{Code: 1, Message: "OK"}
+	res := api.Response{Data: "OK"}
 	json.NewEncoder(w).Encode(res)
 }

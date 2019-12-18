@@ -18,8 +18,7 @@ func Login(w http.ResponseWriter, req *http.Request) {
 	passwordParam := req.FormValue("password")
 	user, err := api.VerifyUserPassword(loginParam, passwordParam)
 	if err != nil {
-		res.Code = 0
-		res.Message = err.Error()
+		res.Error = err.Error()
 		json.NewEncoder(w).Encode(&res)
 		return
 	}
@@ -28,14 +27,11 @@ func Login(w http.ResponseWriter, req *http.Request) {
 	token, err := crypto.GetJWTToken(user)
 	if err != nil {
 		log.Println(err)
-		res.Code = 0
-		res.Message = "Error getting a new token"
+		res.Error = "Error getting a new token"
 		json.NewEncoder(w).Encode(&res)
 		return
 	}
 
-	res.Code = 0
-	res.Message = "OK"
 	res.Data = token
 	json.NewEncoder(w).Encode(&res)
 }
@@ -46,7 +42,6 @@ func Login(w http.ResponseWriter, req *http.Request) {
 func Logout(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Request URL : %s, not implemented", r.RequestURI)
 	res := api.Response{}
-	res.Code = 0
-	res.Message = "Not implemented yet"
+	res.Error = "Not implemented yet"
 	json.NewEncoder(w).Encode(&res)
 }
