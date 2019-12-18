@@ -50,6 +50,15 @@ CREATE TABLE collectors (
 	created_at  DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
 );
 `
+var CREATE_TABLE_INJECTIONS = `
+CREATE TABLE injections (
+	id          TEXT NOT NULL PRIMARY KEY,
+	name        TEXT NOT NULL unique,
+	content     TEXT NOT NULL,
+	created_at  DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	modified_at DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+`
 
 var SELECT_ALIAS_BY_SHORTNAME = `
 SELECT *
@@ -132,6 +141,15 @@ var SELECT_ALL_COLLECTOR = `
 SELECT *
 FROM collectors;
 `
+var SELECT_INJECTION_BY_NAME = `
+SELECT id, name, content, created_at, modified_at
+FROM injections
+WHERE name = ?;
+`
+var SELECT_ALL_INJECTION = `
+SELECT id, name, content, created_at, modified_at
+FROM injections;
+`
 
 var INSERT_PAYLOAD = `INSERT INTO payloads (id, name, hash, content) VALUES (?, ?, ?, ?);`
 
@@ -142,3 +160,5 @@ var INSERT_ALIAS = `INSERT INTO aliases (id, payload_id, alias) VALUES (?, ?, ?)
 var INSERT_EXECUTION = `INSERT INTO executions (id, payload_id, alias_id) VALUES (?, ?, ?);`
 
 var INSERT_COLLECTOR = `INSERT INTO collectors (id, payload_id, alias_id) VALUES (?, ?, ?);`
+
+var INSERT_INJECTION = `INSERT INTO injections (id, name, content) VALUES (?, ?, ?);`

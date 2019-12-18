@@ -59,8 +59,15 @@ func (s *Sqlite) Setup() error {
 		fmt.Println(err)
 	}
 
-	fmt.Println("Creating Execution' table")
+	fmt.Println("Creating Executions' table")
 	_, err = s.db.Exec(CREATE_TABLE_EXECUTIONS)
+	fmt.Println(err)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println("Creating Injections' table")
+	_, err = s.db.Exec(CREATE_TABLE_INJECTIONS)
 	fmt.Println(err)
 	if err != nil {
 		fmt.Println(err)
@@ -114,6 +121,16 @@ func (s *Sqlite) CreateCollector(collector models.Collector) (models.Collector, 
 	}
 
 	return s.GetCollector(collector.ID)
+}
+
+func (s *Sqlite) CreateInjection(injection models.Injection) (models.Injection, error) {
+	_, err := s.db.Exec(INSERT_INJECTION, injection.ID, injection.Name, injection.Content)
+	if err != nil {
+		fmt.Println(err)
+		return models.Injection{}, err
+	}
+
+	return s.GetInjection(injection.ID)
 }
 
 func (s *Sqlite) CreateExecution(execution models.Execution, payloadIDOrAlias string) (models.Execution, error) {
@@ -212,6 +229,51 @@ func (s *Sqlite) GetPayloadByAlias(short string) (models.Payload, error) {
 	return res, nil
 }
 
+func (s *Sqlite) GetInjection(injection string) (models.Injection, error) {
+
+	row := s.db.QueryRow(SELECT_INJECTION_BY_NAME, injection)
+
+	var res models.Injection
+	err := row.Scan(&res.ID, &res.Name, &res.Content, &res.CreatedAt, &res.ModifiedAt)
+	if err == sql.ErrNoRows {
+		return models.Injection{}, models.NoSuchItem
+	}
+
+	if err != nil {
+		fmt.Println(err)
+		return models.Injection{}, err
+	}
+	return res, nil
+}
+
+func (s *Sqlite) GetInjections() ([]models.Injection, error) {
+
+	res := []models.Injection{}
+
+	rows, err := s.db.Query(SELECT_ALL_INJECTION)
+	if err != nil {
+		fmt.Println("Error querying the db (Injection):", err)
+		return nil, err
+	}
+
+	var tmpRes models.Injection
+	for rows.Next() {
+		rows.Scan(&tmpRes.ID, &tmpRes.Name, &tmpRes.Content, &tmpRes.CreatedAt, &tmpRes.ModifiedAt)
+		res = append(res, tmpRes)
+	}
+
+	if err == sql.ErrNoRows {
+		return nil, models.NoSuchItem
+	}
+
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	log.Println(res)
+	return res, nil
+}
 func (s *Sqlite) GetAlias(alias string) (models.Alias, error) {
 
 	row := s.db.QueryRow(SELECT_ALIAS_BY_SHORTNAME, alias)

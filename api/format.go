@@ -106,7 +106,7 @@ func (l Execution) fromStorage(s models.Execution) Execution {
 	return l
 }
 
-// Execution represent the structure of the frontend-facing Executions. Not the stored one.
+// Collector represent the structure of the frontend-facing Executions. Not the stored one.
 // It offers an `fromStorage` function to convert itself from the storage payload.
 type Collector struct {
 	ID        string    `json:"id"`
@@ -120,5 +120,24 @@ func (l Collector) fromStorage(s models.Collector) Collector {
 	l.PayloadID = s.PayloadID
 	l.CreatedAt = s.CreatedAt
 	l.Data = s.Data
+	return l
+}
+
+// Injection represent the structure of the frontend-facing Executions. Not the stored one.
+// It offers an `fromStorage` function to convert itself from the storage payload.
+type Injection struct {
+	ID         string    `json:"id"`
+	Name       string    `json:"name"`
+	Content    string    `json:"content"`
+	CreatedAt  time.Time `json:"created_at"`
+	ModifiedAt time.Time `json:"modified_at"`
+}
+
+func (l Injection) fromStorage(s models.Injection) Injection {
+	l.ID = s.ID
+	l.Name = s.Name
+	l.Content = s.Content
+	l.CreatedAt = s.CreatedAt
+	l.ModifiedAt = s.ModifiedAt
 	return l
 }

@@ -30,6 +30,25 @@ func sendResponse(status api.APIError, data interface{}, w http.ResponseWriter) 
 	return err
 }
 
+func (httpapi *HTTPApi) createInjection(w http.ResponseWriter, req *http.Request) {
+	var data models.Injection
+
+	err := json.NewDecoder(req.Body).Decode(&data)
+	if err != nil {
+		log.Println(err)
+		sendResponse(api.InvalidInput, nil, w)
+		return
+	}
+
+	returnedInjection, err := api.AddInjection(data.Name, data.Content)
+	if err != nil {
+		log.Println(err)
+		sendResponse(api.DatabaseError, nil, w)
+		return
+	}
+
+	sendResponse(api.Success, returnedInjection, w)
+}
 func (httpapi *HTTPApi) createPayload(w http.ResponseWriter, req *http.Request) {
 	var data models.Payload
 
@@ -176,6 +195,27 @@ func (httpapi *HTTPApi) getAlias(w http.ResponseWriter, req *http.Request) {
 	}
 
 	sendResponse(api.Success, returnedAlias, w)
+}
+func (httpapi *HTTPApi) getInjection(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	returnedInjection, err := api.GetInjection(vars["injection"])
+	if err != nil {
+		log.Println(err)
+		sendResponse(api.NotFound, nil, w)
+		return
+	}
+
+	sendResponse(api.Success, returnedInjection, w)
+}
+func (httpapi *HTTPApi) getInjections(w http.ResponseWriter, req *http.Request) {
+	returnedInjections, err := api.GetInjections()
+	if err != nil {
+		log.Println(err)
+		sendResponse(api.NotFound, nil, w)
+		return
+	}
+
+	sendResponse(api.Success, returnedInjections, w)
 }
 
 func (httpapi *HTTPApi) getAliasByID(w http.ResponseWriter, req *http.Request) {

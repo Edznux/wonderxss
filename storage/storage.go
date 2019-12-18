@@ -27,6 +27,7 @@ type Storage interface {
 	CreateAlias(models.Alias) (models.Alias, error)
 	CreateExecution(execution models.Execution, payloadIDOrAlias string) (models.Execution, error)
 	CreateCollector(collector models.Collector) (models.Collector, error)
+	CreateInjection(injection models.Injection) (models.Injection, error)
 
 	// Read
 	GetUser(id string) (models.User, error)
@@ -47,6 +48,8 @@ type Storage interface {
 	GetCollectors() ([]models.Collector, error)
 	GetCollector(id string) (models.Collector, error)
 
+	GetInjections() ([]models.Injection, error)
+	GetInjection(id string) (models.Injection, error)
 	// Update
 	UpdatePayload(models.Payload) error
 	UpdateUser(models.User) error

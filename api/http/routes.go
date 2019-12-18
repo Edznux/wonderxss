@@ -38,6 +38,11 @@ func (httpapi *HTTPApi) Routes(router *mux.Router) {
 	// Colletors CRUD
 	router.HandleFunc("/collectors", httpapi.getCollectors).Methods("GET")
 	router.HandleFunc("/collectors", httpapi.createCollectors).Methods("POST")
+
+	// Colletors CRUD
+	router.HandleFunc("/injections/{name}", httpapi.getInjection).Methods("GET")
+	router.HandleFunc("/injections", httpapi.getInjections).Methods("GET")
+	router.HandleFunc("/injections", httpapi.createInjection).Methods("POST")
 }
 
 func (httpapi *HTTPApi) NotImplementedYet(w http.ResponseWriter, r *http.Request) {
