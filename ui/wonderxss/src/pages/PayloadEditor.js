@@ -28,9 +28,9 @@ class PayloadEditor extends React.Component {
             alias: alias,
             payload_id: payload_id
         })
-            .then(res => {
-                console.log(res)
-            });
+        .then(res => {
+            console.log(res)
+        });
     };
     createPayload = () => {
         if (this.state.currentPayloadName === "") {
@@ -42,16 +42,16 @@ class PayloadEditor extends React.Component {
             name: this.state.currentPayloadName,
             content: this.state.currentPayload
         })
-            .then(res => {
-                let payload_id = ""
-                console.log(res.data.data)
-                if (res.data.data && !res.data.error) {
-                    payload_id = res.data.data.ID
-                    if (this.state.currentAlias !== "") {
-                        this.createAlias(payload_id, this.state.currentAlias)
-                    }
+        .then(res => {
+            let payload_id = ""
+            console.log(res.data.data)
+            if (res.data.data && !res.data.error) {
+                payload_id = res.data.data.ID
+                if (this.state.currentAlias !== "") {
+                    this.createAlias(payload_id, this.state.currentAlias)
                 }
-            });
+            }
+        });
     };
     render() {
         return (

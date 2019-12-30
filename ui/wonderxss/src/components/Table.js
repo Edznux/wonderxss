@@ -9,6 +9,8 @@ import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
+import DeleteIcon from '@material-ui/icons/Delete';
+
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -33,9 +35,18 @@ function stableSort(array, cmp) {
 function getSorting(order, orderBy) {
     return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
 }
+function displayActionButton(isDeleteButtonEnabled){
+    if (isDeleteButtonEnabled){
+        return (
+            <TableCell component="th" id="delete-head" scope="row" padding="none" className="row-id">
+                <span>Delete</span>
+            </TableCell>
+        )
+    }
+}
 
 function EnhancedTableHead(props) {
-    const { headCells, classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+    const { headCells, classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, isDeleteButtonEnabled } = props;
     const createSortHandler = property => event => {
         onRequestSort(event, property);
     };
@@ -43,7 +54,7 @@ function EnhancedTableHead(props) {
     return (
         <TableHead>
             <TableRow>
-                <TableCell padding="checkbox">
+                <TableCell>
                     <Checkbox
                         indeterminate={numSelected > 0 && numSelected < rowCount}
                         checked={numSelected === rowCount}
@@ -57,6 +68,7 @@ function EnhancedTableHead(props) {
                         align={headCell.numeric ? 'right' : 'left'}
                         padding={headCell.disablePadding ? 'none' : 'default'}
                         sortDirection={orderBy === headCell.id ? order : false}
+                        className={headCell.hidden ? classes.visuallyHidden : ""}
                     >
                         <TableSortLabel
                             active={orderBy === headCell.id}
@@ -72,12 +84,14 @@ function EnhancedTableHead(props) {
                         </TableSortLabel>
                     </TableCell>
                 ))}
+                {displayActionButton(isDeleteButtonEnabled)}
             </TableRow>
         </TableHead>
     );
 }
 
 EnhancedTableHead.propTypes = {
+    hidden: PropTypes.bool,
     classes: PropTypes.object.isRequired,
     numSelected: PropTypes.number.isRequired,
     onRequestSort: PropTypes.func.isRequired,
@@ -116,7 +130,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function EnhancedTable(props) {
-    const { headCells, data, deleteButtonEnabled } = props;
+    const { headCells, data, isDeleteButtonEnabled } = props;
     const classes = useStyles();
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('created_at');
@@ -160,6 +174,11 @@ export default function EnhancedTable(props) {
         return selected.indexOf(name) !== -1;
     }
 
+    const deleteLine = (event) => {
+        const el = event.target.closest("tr");
+        console.log(el)
+    }
+
     const generateRow = (row, index) => {
         const isItemSelected = isSelected("row-id-" + index);
         const labelId = `enhanced-table-checkbox-${index}`;
@@ -167,32 +186,31 @@ export default function EnhancedTable(props) {
         for (let headCell in headCells) {
             if (headCells.hasOwnProperty(headCell)) {
                 cells.push(
-                    <TableCell component="th" id={labelId} scope="row" padding="none" className="row-id">
+                    <TableCell component="td" id={labelId} scope="row" padding="none"  className={headCells[headCell].hidden ? classes.visuallyHidden : ""}>
                         <span className="ellipsis">{row[headCells[headCell].field]}</span>
                     </TableCell>
                 )
             }
         }
-        console.log("test")
-        if (deleteButtonEnabled) {
-            console.log("delete button enabled")
+
+        if (isDeleteButtonEnabled){
             cells.push(
-                <TableCell component="th" id="delete-head" scope="row" padding="none" className="row-id">
-                    <span className="ellipsis">Delete</span>
+                <TableCell component="td" scope="row" padding="none" className="row-id">
+                    <DeleteIcon onClick={(event) => {deleteLine(event)} }/>
                 </TableCell>
             )
         }
+
         return (
             <TableRow
                 hover
                 onClick={event => handleClick(event, "row-id-" + index)}
                 role="checkbox"
                 aria-checked={isItemSelected}
-                tabIndex={-1}
                 key={"row-id-" + index}
                 selected={isItemSelected}
             >
-                <TableCell padding="checkbox">
+                <TableCell>
                     <Checkbox
                         checked={isItemSelected}
                         inputProps={{ 'aria-labelledby': labelId }}
@@ -223,6 +241,7 @@ export default function EnhancedTable(props) {
                             onSelectAllClick={handleSelectAllClick}
                             onRequestSort={handleRequestSort}
                             rowCount={data.length}
+                            isDeleteButtonEnabled={isDeleteButtonEnabled}
                         />
                         <TableBody>
                             {

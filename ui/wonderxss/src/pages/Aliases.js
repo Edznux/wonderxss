@@ -11,6 +11,7 @@ export default class Aliases extends React.Component {
       currentPayload: "",
       currentAlias: "",
       headCells : [
+        { id: 'ID', field: "id", numeric: false, disablePadding: true, label: 'id', hidden: true },
         { id: 'Name', field: "alias", numeric: false, disablePadding: true, label: 'Name' },
         { id: 'Payload', field: "payload_id", numeric: false, disablePadding: true, label: 'Content', ellipsis: true },
         { id: 'Created_At', field: "created_at", numeric: false, disablePadding: true, label: 'Created At', ellipsis: true },
@@ -77,7 +78,7 @@ export default class Aliases extends React.Component {
     return (
       <Container className="container">
         Aliases list:
-        <EnhancedTable headCells={this.state.headCells} data={this.state.aliases} deleteButtonEnabled={true}></EnhancedTable>
+        <EnhancedTable headCells={this.state.headCells} data={this.state.aliases} isDeleteButtonEnabled={true}></EnhancedTable>
         Alias : <TextField
           className="alias-field"
           type="text"

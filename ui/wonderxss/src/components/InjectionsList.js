@@ -14,7 +14,8 @@ export default class InjectionsList extends React.Component {
         super(props)
         this.state = {
             headCells: [
-                { id: 'Name', field:"name", numeric: false, disablePadding: true, label: 'Name', ellipsis: true },
+                { id: 'ID', field:"id", numeric: false, disablePadding: false, label: 'id', ellipsis: true, hidden:true },
+                { id: 'Name', field:"name", numeric: false, disablePadding: false, label: 'Name', ellipsis: true },
                 { id: 'Injection', field: "formatedContent", numeric: false, disablePadding: false, label: 'Injection' },
                 { id: 'Created_At', field: "created_at", numeric: false, disablePadding: false, label: 'Created At', ellipsis: true },
             ],
@@ -44,10 +45,10 @@ export default class InjectionsList extends React.Component {
         let s = event.target.value
         let found = SRIKinds.indexOf(s)
         if (found > -1){
-            this.setState({ SRIKind: SRIKinds[found]});
+            this.setState({ SRIKind: SRIKinds[found] });
             return
         }
-        this.setState({ SRIKind: SRIKinds[0]});
+        this.setState({ SRIKind: SRIKinds[0] });
         this.updateInjections()
     }
     toggleSubdomain = (event) =>{
@@ -191,7 +192,7 @@ export default class InjectionsList extends React.Component {
                     </Select>
                 </FormLabel>
                 
-                <EnhancedTable headCells={this.state.headCells} data={this.state.injections}></EnhancedTable>
+                <EnhancedTable headCells={this.state.headCells} data={this.state.injections}  isDeleteButtonEnabled={true}></EnhancedTable>
 
                 <Input type="text" placeholder="Name" onChange={(event) => this.setState({ newTitle: event.target.value })}></Input>
                 <Input type="text" placeholder="Injection" onChange={(event) => this.setState({ newContent: event.target.value })}></Input>
