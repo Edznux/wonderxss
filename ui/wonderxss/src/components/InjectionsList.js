@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 
 import { API_PAYLOADS, URL_PAYLOAD, API_INJECTIONS} from "../helpers/constants"
-import { TableCell, TableRow, Checkbox, Select, Container, FormLabel, Button, Input } from '@material-ui/core';
+import { Checkbox, Select, Container, FormLabel, Button, Input } from '@material-ui/core';
 import EnhancedTable from './Table';
 
 const REPLACE_URL_TAG = "##URL##"

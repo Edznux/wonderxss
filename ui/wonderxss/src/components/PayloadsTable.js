@@ -10,16 +10,16 @@ export default class PayloadsTable extends React.Component {
         super(props)
         this.state = {
             payloads: [],
-            headCells : [
-                { id: 'ID', field:"id", numeric: false, disablePadding: true, label: 'ID', ellipsis:true },
+            headCells: [
+                { id: 'ID', field: "id", numeric: false, disablePadding: true, label: 'ID', ellipsis: true },
                 { id: 'Name', field: "name", numeric: false, disablePadding: false, label: 'Name' },
-                { id: 'Content', field:"content", numeric: false, disablePadding: false, label: 'Content', ellipsis: true  },
-                { id: 'Hashes', field:"hashes", numeric: false, disablePadding: false, label: 'Hashes', ellipsis: true  },
-                { id: 'Created_At', field:"created_at", numeric: false, disablePadding: false, label: 'Created At', ellipsis: true  },
+                { id: 'Content', field: "content", numeric: false, disablePadding: false, label: 'Content', ellipsis: true },
+                { id: 'Hashes', field: "hashes", numeric: false, disablePadding: false, label: 'Hashes', ellipsis: true },
+                { id: 'Created_At', field: "created_at", numeric: false, disablePadding: false, label: 'Created At', ellipsis: true },
             ],
         }
     };
-    formatSRI(hashes){
+    formatSRI(hashes) {
         let res = [];
         for (var key in hashes) {
             if (hashes.hasOwnProperty(key)) {
@@ -28,16 +28,16 @@ export default class PayloadsTable extends React.Component {
         }
         return res
     }
-    componentDidMount(){
+    componentDidMount() {
         axios.get(API_PAYLOADS).then(res => {
-            if (res.status !== 200){
+            if (res.status !== 200) {
                 throw new Error("Couldn't load payloads")
-            }else{
+            } else {
                 return res.data
             }
         }).then((rows) => {
             // This override the SRIHashes object to a HTML List.
-            for(var row in rows.data){
+            for (var row in rows.data) {
                 rows.data[row].hashes = this.formatSRI(rows.data[row].hashes)
             }
             this.setState({
@@ -45,11 +45,11 @@ export default class PayloadsTable extends React.Component {
             })
         });
     }
-    render(){
+    render() {
         return (
-        <div className="Payloads">
-            <EnhancedTable headCells={this.state.headCells} data={this.state.payloads}></EnhancedTable>
-        </div>
+            <div className="Payloads">
+                <EnhancedTable headCells={this.state.headCells} data={this.state.payloads} deleteButtonEnabled={true}></EnhancedTable>
+            </div>
         );
     };
 }

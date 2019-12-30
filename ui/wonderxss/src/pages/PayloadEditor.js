@@ -9,18 +9,18 @@ import { API_PAYLOADS, API_ALIASES } from '../helpers/constants';
 
 
 class PayloadEditor extends React.Component {
-    
+
     constructor(props) {
         super(props)
         this.state = {
-            currentAlias:"",
-            currentPayload:"",
-            currentPayloadName:""
+            currentAlias: "",
+            currentPayload: "",
+            currentPayloadName: ""
         }
     };
     createAlias = (payload_id, alias) => {
         console.log(payload_id, alias)
-        if (!payload_id || !alias){
+        if (!payload_id || !alias) {
             console.log("missing payload ID or alias name, not creating alias")
             return
         }
@@ -28,30 +28,30 @@ class PayloadEditor extends React.Component {
             alias: alias,
             payload_id: payload_id
         })
-        .then(res => {
-            console.log(res)
-        });
+            .then(res => {
+                console.log(res)
+            });
     };
     createPayload = () => {
-        if (this.state.currentPayloadName === ""){
+        if (this.state.currentPayloadName === "") {
             alert("please provide a payload name.")
             return
         }
-        
+
         axios.post(API_PAYLOADS, {
             name: this.state.currentPayloadName,
             content: this.state.currentPayload
         })
-        .then(res => {
-            let payload_id = ""
-            console.log(res.data.data)
-            if(res.data.data && !res.data.error){
-                payload_id = res.data.data.ID
-                if ( this.state.currentAlias !== ""){
-                    this.createAlias(payload_id, this.state.currentAlias)
+            .then(res => {
+                let payload_id = ""
+                console.log(res.data.data)
+                if (res.data.data && !res.data.error) {
+                    payload_id = res.data.data.ID
+                    if (this.state.currentAlias !== "") {
+                        this.createAlias(payload_id, this.state.currentAlias)
+                    }
                 }
-            }
-        });
+            });
     };
     render() {
         return (
@@ -62,13 +62,13 @@ class PayloadEditor extends React.Component {
                     mode="javascript"
                     theme="github"
                     name="editor"
-                    editorProps={{ $blockScrolling: true}}
-                    onChange={(data) => {this.setState({ "currentPayload": data }) }}
+                    editorProps={{ $blockScrolling: true }}
+                    onChange={(data) => { this.setState({ "currentPayload": data }) }}
                     value={this.state.currentPayload}
-                    />
+                />
                 <Input type="text" placeholder="Payload name" onChange={(event) => { this.setState({ "currentPayloadName": event.target.value }) }}></Input>
                 <Input type="text" placeholder="short-alias" onChange={(event) => { this.setState({ "currentAlias": event.target.value }) }}></Input>
-                
+
                 <Button onClick={this.createPayload}>Create paylaod</Button>
             </Container>
         )

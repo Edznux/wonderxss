@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles }  from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -116,11 +116,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function EnhancedTable(props) {
-    const { headCells, data } = props;
+    const { headCells, data, deleteButtonEnabled } = props;
     const classes = useStyles();
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('created_at');
     const [selected, setSelected] = React.useState([]);
+
     const handleRequestSort = (event, property) => {
         const isDesc = orderBy === property && order === 'desc';
         setOrder(isDesc ? 'asc' : 'desc');
@@ -135,7 +136,7 @@ export default function EnhancedTable(props) {
         }
         setSelected([]);
     };
-    
+
     const handleClick = (event, name) => {
         const selectedIndex = selected.indexOf(name);
         let newSelected = [];
@@ -152,7 +153,6 @@ export default function EnhancedTable(props) {
                 selected.slice(selectedIndex + 1),
             );
         }
-
         setSelected(newSelected);
     };
 
@@ -164,7 +164,7 @@ export default function EnhancedTable(props) {
         const isItemSelected = isSelected("row-id-" + index);
         const labelId = `enhanced-table-checkbox-${index}`;
         let cells = []
-        for (let headCell in headCells){
+        for (let headCell in headCells) {
             if (headCells.hasOwnProperty(headCell)) {
                 cells.push(
                     <TableCell component="th" id={labelId} scope="row" padding="none" className="row-id">
@@ -172,6 +172,15 @@ export default function EnhancedTable(props) {
                     </TableCell>
                 )
             }
+        }
+        console.log("test")
+        if (deleteButtonEnabled) {
+            console.log("delete button enabled")
+            cells.push(
+                <TableCell component="th" id="delete-head" scope="row" padding="none" className="row-id">
+                    <span className="ellipsis">Delete</span>
+                </TableCell>
+            )
         }
         return (
             <TableRow
@@ -217,10 +226,10 @@ export default function EnhancedTable(props) {
                         />
                         <TableBody>
                             {
-                            stableSort(data, getSorting(order, orderBy))
-                                .map((row, index) => {
-                                    return generateRow(row, index)
-                                })
+                                stableSort(data, getSorting(order, orderBy))
+                                    .map((row, index) => {
+                                        return generateRow(row, index)
+                                    })
                             }
                         </TableBody>
                     </Table>
