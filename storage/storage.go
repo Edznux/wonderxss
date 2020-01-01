@@ -55,7 +55,11 @@ type Storage interface {
 	UpdateUser(models.User) error
 
 	// Delete
+	DeleteExecution(models.Execution) error
+	DeleteInjection(models.Injection) error
+	DeleteCollector(models.Collector) error
 	DeletePayload(models.Payload) error
+	DeleteAlias(models.Alias) error
 	DeleteUser(models.User) error
 }
 

@@ -513,9 +513,27 @@ func (s *Sqlite) UpdateUser(models.User) error {
 }
 
 //Delete
-func (s *Sqlite) DeletePayload(models.Payload) error {
-	return nil
+func (s *Sqlite) DeletePayload(p models.Payload) error {
+	_, err := s.db.Exec(DELETE_PAYLOAD, p.ID)
+	return err
 }
-func (s *Sqlite) DeleteUser(models.User) error {
-	return nil
+func (s *Sqlite) DeleteUser(u models.User) error {
+	_, err := s.db.Exec(DELETE_USER, u.ID)
+	return err
+}
+func (s *Sqlite) DeleteAlias(a models.Alias) error {
+	_, err := s.db.Exec(DELETE_ALIAS, a.ID)
+	return err
+}
+func (s *Sqlite) DeleteExecution(e models.Execution) error {
+	_, err := s.db.Exec(DELETE_EXECUTION, e.ID)
+	return err
+}
+func (s *Sqlite) DeleteCollector(c models.Collector) error {
+	_, err := s.db.Exec(DELETE_COLLECTOR, c.ID)
+	return err
+}
+func (s *Sqlite) DeleteInjection(i models.Injection) error {
+	_, err := s.db.Exec(DELETE_INJECTION, i.ID)
+	return err
 }

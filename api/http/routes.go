@@ -31,18 +31,22 @@ func (httpapi *HTTPApi) Routes(router *mux.Router) {
 	router.HandleFunc("/aliases/{alias}", httpapi.getAlias).Methods("GET")
 	router.HandleFunc("/aliases/id/{id}", httpapi.getAliasByID).Methods("GET")
 	router.HandleFunc("/aliases/payload/{id}", httpapi.getAliasByPayloadID).Methods("GET")
+	router.HandleFunc("/aliases/{id}", httpapi.deleteAlias).Methods("DELETE")
 
 	// Executions CRUD
 	router.HandleFunc("/executions", httpapi.getExecutions).Methods("GET")
+	router.HandleFunc("/executions/{id}", httpapi.deleteExecution).Methods("DELETE")
 
 	// Colletors CRUD
 	router.HandleFunc("/collectors", httpapi.getCollectors).Methods("GET")
 	router.HandleFunc("/collectors", httpapi.createCollectors).Methods("POST")
+	router.HandleFunc("/collectors/{id}", httpapi.deleteCollector).Methods("DELETE")
 
 	// Colletors CRUD
 	router.HandleFunc("/injections/{name}", httpapi.getInjection).Methods("GET")
 	router.HandleFunc("/injections", httpapi.getInjections).Methods("GET")
 	router.HandleFunc("/injections", httpapi.createInjection).Methods("POST")
+	router.HandleFunc("/injections/{id}", httpapi.deleteInjection).Methods("DELETE")
 }
 
 func (httpapi *HTTPApi) NotImplementedYet(w http.ResponseWriter, r *http.Request) {

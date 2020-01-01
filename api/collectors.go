@@ -50,3 +50,12 @@ func AddCollector(payloadID string, data string) (models.Collector, error) {
 
 	return returnedAlias, nil
 }
+
+func DeleteCollector(id string) error {
+	e := models.Collector{ID: id}
+	err := store.DeleteCollector(e)
+	if err != nil {
+		return err
+	}
+	return nil
+}

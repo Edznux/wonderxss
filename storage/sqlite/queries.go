@@ -156,14 +156,18 @@ SELECT id, name, content, created_at, modified_at
 FROM injections;
 `
 
+// INSERT
 var INSERT_PAYLOAD = `INSERT INTO payloads (id, name, hash, content) VALUES (?, ?, ?, ?);`
-
 var INSERT_USER = `INSERT INTO users (id, username, password) VALUES (?, ?, ?);`
-
 var INSERT_ALIAS = `INSERT INTO aliases (id, payload_id, alias) VALUES (?, ?, ?);`
-
 var INSERT_EXECUTION = `INSERT INTO executions (id, payload_id, alias_id) VALUES (?, ?, ?);`
-
 var INSERT_COLLECTOR = `INSERT INTO collectors (id, payload_id, alias_id) VALUES (?, ?, ?);`
-
 var INSERT_INJECTION = `INSERT INTO injections (id, name, content) VALUES (?, ?, ?);`
+
+// DELETE
+var DELETE_PAYLOAD = `DELETE FROM payloads WHERE id = ?;`
+var DELETE_USER = `DELETE FROM users WHERE id = ?;`
+var DELETE_ALIAS = `DELETE FROM aliases WHERE id = ?;`
+var DELETE_EXECUTION = `DELETE FROM executions WHERE id = ?;`
+var DELETE_COLLECTOR = `DELETE FROM collectors WHERE id = ?;`
+var DELETE_INJECTION = `DELETE FROM injections WHERE id = ?;`

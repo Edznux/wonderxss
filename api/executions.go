@@ -50,3 +50,12 @@ func AddExecution(payloadID string, aliasID string) (models.Execution, error) {
 
 	return returnedAlias, nil
 }
+
+func DeleteExecution(id string) error {
+	e := models.Execution{ID: id}
+	err := store.DeleteExecution(e)
+	if err != nil {
+		return err
+	}
+	return nil
+}

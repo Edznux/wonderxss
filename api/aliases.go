@@ -64,3 +64,12 @@ func AddAlias(name string, payloadId string) (models.Alias, error) {
 
 	return returnedAlias, nil
 }
+
+func DeleteAlias(id string) error {
+	e := models.Alias{ID: id}
+	err := store.DeleteAlias(e)
+	if err != nil {
+		return err
+	}
+	return nil
+}

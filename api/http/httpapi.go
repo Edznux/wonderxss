@@ -248,6 +248,37 @@ func (httpapi *HTTPApi) updatePayload(w http.ResponseWriter, req *http.Request) 
 }
 
 func (httpapi *HTTPApi) deletePayload(w http.ResponseWriter, req *http.Request) {
-	res, _ := json.Marshal(api.Response{Error: "Not Implemented yet"})
-	w.Write(res)
+	vars := mux.Vars(req)
+	api.DeletePayload(vars["id"])
+	sendResponse(api.Success, "", w)
+}
+
+func (httpapi *HTTPApi) deleteExecution(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	api.DeleteExecution(vars["id"])
+	sendResponse(api.Success, "", w)
+}
+
+func (httpapi *HTTPApi) deleteUser(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	api.DeleteUser(vars["id"])
+	sendResponse(api.Success, "", w)
+}
+
+func (httpapi *HTTPApi) deleteAlias(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	api.DeleteAlias(vars["id"])
+	sendResponse(api.Success, "", w)
+}
+
+func (httpapi *HTTPApi) deleteInjection(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	api.DeleteInjection(vars["id"])
+	sendResponse(api.Success, "", w)
+}
+
+func (httpapi *HTTPApi) deleteCollector(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	api.DeleteCollector(vars["id"])
+	sendResponse(api.Success, "", w)
 }

@@ -81,3 +81,12 @@ func CreateUser(username, password string) (models.User, error) {
 	}
 	return user, nil
 }
+
+func DeleteUser(id string) error {
+	e := models.User{ID: id}
+	err := store.DeleteUser(e)
+	if err != nil {
+		return err
+	}
+	return nil
+}

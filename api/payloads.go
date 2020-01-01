@@ -77,3 +77,12 @@ func AddPayload(name string, content string) (models.Payload, error) {
 
 	return returnedPayload, nil
 }
+
+func DeletePayload(id string) error {
+	e := models.Payload{ID: id}
+	err := store.DeletePayload(e)
+	if err != nil {
+		return err
+	}
+	return nil
+}

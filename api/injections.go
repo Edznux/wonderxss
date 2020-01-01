@@ -46,3 +46,12 @@ func AddInjection(name string, content string) (models.Injection, error) {
 
 	return returnedInjection, nil
 }
+
+func DeleteInjection(id string) error {
+	e := models.Injection{ID: id}
+	err := store.DeleteInjection(e)
+	if err != nil {
+		return err
+	}
+	return nil
+}
