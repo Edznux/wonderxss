@@ -15,9 +15,11 @@
 
     discord_token: CHANGEME
     discord_enabled: false
+
   tasks:
     - name: Print statement
       debug:
         msg: "Host is {{ansible_hostname}}"
   roles:
-    - {role: wonderxss}
+    - {role: docker}
+    # - {role: build}

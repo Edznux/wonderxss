@@ -1,0 +1,10 @@
+
+- name: WonderXSS create
+  docker_container:
+    name: wonderxss
+    state: present
+    image: edznux/wonderxss
+    restart_policy: always
+    restart_retries: 5
+    ports:
+     - "80:8080"

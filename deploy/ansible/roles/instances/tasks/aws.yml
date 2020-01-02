@@ -13,5 +13,5 @@
 - name: Create a new EC2 instance
     ec2_instance:
         name: wonderxss
-        instance_type: {{ instance_type }}
+        instance_type: "{{ instance_type }}"
         security_group: wonderxss-sg
