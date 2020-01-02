@@ -1,0 +1,17 @@
+- name: Create a new Security Group for the instance
+    ec2_group:
+        name: wonderxss-sg
+        description: Allow all on HTTP and HTTPS
+        rules:
+            - proto: tcp
+                ports:
+                - 80
+                - 443
+                cidr_ip: 0.0.0.0/0
+                rule_desc: Allow all on HTTP and HTTPS
+
+- name: Create a new EC2 instance
+    ec2_instance:
+        name: wonderxss
+        instance_type: {{ instance_type }}
+        security_group: wonderxss-sg

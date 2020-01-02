@@ -1,0 +1,23 @@
+---
+
+- hosts: wonderxss
+  vars:
+    domain: localhost
+    database: sqlite
+    standalone_https: true
+    https_port: 443
+    http_port: 80
+
+    jwt_token: "change me, please, for f*** sake"
+
+    slack_token: CHANGEME
+    slack_enabled: true
+
+    discord_token: CHANGEME
+    discord_enabled: false
+  tasks:
+    - name: Print statement
+      debug:
+        msg: "Host is {{ansible_hostname}}"
+  roles:
+    - {role: wonderxss}

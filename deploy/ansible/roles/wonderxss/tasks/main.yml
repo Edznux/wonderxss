@@ -1,0 +1,25 @@
+- name: Clone the repository
+  git:
+    repo: 'https://github.com/edznux/wonderxss'
+    dest: /tmp/wonderxss
+
+- name: Ensure backend dep
+  shell: go mod vendor
+  args:
+    chdir: /tmp/wonderxss
+
+- name: Build the backend
+  shell: go build
+  args:
+    chdir: /tmp/wonderxss
+
+# TODO: This shouldn't be needed in the future with go-bindata
+- name: Install frontend dependencies
+  shell: npm install
+  args:
+    chdir: /tmp/wonderxss/ui/wonderxss
+
+- name: Build the frontend
+  shell: npm run build
+  args:
+    chdir: /tmp/wonderxss/ui/wonderxss

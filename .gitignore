@@ -5,3 +5,5 @@ db.sqlite
 wonderxss.toml
 vendor
 .vscode
+deploy/ansible/hosts
+deploy/ansible/wonderxss.retry

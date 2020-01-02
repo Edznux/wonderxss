@@ -1,0 +1,37 @@
+# Domain to listen on. (Usefull only for sudomains paylaod aliases)
+domain = "{{ domain }}"
+# Type of database
+database = "{{ database }}"
+# true will enable listening on HTTPS (without a reverse proxy). Disabled by default.
+# This will require certificates:
+# self signed RSA: `openssl req -x509 -nodes -newkey rsa:2048 -keyout server.key -out server.crt -days 3650`
+# Use letsencrypt or other trusted provider for production environment
+standalone_https = {{ standalone_https }}
+http_port = {{ http_port }}
+https_port= {{ https_port }}
+# Generate a new token with
+# OpenSSL: openssl rand -hex 20
+jwt_token= "{{ jwt_token }}"
+
+# Lists of notification systems
+[notifications]
+  # slack-webhook is an arbitrary name. Use whatever you prefer.
+  # TODO:
+  # You can use multiple times the same kind of notification
+  # For example, multiple slack channels
+  [notifications.slack-webhook]
+    name    = "slack"
+    # Change this token
+    token   = "{{ slack_token }}"
+    # Globaly disable this kind of notifications
+    enabled = {{ slack_enabled }}
+  [notifications.discord-webhook]
+    name    = "discord"
+    token   = "{{ discord_token }}"
+    enabled = {{ discord_enabled }}
+# Databases definitions
+[storages]
+  [storages.sqlite]
+    adapter = "sqlite"
+    # name of the sqlite file
+    file    = "db.sqlite"

@@ -1,0 +1,18 @@
+---
+dependencies: []
+
+galaxy_info:
+  author: Edznux
+  description: Create WonderXSS deployment
+  license: "MIT"
+  platforms:
+    - name: aws
+      versions:
+        - ec2
+
+  galaxy_tags:
+    - WonderXSS
+    - redteam
+    - offensive
+    - security
+    - pentest
