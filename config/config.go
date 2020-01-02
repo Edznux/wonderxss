@@ -65,6 +65,7 @@ type Storage struct {
 
 func Setup() {
 	viper.SetConfigType("toml")
+	viper.AddConfigPath("/etc/wonderxss/")
 	viper.SetConfigName("wonderxss")
 	viper.AddConfigPath(".")
 	viper.WatchConfig()
