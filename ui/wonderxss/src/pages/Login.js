@@ -52,7 +52,7 @@ class Login extends React.Component {
                             <span className="login-text">Username:</span>
                             <TextField
                                 className="login-field"
-                                hintText="Enter your username"
+                                placeholder="Enter your username"
                                 floatingLabelText="login"
                                 onChange={(event) => this.setState({ login: event.target.value })}
                                 classes="login-field"
@@ -63,7 +63,7 @@ class Login extends React.Component {
                             <TextField
                                 className="login-field"
                                 type="password"
-                                hintText="Enter your password"
+                                placeholder="Enter your password"
                                 floatingLabelText="password"
                                 classes="login-field"
                                 onChange={(event) => this.setState({ password: event.target.value })}

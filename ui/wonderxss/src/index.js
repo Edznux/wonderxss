@@ -5,6 +5,8 @@ import * as serviceWorker from './serviceWorker';
 import { Route, Link, BrowserRouter as Router, Switch, Redirect} from 'react-router-dom'
 import App from './pages/App';
 import Payloads from './pages/Payloads';
+import LootTable from './pages/LootTable';
+import LootEditor from './pages/LootEditor';
 import Login from './pages/Login';
 import Logout from './pages/Logout';
 import PayloadEditor from './pages/PayloadEditor';
@@ -49,6 +51,9 @@ const routing = (
         <Box flexGrow={1}>
             <Link to="/aliases">Aliases</Link>
         </Box>
+        <Box flexGrow={1}>
+            <Link to="/loots">Loots</Link>
+        </Box>
             <Box flexDirection="row-reverse" flexGrow={1}>
             {
                 !isLoggedIn() && <Link to="/login">Login</Link>
@@ -64,6 +69,8 @@ const routing = (
         <PrivateRoute path="/payloads" component={Payloads} />
         <PrivateRoute path="/editor" component={PayloadEditor} />
         <PrivateRoute path="/aliases" component={Aliases} />
+        <PrivateRoute path="/loots" component={LootTable} />
+        <PrivateRoute path="/loot/:id" component={LootEditor} />
         <PrivateRoute path="/logout" component={Logout} />
         <Route component={NotFound} />
     </Switch>
