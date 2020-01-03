@@ -73,6 +73,13 @@ func (s *Sqlite) Setup() error {
 		log.Println(err)
 		lastErr = err
 	}
+
+	log.Println("Creating Collectors' table")
+	_, err = s.db.Exec(CREATE_TABLE_COLLECTORS)
+	if err != nil {
+		log.Println(err)
+		lastErr = err
+	}
 	return lastErr
 }
 
@@ -114,7 +121,7 @@ func (s *Sqlite) CreateAlias(alias models.Alias) (models.Alias, error) {
 }
 
 func (s *Sqlite) CreateCollector(collector models.Collector) (models.Collector, error) {
-	_, err := s.db.Exec(INSERT_COLLECTOR, collector.ID, collector.PayloadID, collector.Data)
+	_, err := s.db.Exec(INSERT_COLLECTOR, collector.ID, collector.Data)
 	if err != nil {
 		log.Println(err)
 		return models.Collector{}, err
@@ -395,7 +402,7 @@ func (s *Sqlite) GetCollector(id string) (models.Collector, error) {
 	row := s.db.QueryRow(SELECT_COLLECTOR, id)
 
 	var res models.Collector
-	err := row.Scan(&res.ID, &res.PayloadID, &res.Data, &res.CreatedAt)
+	err := row.Scan(&res.ID, &res.Data, &res.CreatedAt)
 	if err == sql.ErrNoRows {
 		return models.Collector{}, models.NoSuchItem
 	}
@@ -421,7 +428,7 @@ func (s *Sqlite) GetCollectors() ([]models.Collector, error) {
 
 	var tmpRes models.Collector
 	for rows.Next() {
-		rows.Scan(&tmpRes.ID, &tmpRes.PayloadID, &tmpRes.Data, &tmpRes.CreatedAt)
+		rows.Scan(&tmpRes.ID, &tmpRes.Data, &tmpRes.CreatedAt)
 		res = append(res, tmpRes)
 	}
 

@@ -74,7 +74,6 @@ func (httpapi *HTTPApi) createPayload(w http.ResponseWriter, req *http.Request) 
 func (httpapi *HTTPApi) createCollectors(w http.ResponseWriter, req *http.Request) {
 
 	var data models.Collector
-	vars := mux.Vars(req)
 
 	err := json.NewDecoder(req.Body).Decode(&data)
 	if err != nil {
@@ -83,13 +82,7 @@ func (httpapi *HTTPApi) createCollectors(w http.ResponseWriter, req *http.Reques
 		return
 	}
 
-	// override the payloadID from the JSON if it's provided in the URL param.
-	payloadID := vars["id"]
-	if payloadID == "" {
-		payloadID = data.PayloadID
-	}
-
-	returnedCollector, err := api.AddCollector(payloadID, data.Data)
+	returnedCollector, err := api.AddCollector(data.Data)
 	if err != nil {
 		log.Println(err)
 		sendResponse(api.DatabaseError, nil, w)

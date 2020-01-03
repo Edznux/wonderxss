@@ -34,11 +34,10 @@ func GetCollector(id string) (Collector, error) {
 	return res.fromStorage(collector), nil
 }
 
-func AddCollector(payloadID string, data string) (models.Collector, error) {
-	fmt.Printf("AddCollector(\"%s\", \"%s\")\n", payloadID, data)
+func AddCollector(data string) (models.Collector, error) {
+	fmt.Printf("AddCollector(\"%s\")\n", data)
 	c := models.Collector{
 		ID:        uuid.New().String(),
-		PayloadID: payloadID,
 		Data:      data,
 		CreatedAt: time.Now(),
 	}

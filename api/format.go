@@ -109,14 +109,12 @@ func (l Execution) fromStorage(s models.Execution) Execution {
 // It offers an `fromStorage` function to convert itself from the storage payload.
 type Collector struct {
 	ID        string    `json:"id"`
-	PayloadID string    `json:"payload_id"`
 	Data      string    `json:"data"`
 	CreatedAt time.Time `json:"created_at"`
 }
 
 func (l Collector) fromStorage(s models.Collector) Collector {
 	l.ID = s.ID
-	l.PayloadID = s.PayloadID
 	l.CreatedAt = s.CreatedAt
 	l.Data = s.Data
 	return l

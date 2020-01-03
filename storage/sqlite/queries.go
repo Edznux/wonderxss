@@ -46,8 +46,8 @@ CREATE TABLE payloads (
 var CREATE_TABLE_COLLECTORS = `
 CREATE TABLE collectors (
 	id          TEXT NOT NULL PRIMARY KEY,
-	content     TEXT NOT NULL,
-	created_at  DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	data    	TEXT NOT NULL,
+	created_at  DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 `
 var CREATE_TABLE_INJECTIONS = `
@@ -132,13 +132,13 @@ WHERE username = ?;
 `
 
 var SELECT_COLLECTOR = `
-SELECT *
+SELECT id, data, created_at
 FROM collectors
 WHERE id = ?;
 `
 
 var SELECT_ALL_COLLECTOR = `
-SELECT *
+SELECT id, data, created_at
 FROM collectors;
 `
 var SELECT_INJECTION = `
@@ -161,7 +161,7 @@ var INSERT_PAYLOAD = `INSERT INTO payloads (id, name, hash, content) VALUES (?, 
 var INSERT_USER = `INSERT INTO users (id, username, password) VALUES (?, ?, ?);`
 var INSERT_ALIAS = `INSERT INTO aliases (id, payload_id, alias) VALUES (?, ?, ?);`
 var INSERT_EXECUTION = `INSERT INTO executions (id, payload_id, alias_id) VALUES (?, ?, ?);`
-var INSERT_COLLECTOR = `INSERT INTO collectors (id, payload_id, alias_id) VALUES (?, ?, ?);`
+var INSERT_COLLECTOR = `INSERT INTO collectors (id, data) VALUES (?, ?);`
 var INSERT_INJECTION = `INSERT INTO injections (id, name, content) VALUES (?, ?, ?);`
 
 // DELETE
