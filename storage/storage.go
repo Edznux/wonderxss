@@ -28,7 +28,7 @@ type Storage interface {
 	CreateExecution(execution models.Execution, payloadIDOrAlias string) (models.Execution, error)
 	CreateCollector(collector models.Collector) (models.Collector, error)
 	CreateInjection(injection models.Injection) (models.Injection, error)
-
+	CreateOTP(user models.User, TOTPSecret string) (models.User, error)
 	// Read
 	GetUser(id string) (models.User, error)
 	GetUserByName(name string) (models.User, error)
@@ -61,6 +61,7 @@ type Storage interface {
 	DeletePayload(models.Payload) error
 	DeleteAlias(models.Alias) error
 	DeleteUser(models.User) error
+	RemoveOTP(models.User) (models.User, error)
 }
 
 func Init() {

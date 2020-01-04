@@ -31,12 +31,32 @@ func VerifyUserPassword(loginParam, passwordParam string) (models.User, error) {
 	return user, nil
 }
 
+// GetUserByName is a direct replica from the storage.
 func GetUserByName(name string) (models.User, error) {
 	user, err := store.GetUserByName(name)
 	if err != nil {
 		return user, err
 	}
+	return user, nil
+}
 
+func GetUser(id string) (models.User, error) {
+	user, err := store.GetUser(id)
+	if err != nil {
+		return user, err
+	}
+	return user, nil
+}
+
+func CreateOTP(userID string, token string) (models.User, error) {
+	user, err := store.GetUser(userID)
+	if err != nil {
+		return user, err
+	}
+	user, err = store.CreateOTP(user, token)
+	if err != nil {
+		return user, err
+	}
 	return user, nil
 }
 
@@ -52,7 +72,7 @@ func CreateUser(username, password string) (models.User, error) {
 		return u, errors.New("Invalid password")
 	}
 
-	existingUser, err := GetUserByName(username)
+	existingUser, err := store.GetUserByName(username)
 	if err != nil {
 		// If the error is just an empty response, ignore
 		if err != models.NoSuchItem {

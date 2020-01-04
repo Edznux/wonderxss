@@ -104,6 +104,26 @@ func (s *Sqlite) CreateUser(user models.User) (models.User, error) {
 	return s.GetUser(user.ID)
 }
 
+func (s *Sqlite) CreateOTP(user models.User, TOTPSecret string) (models.User, error) {
+	_, err := s.db.Exec(UPDATE_ADD_TOTP, 1, TOTPSecret, user.ID)
+	if err != nil {
+		log.Println(err)
+		return models.User{}, err
+	}
+
+	return s.GetUser(user.ID)
+}
+
+func (s *Sqlite) RemoveOTP(user models.User) (models.User, error) {
+	_, err := s.db.Exec(UPDATE_ADD_TOTP, 0, "", user.ID)
+	if err != nil {
+		log.Println(err)
+		return models.User{}, err
+	}
+
+	return s.GetUser(user.ID)
+}
+
 func (s *Sqlite) CreateAlias(alias models.Alias) (models.Alias, error) {
 	_, err := s.db.Exec(INSERT_ALIAS, alias.ID, alias.PayloadID, alias.Short)
 	if sqliteErr, ok := err.(sqlite3.Error); ok {
@@ -478,12 +498,20 @@ func (s *Sqlite) GetAliases() ([]models.Alias, error) {
 
 func (s *Sqlite) GetUser(id string) (models.User, error) {
 	var user models.User
+	var TOTPSecret sql.NullString
+	var TFEnabled int
 
 	row := s.db.QueryRow(SELECT_USER, id)
-
-	err := row.Scan(&user.ID, &user.Username, &user.Password, &user.CreatedAt, &user.ModifiedAt)
+	err := row.Scan(&user.ID, &user.Username, &user.Password, &TFEnabled, &TOTPSecret, &user.CreatedAt, &user.ModifiedAt)
 	if err == sql.ErrNoRows {
 		return user, models.NoSuchItem
+	}
+
+	if TFEnabled == 1 {
+		user.TwoFactorEnabled = true
+	}
+	if TOTPSecret.Valid {
+		user.TOTPSecret = TOTPSecret.String
 	}
 
 	if err != nil {
@@ -495,12 +523,20 @@ func (s *Sqlite) GetUser(id string) (models.User, error) {
 
 func (s *Sqlite) GetUserByName(name string) (models.User, error) {
 	var user models.User
+	var TOTPSecret sql.NullString
+	var TFEnabled int
 
 	row := s.db.QueryRow(SELECT_USER_BY_NAME, name)
-
-	err := row.Scan(&user.ID, &user.Username, &user.Password, &user.CreatedAt, &user.ModifiedAt)
+	err := row.Scan(&user.ID, &user.Username, &user.Password, &TFEnabled, &TOTPSecret, &user.CreatedAt, &user.ModifiedAt)
 	if err == sql.ErrNoRows {
 		return user, models.NoSuchItem
+	}
+
+	if TFEnabled == 1 {
+		user.TwoFactorEnabled = true
+	}
+	if TOTPSecret.Valid {
+		user.TOTPSecret = TOTPSecret.String
 	}
 
 	if err != nil {

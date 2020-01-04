@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/dgrijalva/jwt-go"
 	apipkg "github.com/edznux/wonderxss/api"
 	"github.com/edznux/wonderxss/crypto"
 )
@@ -43,8 +44,15 @@ func (api *HTTPApi) authMiddleware(next http.Handler) http.Handler {
 			json.NewEncoder(w).Encode(&res)
 			return
 		}
+		bearer := strings.Split(tokenHeader, "Bearer ")
+		if len(bearer) != 2 {
+			w.WriteHeader(http.StatusUnauthorized)
+			res.Error = "Error verifying JWT token: Invalid token"
+			json.NewEncoder(w).Encode(&res)
+			return
+		}
+		token := bearer[1]
 
-		token := strings.Split(tokenHeader, "Bearer ")[1]
 		claims, err := crypto.VerifyJWTToken(token)
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
@@ -52,8 +60,29 @@ func (api *HTTPApi) authMiddleware(next http.Handler) http.Handler {
 			json.NewEncoder(w).Encode(&res)
 			return
 		}
-		fmt.Println(claims)
+		fmt.Println("Claims:", claims)
 
+		// Get the user ID in order to check if it :
+		// - exist in database
+		// - has 2FA enabled
+		JWTdata := claims.(jwt.MapClaims)
+		user, err := apipkg.GetUser(JWTdata["user_id"].(string))
+		if err != nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			res.Error = "Error verifying user: " + err.Error()
+			json.NewEncoder(w).Encode(&res)
+			return
+		}
+
+		if user.TwoFactorEnabled {
+			log.Printf("User with 2FA: %+v\n", user.GetUser())
+			if !JWTdata["2FAVerified"].(bool) {
+				w.WriteHeader(http.StatusUnauthorized)
+				res.Error = "Error verifying 2FA: " + err.Error()
+				json.NewEncoder(w).Encode(&res)
+				return
+			}
+		}
 		next.ServeHTTP(w, r)
 	})
 }

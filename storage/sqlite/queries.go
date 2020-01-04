@@ -5,6 +5,8 @@ CREATE TABLE users (
 	id          TEXT NOT NULL PRIMARY KEY,
 	username    TEXT NOT NULL unique,
 	password    TEXT NOT NULL,
+	two_factor_enabled INTEGER DEFAULT 0,
+	totp_secret TEXT,
 	created_at  DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	modified_at DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
@@ -120,13 +122,13 @@ WHERE name = ?;
 `
 
 var SELECT_USER = `
-SELECT id, username, password, created_at, modified_at
+SELECT id, username, password, two_factor_enabled, totp_secret, created_at, modified_at
 FROM users
 WHERE id = ?;
 `
 
 var SELECT_USER_BY_NAME = `
-SELECT id, username, password, created_at, modified_at
+SELECT id, username, password, two_factor_enabled, totp_secret, created_at, modified_at
 FROM users
 WHERE username = ?;
 `
@@ -163,6 +165,13 @@ var INSERT_ALIAS = `INSERT INTO aliases (id, payload_id, alias) VALUES (?, ?, ?)
 var INSERT_EXECUTION = `INSERT INTO executions (id, payload_id, alias_id) VALUES (?, ?, ?);`
 var INSERT_COLLECTOR = `INSERT INTO collectors (id, data) VALUES (?, ?);`
 var INSERT_INJECTION = `INSERT INTO injections (id, name, content) VALUES (?, ?, ?);`
+
+// UPDATE
+var UPDATE_ADD_TOTP = `
+UPDATE users
+SET two_factor_enabled = ?,
+	totp_secret = ?
+WHERE id = ?;`
 
 // DELETE
 var DELETE_PAYLOAD = `DELETE FROM payloads WHERE id = ?;`
