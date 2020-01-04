@@ -4,8 +4,7 @@ import AceEditor from "react-ace";
 import { Container } from '@material-ui/core';
 import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/theme-github";
-import { API_COLLECTORS } from "../helpers/constants"
-import test from './test';
+import { API_COLLECTORS } from "../helpers/constants";
 
 
 export default class LootViewer extends React.Component {
@@ -16,8 +15,8 @@ export default class LootViewer extends React.Component {
         const { id } = this.props.match.params;
         this.state = {
             id: id,
-            currentPayload: test.value,
-            currentType: test.type,
+            currentPayload: '',
+            currentType: '',
         }
     };
 

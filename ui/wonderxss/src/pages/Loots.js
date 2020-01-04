@@ -14,9 +14,7 @@ export default class Loots extends React.Component {
         const date = dateObject.getMonth()+1 + '/' + dateObject.getDay() + '/' + dateObject.getFullYear();
 
         this.state = {
-            payloads: [ 
-                {'PayloadID': 1, 'link': 'loot/1', 'CreatedAt': date}
-            ],
+            payloads: [],
             headCells: [
                 { id: 'ID', field: "PayloadID", numeric: false, disablePadding: true, label: 'ID', ellipsis: true},
                 { id: 'Link', field: "link", numeric: false, disablePadding: false, label: 'Link' },
