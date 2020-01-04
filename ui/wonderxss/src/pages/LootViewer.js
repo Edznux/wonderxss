@@ -6,7 +6,7 @@ import "ace-builds/src-noconflict/theme-github";
 import test from './test';
 
 
-class LootEditor extends React.Component {
+export default class LootViewer extends React.Component {
 
     constructor(props) {
         super(props)
@@ -19,28 +19,36 @@ class LootEditor extends React.Component {
         }
     };
 
+    renderEditor = (payload) => {
+        return <AceEditor
+            width="100%"
+            ref="aceEditor"
+            mode="javascript"
+            theme="github"
+            name="editor"
+            editorProps={{ $blockScrolling: true }}
+            onChange={(data) => { this.setState({ "currentPayload": data }) }}
+            value={ payload }
+        />;
+    }
+
+    renderImage = (payload) => {
+        return payload;
+    }
+
+    renderDefault = (type) => {
+        return type
+    }
+
     displayType = (type, payload) => {
-        let display = '';
-
         switch(type) {
-            case 'code' : 
-                display = <AceEditor
-                    width="100%"
-                    ref="aceEditor"
-                    mode="javascript"
-                    theme="github"
-                    name="editor"
-                    editorProps={{ $blockScrolling: true }}
-                    onChange={(data) => { this.setState({ "currentPayload": data }) }}
-                    value={ payload }
-                />;
-                break;
+            case 'code': 
+                return this.renderEditor(payload);
+            case 'image':
+                return this.renderImage(payload);
             default:
-                display = type;
-                break;
+                return this.renderDefault(type);
         }
-
-        return display;
     }
     
     render() {
@@ -56,7 +64,3 @@ class LootEditor extends React.Component {
         );
     }
 }
-
-
-
-export default LootEditor;

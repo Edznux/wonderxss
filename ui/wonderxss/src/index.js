@@ -5,8 +5,8 @@ import * as serviceWorker from './serviceWorker';
 import { Route, Link, BrowserRouter as Router, Switch, Redirect} from 'react-router-dom'
 import App from './pages/App';
 import Payloads from './pages/Payloads';
-import LootTable from './pages/LootTable';
-import LootEditor from './pages/LootEditor';
+import Loots from './pages/Loots';
+import LootViewer from './pages/LootViewer';
 import Login from './pages/Login';
 import Logout from './pages/Logout';
 import PayloadEditor from './pages/PayloadEditor';
@@ -69,8 +69,8 @@ const routing = (
         <PrivateRoute path="/payloads" component={Payloads} />
         <PrivateRoute path="/editor" component={PayloadEditor} />
         <PrivateRoute path="/aliases" component={Aliases} />
-        <PrivateRoute path="/loots" component={LootTable} />
-        <PrivateRoute path="/loot/:id" component={LootEditor} />
+        <PrivateRoute path="/loots/:id" component={LootViewer} />
+        <PrivateRoute path="/loots" component={Loots} />
         <PrivateRoute path="/logout" component={Logout} />
         <Route component={NotFound} />
     </Switch>

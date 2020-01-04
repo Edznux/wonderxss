@@ -3,7 +3,7 @@ import { Container } from '@material-ui/core';
 import EnhancedTable from '../components/Table';
 
 
-class LootTable extends React.Component {
+export default class Loots extends React.Component {
     constructor(props) {
         super(props)
 
@@ -34,4 +34,3 @@ class LootTable extends React.Component {
         )
     }
 }
-export default LootTable;
