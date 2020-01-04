@@ -41,6 +41,7 @@ func ValidateOTP(w http.ResponseWriter, req *http.Request) {
 	// Get the OTP Token (6 digits)
 	err := json.NewDecoder(req.Body).Decode(&otpToken)
 	if err != nil {
+		log.Println("Error while decoding OtpToken:", err)
 		res.Error = err.Error()
 		json.NewEncoder(w).Encode(&res)
 		return
@@ -48,6 +49,7 @@ func ValidateOTP(w http.ResponseWriter, req *http.Request) {
 	// Get the JWT token so we can extract the user id etc...
 	jwtToken, err := getBearer(w, req)
 	if err != nil {
+		log.Println("getBearer error:", err)
 		w.WriteHeader(http.StatusUnauthorized)
 		res.Error = err.Error()
 		json.NewEncoder(w).Encode(&res)
@@ -56,6 +58,7 @@ func ValidateOTP(w http.ResponseWriter, req *http.Request) {
 	// Verify the JWT Token first, if it's not valid reject the request
 	decodedToken, err := crypto.VerifyJWTToken(jwtToken)
 	if err != nil {
+		log.Println("Error verifying the JWT Token:", err)
 		w.WriteHeader(http.StatusUnauthorized)
 		res.Error = "Error verifying JWT token: " + err.Error()
 		json.NewEncoder(w).Encode(&res)
@@ -64,6 +67,7 @@ func ValidateOTP(w http.ResponseWriter, req *http.Request) {
 
 	jwtToken2FA, err := verifyOTP(decodedToken, otpToken.Token)
 	if err != nil {
+		log.Println("Error verifying the OTP:", err)
 		w.WriteHeader(http.StatusUnauthorized)
 		res.Error = "Error verifying JWT token: " + err.Error()
 		json.NewEncoder(w).Encode(&res)
@@ -82,18 +86,21 @@ func RegisterOTP(w http.ResponseWriter, req *http.Request) {
 
 	err := json.NewDecoder(req.Body).Decode(&otpToken)
 	if err != nil {
+		log.Println("Error while decoding OtpToken:", err)
 		res.Error = err.Error()
 		json.NewEncoder(w).Encode(&res)
 		return
 	}
 	bearer, err := getBearer(w, req)
 	if err != nil {
+		log.Println("getBearer error:", err)
 		res.Error = err.Error()
 		json.NewEncoder(w).Encode(&res)
 		return
 	}
 	claims, err := crypto.VerifyJWTToken(bearer)
 	if err != nil {
+		log.Println("Error verifying the JWT Token:", err)
 		res.Error = err.Error()
 		json.NewEncoder(w).Encode(&res)
 		return
@@ -104,11 +111,13 @@ func RegisterOTP(w http.ResponseWriter, req *http.Request) {
 
 	user, err := api.CreateOTP(userID, otpToken.Token)
 	if err != nil {
+		log.Println(err)
 		res.Error = err.Error()
 		json.NewEncoder(w).Encode(&res)
 		return
 	}
 	if !user.TwoFactorEnabled {
+		log.Println("2FA wasn't saved properly")
 		res.Error = "2FA wasn't saved properly"
 		json.NewEncoder(w).Encode(&res)
 		return
@@ -125,6 +134,7 @@ func GenerateOTPSecret(w http.ResponseWriter, req *http.Request) {
 
 	res := api.Response{}
 	if err != nil {
+		log.Println(err)
 		res.Error = err.Error()
 		json.NewEncoder(w).Encode(&res)
 		return
@@ -200,6 +210,7 @@ func verifyOTP(decodedToken jwt.Claims, token string) (string, error) {
 
 	decodedTokenMap["2FAVerified"], err = otpc.Authenticate(token)
 	if err != nil {
+		log.Println("VerifyOTP failed authenticate:", err)
 		return "", err
 	}
 

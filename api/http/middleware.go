@@ -66,6 +66,7 @@ func (api *HTTPApi) authMiddleware(next http.Handler) http.Handler {
 		// - exist in database
 		// - has 2FA enabled
 		JWTdata := claims.(jwt.MapClaims)
+		fmt.Println("JWTdata['2FAVerified']:", JWTdata["2FAVerified"])
 		user, err := apipkg.GetUser(JWTdata["user_id"].(string))
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
@@ -78,7 +79,7 @@ func (api *HTTPApi) authMiddleware(next http.Handler) http.Handler {
 			log.Printf("User with 2FA: %+v\n", user.GetUser())
 			if !JWTdata["2FAVerified"].(bool) {
 				w.WriteHeader(http.StatusUnauthorized)
-				res.Error = "Error verifying 2FA: " + err.Error()
+				res.Error = "Error verifying 2FA"
 				json.NewEncoder(w).Encode(&res)
 				return
 			}

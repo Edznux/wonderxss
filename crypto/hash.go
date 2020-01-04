@@ -2,6 +2,7 @@ package crypto
 
 import (
 	"crypto/rand"
+	"crypto/sha1"
 	"crypto/sha256"
 	"crypto/sha512"
 	"encoding/base32"
@@ -41,12 +42,14 @@ func GenerateSRIHashes(data string) models.SRIHashes {
 
 //GenerateOTPSecret generates the 80-bit base32 encoded string user's secret
 func GenerateOTPSecret() (string, error) {
-	secretLen := 10
+	secretLen := 16
 	secret := make([]byte, secretLen)
 	_, err := rand.Read(secret)
 	if err != nil {
 		fmt.Println("error:", err)
 		return "", fmt.Errorf("Could not generate a new TOTP Secret")
 	}
-	return base32.StdEncoding.EncodeToString(secret), nil
+	hashed := sha1.Sum(secret)
+	// return string(hashed[:]), nil
+	return base32.StdEncoding.EncodeToString(hashed[:]), nil
 }
