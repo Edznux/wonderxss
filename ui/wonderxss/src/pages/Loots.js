@@ -1,6 +1,8 @@
 import React from 'react'
+import axios from 'axios';
 import { Container } from '@material-ui/core';
 import EnhancedTable from '../components/Table';
+import { API_COLLECTORS } from "../helpers/constants"
 
 
 export default class Loots extends React.Component {
@@ -13,15 +15,29 @@ export default class Loots extends React.Component {
 
         this.state = {
             payloads: [ 
-                {'id': 1, 'link': 'loot/1', 'date': date}
+                {'PayloadID': 1, 'link': 'loot/1', 'CreatedAt': date}
             ],
             headCells: [
-                { id: 'ID', field: "id", numeric: false, disablePadding: true, label: 'ID', ellipsis: true},
+                { id: 'ID', field: "PayloadID", numeric: false, disablePadding: true, label: 'ID', ellipsis: true},
                 { id: 'Link', field: "link", numeric: false, disablePadding: false, label: 'Link' },
-                { id: 'Date', field: "date", numeric: false, disablePadding: false, label: 'Date', ellipsis: true },
+                { id: 'Date', field: "CreatedAt", numeric: false, disablePadding: false, label: 'Date', ellipsis: true },
             ],
         }
     };
+
+    componentDidMount() {
+        axios.get(API_COLLECTORS).then(res => {
+            if (res.status !== 200) {
+                throw new Error("Couldn't load collectors")
+            } else {
+                return res.data
+            }
+        }).then((rows) => {
+            this.setState({
+                payloads: rows.data
+            })
+        });
+    }
 
     render() {
         return (
