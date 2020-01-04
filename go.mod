@@ -3,12 +3,10 @@ module github.com/edznux/wonderxss
 go 1.12
 
 require (
-	github.com/BurntSushi/toml v0.3.1
-	github.com/auth0/go-jwt-middleware v0.0.0-20190805220309-36081240882b
 	github.com/cskr/pubsub v1.0.2
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/dgryski/dgoogauth v0.0.0-20190221195224-5a805980a5f3
 	github.com/fsnotify/fsnotify v1.4.7
-	github.com/go-bindata/go-bindata v3.1.2+incompatible // indirect
 	github.com/google/uuid v1.1.1
 	github.com/gorilla/mux v1.7.3
 	github.com/gorilla/websocket v1.4.1
@@ -22,6 +20,5 @@ require (
 	golang.org/x/crypto v0.0.0-20191202143827-86a70503ff7e
 	golang.org/x/sys v0.0.0-20191204072324-ce4227a45e2e // indirect
 	golang.org/x/text v0.3.2 // indirect
-	gopkg.in/fsnotify.v1 v1.4.7
 	gopkg.in/yaml.v2 v2.2.7 // indirect
 )
