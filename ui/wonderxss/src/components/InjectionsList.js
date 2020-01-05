@@ -211,7 +211,7 @@ export default class InjectionsList extends React.Component {
         <Grid container spacing={3}>
           <Grid item xs={6}>
             <FormLabel>
-              Payload ID and/or alias:
+              <span class="input-text-label">Payload ID and/or alias:</span>
               <Select onChange={this.setCurrentAlias}>
                 {this.state.aliasesOrPayloadsIDs.map(aop => {
                   return (
@@ -225,7 +225,7 @@ export default class InjectionsList extends React.Component {
           </Grid>
           <Grid item xs={6}>
             <FormLabel>
-              SRI Type:
+              <span class="input-text-label">SRI Type:</span>
               <Select onChange={this.setCurrentSRI}>
                 {SRIKinds.map(sri => {
                   return <option value={sri}>{sri}</option>;
@@ -235,7 +235,7 @@ export default class InjectionsList extends React.Component {
           </Grid>
           <Grid item xs={6}>
             <FormLabel>
-              Use subdomain:
+              <span class="input-text-label">Use subdomain:</span>
               <Checkbox
                 value="useSubdomain"
                 inputProps={{ "aria-label": "Use Subdomain" }}
@@ -246,7 +246,7 @@ export default class InjectionsList extends React.Component {
           </Grid>
           <Grid item xs={6}>
             <FormLabel>
-              Use HTTPS:
+              <span class="input-text-label">Use HTTPS:</span>
               <Checkbox
                 value="useHTTPS"
                 inputProps={{ "aria-label": "Use HTTPS" }}
