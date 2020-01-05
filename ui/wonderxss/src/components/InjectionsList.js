@@ -1,9 +1,10 @@
 import React from 'react';
 import axios from 'axios';
 
-import { API_PAYLOADS, URL_PAYLOAD, API_INJECTIONS} from "../helpers/constants"
-import { Checkbox, Select, Container, FormLabel, Button, Input } from '@material-ui/core';
+import { API_PAYLOADS, URL_PAYLOAD, API_INJECTIONS} from "../helpers/constants";
+import { Checkbox, Select, Container, FormLabel, Button, Input, Grid, Dialog, DialogTitle, DialogActions, DialogContent, TextField } from '@material-ui/core';
 import EnhancedTable from './Table';
+import  "../styles/InjectionsList.css";
 
 const REPLACE_URL_TAG = "##URL##"
 const REPLACE_SRI_TAG = "##SRI_HASH##"
@@ -31,6 +32,7 @@ export default class InjectionsList extends React.Component {
                 // {"title": "No quote", "content": `<script src=##URL##></script>`},
                 // {"title": "With SRI", "content": `<script src="##URL##" integrity="##SRI_HASH##"></script>`},
             ],
+            openDialog: false,
         }
     };
     setCurrentAlias = (event) => {
@@ -133,7 +135,7 @@ export default class InjectionsList extends React.Component {
     }
     newInjection = (event) => {
         let injections = this.state.injections
-        injections.push({ "title": this.state.newTitle, "content": this.state.newContent })
+        injections.push({ "name": this.state.newTitle, "content": this.state.newContent })
         this.setState({"injections": injections})
         this.updateInjections()
         axios.post(API_INJECTIONS, {
@@ -143,60 +145,100 @@ export default class InjectionsList extends React.Component {
         .then(res => {
             console.log("OK, saved injection", res)
         });
+        this.handleClickOpenClose();
     }
+
+    handleClickOpenClose = () => {
+        this.setState({
+            openDialog: !this.state.openDialog
+        });
+    }
+
     render() {
         return (
             <Container>
-                <FormLabel>
-                    Payload ID and/or alias:
-                    <Select onChange={this.setCurrentAlias}>
-                        {
-                            this.state.aliasesOrPayloadsIDs.map((aop) => {
-                                return (
-                                    <option value={aop[0]}>{this.formatPayloadName(aop[0], aop[1])}</option>
-                                )
-                            })
-                        }
-                    </Select>
-                </FormLabel>
-                <br/>
-                <FormLabel>
-                    Use subdomain:
-                    <Checkbox
-                        value="useSubdomain"
-                        inputProps={{ 'aria-label': 'Use Subdomain' }}
-                        onChange={this.toggleSubdomain}
-                        color="default"
-                        />
-                </FormLabel>
-                <FormLabel>
-                    Use HTTPS:
-                    <Checkbox
-                        value="useHTTPS"
-                        inputProps={{ 'aria-label': 'Use HTTPS' }}
-                        onChange={this.toggleHTTPS}
-                        color="default"
-                        defaultChecked
-                        />
-                </FormLabel>
-                <FormLabel>
-                SRI Type:
-                    <Select onChange={this.setCurrentSRI}>
-                        {
-                            SRIKinds.map((sri) => {
-                                return (
-                                    <option value={sri}>{sri}</option>
-                                    )
-                                })
-                            }
-                    </Select>
-                </FormLabel>
-                
-                <EnhancedTable headCells={this.state.headCells} data={this.state.injections}  isDeleteButtonEnabled={true}></EnhancedTable>
-
-                <Input type="text" placeholder="Name" onChange={(event) => this.setState({ newTitle: event.target.value })}></Input>
-                <Input type="text" placeholder="Injection" onChange={(event) => this.setState({ newContent: event.target.value })}></Input>
-                <Button onClick={this.newInjection}>Create a new injection</Button>
+                <Grid container spacing={3}>
+                    <Grid item xs={6}>
+                        <FormLabel>
+                            Payload ID and/or alias:
+                            <Select onChange={this.setCurrentAlias}>
+                                {
+                                    this.state.aliasesOrPayloadsIDs.map((aop) => {
+                                        return (
+                                            <option value={aop[0]}>{this.formatPayloadName(aop[0], aop[1])}</option>
+                                        )
+                                    })
+                                }
+                            </Select>
+                        </FormLabel>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <FormLabel>
+                            SRI Type:
+                            <Select onChange={this.setCurrentSRI}>
+                                {
+                                    SRIKinds.map((sri) => {
+                                        return (
+                                            <option value={sri}>{sri}</option>
+                                            )
+                                        })
+                                    }
+                            </Select>
+                        </FormLabel>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <FormLabel>
+                            Use subdomain:
+                            <Checkbox
+                                value="useSubdomain"
+                                inputProps={{ 'aria-label': 'Use Subdomain' }}
+                                onChange={this.toggleSubdomain}
+                                color="default"
+                                />
+                        </FormLabel>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <FormLabel>
+                            Use HTTPS:
+                            <Checkbox
+                                value="useHTTPS"
+                                inputProps={{ 'aria-label': 'Use HTTPS' }}
+                                onChange={this.toggleHTTPS}
+                                color="default"
+                                defaultChecked
+                                />
+                        </FormLabel>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <EnhancedTable headCells={this.state.headCells} data={this.state.injections}  isDeleteButtonEnabled={true}></EnhancedTable>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Button className="submit-button" variant="outlined" color="primary" onClick={this.handleClickOpenClose}>
+                            Create new injection
+                        </Button>
+                        <Dialog open={this.state.openDialog} onClose={this.handleClickOpenClose} aria-labelledby="form-dialog-title">
+                            <DialogTitle id="form-dialog-title">New injection</DialogTitle>
+                            <DialogContent>
+                                <Grid container spacing={3}>
+                                    <Grid item xs={12}>
+                                        <Input type="text" placeholder="Name" className="input" onChange={(event) => this.setState({ newTitle: event.target.value })}></Input>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <TextField type="text" placeholder="Injection" className="input" onChange={(event) => this.setState({ newContent: event.target.value })} multiline/>
+                                    </Grid>
+                                </Grid>
+                            </DialogContent>
+                            <DialogActions>
+                            <Button onClick={this.handleClickOpenClose} color="primary">
+                                Cancel
+                            </Button>
+                            <Button onClick={this.newInjection} color="primary">
+                                Create
+                            </Button>
+                            </DialogActions>
+                        </Dialog>
+                    </Grid>
+                </Grid>
             </Container>
         );
     };

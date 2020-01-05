@@ -180,6 +180,7 @@ export default function EnhancedTable(props) {
     }
 
     const generateRow = (row, index) => {
+        console.log(row);
         const isItemSelected = isSelected("row-id-" + index);
         const labelId = `enhanced-table-checkbox-${index}`;
         let cells = []

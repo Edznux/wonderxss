@@ -1,0 +1,29 @@
+.MuiContainer-root .MuiFormLabel-root .MuiInput-root{
+    margin-left: 15px;
+}
+
+.MuiContainer-root .MuiFormLabel-root .MuiInput-root .MuiSelect-select{
+    width: 150px;
+}
+
+.MuiInput-root.input,
+.MuiTextField-root.input {
+    width: 100%;
+}
+
+.MuiContainer-root .submit-button {
+    margin: auto;
+    display: block;
+    border-color: #f50057
+}
+
+.MuiContainer-root .submit-button .MuiButton-label {
+    text-align: center;
+    color: #f50057;
+}
+
+.MuiContainer-root .MuiGrid-spacing-xs-12 .MuiGrid-item,
+.MuiContainer-root .MuiGrid-spacing-xs-6 .MuiGrid-item,
+.MuiContainer-root .MuiGrid-spacing-xs-3 .MuiGrid-item {
+    padding-bottom: 0;
+}
