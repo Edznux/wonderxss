@@ -12,15 +12,31 @@ code {
     monospace;
 }
 
+.navigation {
+  background-color: #52565c;
+  position: sticky;
+  top: 0;
+}
+
 #menu {
   margin: auto;
-  height: 40px;
+  height: 55px;
   width: 70%;
   display: flex;
   text-align: center;
 }
 
+#menu div {
+  margin: auto;
+  height: 55px;
+}
+
+#menu div:hover {
+  background-color: #282c34;
+}
+
 #menu a {
   color: #fff;
+  line-height: 55px;
   text-decoration: none;
 }

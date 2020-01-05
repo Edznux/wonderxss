@@ -36,27 +36,29 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
 
 const routing = (
 <Router>
-    <div id="menu">
-        <Box flexGrow={1}>
-            <Link to="/">Home</Link>
-        </Box>
-        <Box flexGrow={1}>
-            <Link to="/payloads">Payloads</Link>
-        </Box>
-        <Box flexGrow={1}>
-            <Link to="/editor">Payload Editor</Link>
-        </Box>
-        <Box flexGrow={1}>
-            <Link to="/aliases">Aliases</Link>
-        </Box>
-            <Box flexDirection="row-reverse" flexGrow={1}>
-            {
-                !isLoggedIn() && <Link to="/login">Login</Link>
-            }
-            {
-                isLoggedIn() && <Link to="/logout">Logout</Link>
-            }
-        </Box>
+    <div class="navigation">
+        <div id="menu">
+            <Box flexGrow={1}>
+                <Link to="/">Home</Link>
+            </Box>
+            <Box flexGrow={1}>
+                <Link to="/payloads">Payloads</Link>
+            </Box>
+            <Box flexGrow={1}>
+                <Link to="/editor">Payload Editor</Link>
+            </Box>
+            <Box flexGrow={1}>
+                <Link to="/aliases">Aliases</Link>
+            </Box>
+                <Box flexDirection="row-reverse" flexGrow={1}>
+                {
+                    !isLoggedIn() && <Link to="/login">Login</Link>
+                }
+                {
+                    isLoggedIn() && <Link to="/logout">Logout</Link>
+                }
+            </Box>
+        </div>
     </div>
     <Switch>
         <Route path="/login" component={Login} />
