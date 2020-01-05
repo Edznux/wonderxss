@@ -15,7 +15,8 @@ import (
 )
 
 type OtpToken struct {
-	Token string `json:"token"`
+	Token  string `json:"token,omitempty"`
+	Secret string `json:"secret,omitempty"`
 }
 
 func getBearer(w http.ResponseWriter, req *http.Request) (string, error) {
@@ -29,53 +30,6 @@ func getBearer(w http.ResponseWriter, req *http.Request) (string, error) {
 		return "", fmt.Errorf("Error verifying JWT token: Invalid token")
 	}
 	return bearer[1], nil
-}
-
-// ValidateOTP is handling the login attempt with 2FA.
-// It parses a new OTP Token (6 number digit) and validates it against one we generates
-func ValidateOTP(w http.ResponseWriter, req *http.Request) {
-	log.Printf("2FA Request")
-	otpToken := OtpToken{}
-	res := api.Response{}
-
-	// Get the OTP Token (6 digits)
-	err := json.NewDecoder(req.Body).Decode(&otpToken)
-	if err != nil {
-		log.Println("Error while decoding OtpToken:", err)
-		res.Error = err.Error()
-		json.NewEncoder(w).Encode(&res)
-		return
-	}
-	// Get the JWT token so we can extract the user id etc...
-	jwtToken, err := getBearer(w, req)
-	if err != nil {
-		log.Println("getBearer error:", err)
-		w.WriteHeader(http.StatusUnauthorized)
-		res.Error = err.Error()
-		json.NewEncoder(w).Encode(&res)
-		return
-	}
-	// Verify the JWT Token first, if it's not valid reject the request
-	decodedToken, err := crypto.VerifyJWTToken(jwtToken)
-	if err != nil {
-		log.Println("Error verifying the JWT Token:", err)
-		w.WriteHeader(http.StatusUnauthorized)
-		res.Error = "Error verifying JWT token: " + err.Error()
-		json.NewEncoder(w).Encode(&res)
-		return
-	}
-
-	jwtToken2FA, err := verifyOTP(decodedToken, otpToken.Token)
-	if err != nil {
-		log.Println("Error verifying the OTP:", err)
-		w.WriteHeader(http.StatusUnauthorized)
-		res.Error = "Error verifying JWT token: " + err.Error()
-		json.NewEncoder(w).Encode(&res)
-		return
-	}
-	// Get the validated new JWT Token and send it back
-	res.Data = jwtToken2FA
-	json.NewEncoder(w).Encode(&res)
 }
 
 // RegisterOTP recieve a new shared secret for TOTP and saves it for a given user
@@ -109,7 +63,7 @@ func RegisterOTP(w http.ResponseWriter, req *http.Request) {
 	decodedTokenMap := claims.(jwt.MapClaims)
 	userID := decodedTokenMap["user_id"].(string)
 
-	user, err := api.CreateOTP(userID, otpToken.Token)
+	user, err := api.CreateOTP(userID, otpToken.Secret)
 	if err != nil {
 		log.Println(err)
 		res.Error = err.Error()
@@ -117,12 +71,20 @@ func RegisterOTP(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	if !user.TwoFactorEnabled {
-		log.Println("2FA wasn't saved properly")
 		res.Error = "2FA wasn't saved properly"
+		log.Println(res.Error)
 		json.NewEncoder(w).Encode(&res)
 		return
 	}
-	res.Data = "OK"
+	// Verify the token with the secret
+	jwtTokenVerified, err := verifyOTP(user.TOTPSecret, otpToken.Token)
+	if err != nil {
+		log.Println("Could not verify the newly registered OTP:", err)
+		res.Error = err.Error()
+		json.NewEncoder(w).Encode(&res)
+		return
+	}
+	res.Data = jwtTokenVerified
 	json.NewEncoder(w).Encode(&res)
 }
 
@@ -139,27 +101,41 @@ func GenerateOTPSecret(w http.ResponseWriter, req *http.Request) {
 		json.NewEncoder(w).Encode(&res)
 		return
 	}
-	res.Data = OtpToken{Token: token}
+	res.Data = OtpToken{Secret: token}
 	json.NewEncoder(w).Encode(&res)
 }
 
 // Login is the http handler function for user login
 func Login(w http.ResponseWriter, req *http.Request) {
 	log.Printf("Login request")
+	var OTPOk bool
 
 	res := api.Response{}
 	loginParam := req.FormValue("login")
 	passwordParam := req.FormValue("password")
+
 	user, err := api.VerifyUserPassword(loginParam, passwordParam)
 	if err != nil {
 		res.Error = err.Error()
 		json.NewEncoder(w).Encode(&res)
 		return
 	}
-
+	if user.TwoFactorEnabled {
+		OTPToken := req.FormValue("token")
+		OTPOk, err = verifyOTP(user.TOTPSecret, OTPToken)
+		if err != nil {
+			res.Error = err.Error()
+			json.NewEncoder(w).Encode(&res)
+			return
+		}
+		if !OTPOk {
+			res.Error = "Invalid OTP"
+			json.NewEncoder(w).Encode(&res)
+			return
+		}
+	}
 	// Get a new JWT Token if the user is validated.
-	// The second parameter MUST be false since we didn't checked the 2FA yet.
-	token, err := crypto.GetJWTToken(user, false)
+	jwtToken, err := crypto.GetJWTToken(user)
 	if err != nil {
 		log.Println(err)
 		res.Error = "Error getting a new token"
@@ -167,7 +143,7 @@ func Login(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	res.Data = token
+	res.Data = jwtToken
 	json.NewEncoder(w).Encode(&res)
 }
 
@@ -182,24 +158,11 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&res)
 }
 
-// verifyOTP takes the bearerToken and the OTPToken.
-// It needs the bearer token to ensure the user id is valid and has the 2FA enabled.
-// With this valid bearer, it will also get the User and it's TOTPSecret stored in DB
-// It will returns a new JWTToken with the "2FAVerified" field set to true (if successful)
-func verifyOTP(decodedToken jwt.Claims, token string) (string, error) {
+// verifyOTP takes the user's OTP secret and the OTPToken. It will return true if it's valid.
+func verifyOTP(secret string, token string) (bool, error) {
 
-	decodedTokenMap := decodedToken.(jwt.MapClaims)
-
-	// Get the user first, so we can double check it has 2FA enabled, it exists etc...
-	userID := decodedTokenMap["user_id"].(string)
-	user, err := api.GetUser(userID)
-	if err != nil {
-		return "", err
-	}
-
-	secret := user.TOTPSecret
 	if len(secret) == 0 {
-		return "", fmt.Errorf("Empty TOTPSecret")
+		return false, fmt.Errorf("Empty TOTPSecret")
 	}
 
 	otpc := &dgoogauth.OTPConfig{
@@ -208,16 +171,15 @@ func verifyOTP(decodedToken jwt.Claims, token string) (string, error) {
 		HotpCounter: 0,
 	}
 
-	decodedTokenMap["2FAVerified"], err = otpc.Authenticate(token)
+	verified, err := otpc.Authenticate(token)
 	if err != nil {
 		log.Println("VerifyOTP failed authenticate:", err)
-		return "", err
+		return false, err
 	}
 
-	if decodedTokenMap["2FAVerified"] == false {
-		return "", fmt.Errorf("Invalid one-time password")
+	if !verified {
+		return false, fmt.Errorf("Invalid one-time password")
 	}
 
-	jwToken, _ := crypto.GetJWTToken(user, true)
-	return jwToken, nil
+	return true, nil
 }

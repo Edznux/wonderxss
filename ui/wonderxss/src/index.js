@@ -6,6 +6,7 @@ import { Route, Link, BrowserRouter as Router, Switch, Redirect} from 'react-rou
 import App from './pages/App';
 import Payloads from './pages/Payloads';
 import Login from './pages/Login';
+import ProfilePage from './pages/Profile';
 import Logout from './pages/Logout';
 import PayloadEditor from './pages/PayloadEditor';
 import NotFound from './pages/NotFound';
@@ -57,13 +58,18 @@ const routing = (
                 {
                     isLoggedIn() && <Link to="/logout">Logout</Link>
                 }
+                {
+                    isLoggedIn() && <Link to="/profile">Profile</Link>
+                }
             </Box>
         </div>
     </div>
     <Switch>
-        <Route path="/login" component={Login} />
+        <Route exact path="/login" component={Login} />
         <PrivateRoute exact path="/" component={App} />
         <PrivateRoute path="/payloads" component={Payloads} />
+        <PrivateRoute path="/profile/:subpage" component={ProfilePage} />
+        <PrivateRoute path="/profile" component={ProfilePage} />
         <PrivateRoute path="/editor" component={PayloadEditor} />
         <PrivateRoute path="/aliases" component={Aliases} />
         <PrivateRoute path="/logout" component={Logout} />

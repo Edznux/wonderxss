@@ -48,7 +48,6 @@ func entrypoint() {
 	router.HandleFunc("/logout", webserver.Logout)
 	router.HandleFunc("/otp/new", webserver.GenerateOTPSecret).Methods("GET")
 	router.HandleFunc("/otp/new", webserver.RegisterOTP).Methods("POST")
-	router.HandleFunc("/otp", webserver.ValidateOTP).Methods("POST")
 
 	router.PathPrefix("/").HandlerFunc(ui.HandleIndex)
 

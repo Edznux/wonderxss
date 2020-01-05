@@ -10,6 +10,32 @@ export function setAuthToken (JWTToken){
         delete axios.defaults.headers.common['Authorization'];
     }
 };
+export function decodeJWT(){
+    let jwt = localStorage.getItem("jwt")
+    let splitted = jwt.split(".")
+    let data, decoded;
+
+    if (splitted.length !== 3){
+        return false
+    }
+    data = splitted[1]
+    
+    try {
+        decoded = JSON.parse(atob(data))
+    } catch(e){
+        console.log(e)
+        // If the json parse is crashing, expire the token.
+        return false
+    }
+    return decoded
+}
+
+export function getLoginFromJWT(){
+    return decodeJWT()["user_name"]
+}
+export function getUserIDFromJWT(){
+    return decodeJWT()["user_id"]
+}
 
 export function isLoggedIn(){
     let jwt = localStorage.getItem("jwt")
@@ -26,9 +52,9 @@ export function isTokenExpired(JWTToken){
     if (JWTToken === null){
         return true
     }
-    data = JWTToken.split(".")[1]
-
+    
     try {
+        data = JWTToken.split(".")[1]
         decoded = JSON.parse(atob(data))
     } catch(e){
         console.log(e)

@@ -17,7 +17,8 @@ func (httpapi *HTTPApi) Routes(router *mux.Router) {
 
 	// HealthZ endpoint.
 	router.HandleFunc("/healthz", httpapi.healthz)
-
+	// User crud
+	router.HandleFunc("/users/{id}", httpapi.getUser).Methods("GET")
 	// Payload CRUD
 	router.HandleFunc("/payloads", httpapi.createPayload).Methods("POST")
 	router.HandleFunc("/payloads", httpapi.getPayloads).Methods("GET")

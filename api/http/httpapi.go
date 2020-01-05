@@ -125,6 +125,18 @@ func (httpapi *HTTPApi) createAlias(w http.ResponseWriter, req *http.Request) {
 	sendResponse(api.Success, returnedAlias, w)
 }
 
+func (httpapi *HTTPApi) getUser(w http.ResponseWriter, req *http.Request) {
+	fmt.Println("httpapi.getUser")
+	vars := mux.Vars(req)
+	user, err := api.GetUser((vars["id"]))
+	if err != nil {
+		log.Println(err)
+		sendResponse(api.DatabaseError, nil, w)
+		return
+	}
+
+	sendResponse(api.Success, user, w)
+}
 func (httpapi *HTTPApi) getPayloads(w http.ResponseWriter, req *http.Request) {
 	fmt.Println("httpapi.getPayloads")
 	payloads, err := api.GetPayloads()
