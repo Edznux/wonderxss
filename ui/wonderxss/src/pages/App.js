@@ -1,8 +1,8 @@
-import React from 'react';
-import './App.css';
-import InjectionsList from '../components/InjectionsList';
-import Alert from '../components/Alert';
-import { Container } from '@material-ui/core';
+import React from "react";
+import "./App.css";
+import InjectionsList from "../components/InjectionsList";
+import Alert from "../components/Alert";
+import { Container } from "@material-ui/core";
 
 function App() {
   return (
