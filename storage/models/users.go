@@ -7,14 +7,10 @@ import (
 //User complement the SafeUser model with its password
 type User struct {
 	// Extent the SafeUser model
-	SafeUser
 	// This should never be returned to other parts of the application
-	Password string
+	Password string `json:"-"` // remove secret from HTTP Response
 	// TOTPSecret represent the shared secret for TOTP
-	TOTPSecret string
-}
-
-type SafeUser struct {
+	TOTPSecret string `json:"-"` // remove secret from HTTP Response
 	// ID should be a string: uuid. Non sequential
 	ID string `json:"id"`
 	// The username is the login of the user.
@@ -24,16 +20,4 @@ type SafeUser struct {
 	TwoFactorEnabled bool      `json:"two_factor_enabled"`
 	CreatedAt        time.Time `json:"created_at"`
 	ModifiedAt       time.Time `json:"modified_at"`
-}
-
-//GetUser returns a user model safe to return to the frontend
-func (u *User) GetUser() SafeUser {
-	su := SafeUser{}
-
-	su.Username = u.Username
-	su.TwoFactorEnabled = u.TwoFactorEnabled
-	su.CreatedAt = u.CreatedAt
-	su.ModifiedAt = u.ModifiedAt
-
-	return su
 }
