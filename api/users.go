@@ -48,12 +48,12 @@ func GetUser(id string) (models.User, error) {
 	return user, nil
 }
 
-func CreateOTP(userID string, token string) (models.User, error) {
+func CreateOTP(userID string, secret string) (models.User, error) {
 	user, err := store.GetUser(userID)
 	if err != nil {
 		return user, err
 	}
-	user, err = store.CreateOTP(user, token)
+	user, err = store.CreateOTP(user, secret)
 	if err != nil {
 		return user, err
 	}

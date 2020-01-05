@@ -4,7 +4,7 @@ import TextField from '@material-ui/core/TextField';
 import { Container, InputLabel } from '@material-ui/core';
 
 
-import { setAuthToken } from "../helpers/auth";
+import { setAuthToken, is2FAEnabled } from "../helpers/auth";
 import './Login.css';
 
 class Login extends React.Component {
@@ -14,6 +14,7 @@ class Login extends React.Component {
         this.state = {
             login: "",
             password: "",
+            token: "",
             error: false
         }
     };
@@ -25,7 +26,7 @@ class Login extends React.Component {
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
             },
-            data: "login=" + this.state.login + "&password=" + this.state.password,
+            data: "login=" + this.state.login + "&password=" + this.state.password + "&token=" + this.state.token ,
         })
             .then(res => {
                 let data = res.data
@@ -45,8 +46,6 @@ class Login extends React.Component {
             <Container>
                 <div id="error" hidden={!this.state.error}>Bad credentials</div>
                 <div id="login-form">
-                    {/* <FormGroup onSubmit={(event) => this.handleSubmit(event)}> */}
-
                     <form className="login-flex-container" onSubmit={(event) => this.handleSubmit(event)}>
                         <InputLabel className="login-field">
                             <span className="login-text">Username:</span>
@@ -69,8 +68,17 @@ class Login extends React.Component {
                                 onChange={(event) => this.setState({ password: event.target.value })}
                             />
                         </InputLabel>
+                        {
+                            is2FAEnabled() && <TextField
+                                className="login-field"
+                                type="text"
+                                hintText="Enter your OTP Token"
+                                floatingLabelText="OTP Token"
+                                classes="login-field"
+                                onChange={(event) => this.setState({ token: event.target.value })}
+                            />
+                        }
                         <input type="submit" value="Submit" className="login-field" />
-                        {/* </FormGroup> */}
                     </form>
                 </div>
             </Container>

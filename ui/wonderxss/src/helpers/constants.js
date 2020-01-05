@@ -3,6 +3,8 @@
 export const URL = "//" + window.location.hostname
 export const URL_LOGIN = URL + "/login"
 export const URL_PAYLOAD = URL + "/p/"
+export const URL_OTP_REGISTER = URL + "/otp/new"
+export const URL_OTP = URL + "/otp"
 
 export const API_BASE = URL + "/api/v1"
 export const API_PAYLOADS = API_BASE + "/payloads"

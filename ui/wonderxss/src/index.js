@@ -6,6 +6,7 @@ import { Route, Link, BrowserRouter as Router, Switch, Redirect} from 'react-rou
 import App from './pages/App';
 import Payloads from './pages/Payloads';
 import Login from './pages/Login';
+import OTPPage from './pages/OTP';
 import Logout from './pages/Logout';
 import PayloadEditor from './pages/PayloadEditor';
 import NotFound from './pages/NotFound';
@@ -59,9 +60,10 @@ const routing = (
         </Box>
     </div>
     <Switch>
-        <Route path="/login" component={Login} />
+        <Route exact path="/login" component={Login} />
         <PrivateRoute exact path="/" component={App} />
         <PrivateRoute path="/payloads" component={Payloads} />
+        <PrivateRoute path="/login/otp" component={OTPPage} />
         <PrivateRoute path="/editor" component={PayloadEditor} />
         <PrivateRoute path="/aliases" component={Aliases} />
         <PrivateRoute path="/logout" component={Logout} />
