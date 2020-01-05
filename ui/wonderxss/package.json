@@ -18,6 +18,7 @@
     "start": "HOST=localhost react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "prettier": "prettier --trailing-comma es5 --write \"./src/**/*.js\"",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
