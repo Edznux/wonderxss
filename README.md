@@ -1,12 +1,15 @@
 # wonderxss
 
 Blind-XSS tool.
+
+
 **Work in progress**
 
 Features:
 - [x] 0 runtime dependencies
 - [ ] Realtime (websocket)
 - [ ] Authentication
+  - [x] 2FA (Google Authenticator, Authy...)
   - [x] JWT
   - [ ] Oauth2
 - [x] Extensible
