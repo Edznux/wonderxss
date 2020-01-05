@@ -7,6 +7,7 @@ export const URL_OTP_REGISTER = URL + "/otp/new"
 export const URL_OTP = URL + "/otp"
 
 export const API_BASE = URL + "/api/v1"
+export const API_USER = API_BASE + "/users"
 export const API_PAYLOADS = API_BASE + "/payloads"
 export const API_INJECTIONS = API_BASE + "/injections"
 export const API_ALIASES = API_BASE + "/aliases"

@@ -33,6 +33,9 @@ export function decodeJWT(){
 export function getLoginFromJWT(){
     return decodeJWT()["user_name"]
 }
+export function getUserIDFromJWT(){
+    return decodeJWT()["user_id"]
+}
 
 export function isLoggedIn(){
     let jwt = localStorage.getItem("jwt")
