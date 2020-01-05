@@ -7,7 +7,7 @@ Features:
 - [x] 0 runtime dependencies
 - [ ] Realtime (websocket)
 - [ ] Authentication
-  - [ ] JWT
+  - [x] JWT
   - [ ] Oauth2
 - [x] Extensible
 - [ ] Notification services
@@ -23,8 +23,8 @@ Features:
   - [ ] Github release (binary)
 
 Roadmap:
-- [] DNS Listenner
-- [] Authorization
+- [ ] DNS Listenner
+- [ ] Authorization
 
 ## How to
 
@@ -76,33 +76,27 @@ Prefix: `/api/v1/`
 Routes:
 
 ```bash
-GET  /api/v1/healthz
+/healthz              [GET]
+/users/{id}           [GET]
 
-GET  /api/v1/payloads
-GET  /api/v1/payloads/{id}
-POST /api/v1/payloads
+/payloads             [POST,GET]
+/payloads/{id}        [GET,PUT,DELETE] 
 
-GET  /api/v1/aliases
-GET  /api/v1/aliases/{id}
-POST /api/v1/aliases
+/aliases              [POST, GET]
+/aliases/{id}         [DELETE]
+/aliases/{alias}      [GET]
+/aliases/id/{id}      [GET]
+/aliases/payload/{id} [GET]
 
-GET  /api/v1/collectors
-```
+/executions           [GET]
+/executions/{id}      [DELETE]
 
-Examples:
+/collectors           [GET,POST]
+/collectors/{id}      [DELETE]
 
-```bash
-export DOMAIN=example.com
-# Create a new payload
-curl -X POST $DOMAIN/api/v1/payloads --data '{"name":"Test 1", "content":"alert(1)"}'
-# Create a new alias for a paylaod
-curl -X POST $DOMAIN/api/v1/aliases --data '{"alias":"a", "payload_id":"b4221cb8-5ff8-4677-8a16-f567edd9d58d"}'
-# Get all payloads
-curl $DOMAIN/api/v1/payloads
-# Get all aliases
-curl $DOMAIN/api/v1/aliases
-# Get all loots
-curl $DOMAIN/api/v1/collectors
+/injections           [GET,POST]
+/injections/{name}    [GET]
+/injections/{id}      [DELETE]
 ```
 
 
