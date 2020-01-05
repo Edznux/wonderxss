@@ -4,7 +4,7 @@ import TextField from '@material-ui/core/TextField';
 import { Container, InputLabel } from '@material-ui/core';
 
 
-import { setAuthToken, is2FAEnabled } from "../helpers/auth";
+import { setAuthToken } from "../helpers/auth";
 import './Login.css';
 
 class Login extends React.Component {
@@ -68,16 +68,16 @@ class Login extends React.Component {
                                 onChange={(event) => this.setState({ password: event.target.value })}
                             />
                         </InputLabel>
-                        {
-                            is2FAEnabled() && <TextField
-                                className="login-field"
-                                type="text"
-                                hintText="Enter your OTP Token"
-                                floatingLabelText="OTP Token"
-                                classes="login-field"
-                                onChange={(event) => this.setState({ token: event.target.value })}
-                            />
-                        }
+                        {/* TODO: create this fied on a 2nd step ? after the first login request failed on 2FA Required ? */}
+                        2FA (if enabled) : 
+                        <TextField
+                            className="login-field"
+                            type="text"
+                            hintText="Enter your OTP Token"
+                            floatingLabelText="OTP Token"
+                            classes="login-field"
+                            onChange={(event) => this.setState({ token: event.target.value })}
+                        />
                         <input type="submit" value="Submit" className="login-field" />
                     </form>
                 </div>

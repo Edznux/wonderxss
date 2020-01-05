@@ -12,11 +12,10 @@ import (
 func GetJWTToken(user models.User) (string, error) {
 	signingKey := []byte(config.Current.JWTToken)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user_id":    user.ID,               // Unique
-		"user_name":  user.Username,         // This help for UI, I don't want to make http req to get the username...
-		"role":       "admin",               // Maybe we will add authz later on.
-		"2FAEnabled": user.TwoFactorEnabled, // This allow us to present the OTP Field in the login page if required only
-		"exp":        time.Now().Add(time.Hour * 24).Unix(),
+		"user_id":   user.ID,       // Unique
+		"user_name": user.Username, // This help for UI, I don't want to make http req to get the username...
+		"role":      "admin",       // Maybe we will add authz later on.
+		"exp":       time.Now().Add(time.Hour * 24).Unix(),
 	})
 
 	tokenString, err := token.SignedString(signingKey)

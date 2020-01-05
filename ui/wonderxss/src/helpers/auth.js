@@ -34,13 +34,6 @@ export function getLoginFromJWT(){
     return decodeJWT()["user_name"]
 }
 
-export function is2FAVerified(){
-    return decodeJWT()["2FAVerified"]
-}
-export function is2FAEnabled(){
-    return decodeJWT()["2FAEnabled"]
-}
-
 export function isLoggedIn(){
     let jwt = localStorage.getItem("jwt")
     if (isTokenExpired(jwt)) {
