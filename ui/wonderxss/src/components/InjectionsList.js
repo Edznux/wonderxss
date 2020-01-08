@@ -25,7 +25,10 @@ import "../styles/InjectionsList.css";
 
 const REPLACE_URL_TAG = "##URL##";
 const REPLACE_SRI_TAG = "##SRI_HASH##";
+const REPLACE_CROSSORIGIN = "##CROSSORIGIN##";
+
 const SRIKinds = ["sha256", "sha384", "sha512"];
+const CROSSORIGIN = ["anonymous", "use-credentials"];
 
 export default class InjectionsList extends React.Component {
   constructor(props) {
@@ -72,11 +75,8 @@ export default class InjectionsList extends React.Component {
       useSubdomain: false,
       useHTTPS: true,
       SRIKind: SRIKinds[0],
-      injections: [
-        // {"title": "basic", "content": `"><script src="##URL##"></script>`},
-        // {"title": "No quote", "content": `<script src=##URL##></script>`},
-        // {"title": "With SRI", "content": `<script src="##URL##" integrity="##SRI_HASH##"></script>`},
-      ],
+      injections: [],
+      crossorigin: "",
       openDialog: false,
     };
   }
@@ -93,9 +93,19 @@ export default class InjectionsList extends React.Component {
     let found = SRIKinds.indexOf(s);
     if (found > -1) {
       this.setState({ SRIKind: SRIKinds[found] });
-      return;
+    }else {
+      this.setState({ SRIKind: SRIKinds[0] });
     }
-    this.setState({ SRIKind: SRIKinds[0] });
+    this.updateInjections();
+  };
+  setCurrentCrossOrigin = event => {
+    let selected = event.target.value;
+    let found = CROSSORIGIN.indexOf(selected);
+    if (found > -1) {
+      this.setState({ crossorigin: CROSSORIGIN[found] });
+    }else {
+      this.setState({ crossorigin: CROSSORIGIN[0] });
+    }
     this.updateInjections();
   };
   toggleSubdomain = event => {
@@ -171,6 +181,7 @@ export default class InjectionsList extends React.Component {
     }
     res = injection.replace(REPLACE_URL_TAG, url);
     res = res.replace(REPLACE_SRI_TAG, this.state.SRIKind);
+    res = res.replace(REPLACE_CROSSORIGIN, this.state.crossorigin);
     console.log("res:", res);
     return res;
   };
@@ -235,6 +246,16 @@ export default class InjectionsList extends React.Component {
           </Grid>
           <Grid item xs={6}>
             <FormLabel>
+              <span class="input-text-label">Crossorigin:</span>
+              <Select onChange={this.setCurrentCrossOrigin}>
+                {CROSSORIGIN.map(crossorigin => {
+                  return <option value={crossorigin}>{crossorigin}</option>;
+                })}
+              </Select>
+            </FormLabel>
+          </Grid>
+          <Grid item xs={6}>
+            <FormLabel>
               <span class="input-text-label">Use subdomain:</span>
               <Checkbox
                 value="useSubdomain"
@@ -278,7 +299,9 @@ export default class InjectionsList extends React.Component {
               aria-labelledby="form-dialog-title"
             >
               <DialogTitle id="form-dialog-title">New injection</DialogTitle>
+
               <DialogContent>
+              <small>Replacement list: {REPLACE_CROSSORIGIN}, {REPLACE_URL_TAG}, {REPLACE_SRI_TAG}</small>
                 <Grid container spacing={3}>
                   <Grid item xs={12}>
                     <Input
