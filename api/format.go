@@ -51,18 +51,20 @@ type Response struct {
 // Payload represent the structure of the frontend-facing payload. Not the stored one.
 // It offers an `fromStorage` function to convert itself from the storage payload.
 type Payload struct {
-	ID         string           `json:"id"`
-	Name       string           `json:"name"`
-	Content    string           `json:"content"`
-	Hashes     models.SRIHashes `json:"hashes"` // Used for SRI (sub ressource integrity)
-	CreatedAt  time.Time        `json:"created_at"`
-	ModifiedAt time.Time        `json:"modified_at"`
+	ID          string           `json:"id"`
+	Name        string           `json:"name"`
+	Content     string           `json:"content"`
+	ContentType string           `json:"content_type"`
+	Hashes      models.SRIHashes `json:"hashes"` // Used for SRI (sub ressource integrity)
+	CreatedAt   time.Time        `json:"created_at"`
+	ModifiedAt  time.Time        `json:"modified_at"`
 }
 
 func (p Payload) fromStorage(s models.Payload) Payload {
 	p.ID = s.ID
 	p.Name = s.Name
 	p.Content = s.Content
+	p.ContentType = s.ContentType
 	p.Hashes = s.Hashes
 	p.CreatedAt = s.CreatedAt
 	p.ModifiedAt = s.ModifiedAt

@@ -85,7 +85,7 @@ func (s *Sqlite) Setup() error {
 
 //Create
 func (s *Sqlite) CreatePayload(payload models.Payload) (models.Payload, error) {
-	_, err := s.db.Exec(INSERT_PAYLOAD, payload.ID, payload.Name, payload.Hashes.String(), payload.Content)
+	_, err := s.db.Exec(INSERT_PAYLOAD, payload.ID, payload.Name, payload.Hashes.String(), payload.Content, payload.ContentType)
 	if err != nil {
 		log.Println(err)
 		return models.Payload{}, err
@@ -186,12 +186,16 @@ func (s *Sqlite) GetPayloads() ([]models.Payload, error) {
 
 	var tmpRes models.Payload
 	var hashes string
+	var contentType sql.NullString
 
 	for rows.Next() {
-		rows.Scan(&tmpRes.ID, &tmpRes.Name, &hashes, &tmpRes.Content, &tmpRes.CreatedAt, &tmpRes.ModifiedAt)
+		rows.Scan(&tmpRes.ID, &tmpRes.Name, &hashes, &tmpRes.Content, &contentType, &tmpRes.CreatedAt, &tmpRes.ModifiedAt)
 		err := json.Unmarshal([]byte(hashes), &tmpRes.Hashes)
 		if err != nil {
 			log.Println(err)
+		}
+		if contentType.Valid {
+			tmpRes.ContentType = contentType.String
 		}
 		res = append(res, tmpRes)
 	}
@@ -215,7 +219,8 @@ func (s *Sqlite) GetPayload(id string) (models.Payload, error) {
 
 	var res models.Payload
 	var hashes string
-	err := row.Scan(&res.ID, &res.Name, &hashes, &res.Content, &res.CreatedAt, &res.ModifiedAt)
+	var contentType sql.NullString
+	err := row.Scan(&res.ID, &res.Name, &hashes, &res.Content, &contentType, &res.CreatedAt, &res.ModifiedAt)
 	if err == sql.ErrNoRows {
 		return models.Payload{}, models.NoSuchItem
 	}
@@ -223,6 +228,10 @@ func (s *Sqlite) GetPayload(id string) (models.Payload, error) {
 	if err != nil {
 		log.Println(err)
 		return models.Payload{}, err
+	}
+
+	if contentType.Valid {
+		res.ContentType = contentType.String
 	}
 
 	err = json.Unmarshal([]byte(hashes), &res.Hashes)
@@ -239,7 +248,8 @@ func (s *Sqlite) GetPayloadByAlias(short string) (models.Payload, error) {
 
 	var res models.Payload
 	var hashes string
-	err := row.Scan(&res.ID, &res.Name, &hashes, &res.Content, &res.CreatedAt, &res.ModifiedAt)
+	var contentType sql.NullString
+	err := row.Scan(&res.ID, &res.Name, &hashes, &res.Content, &contentType, &res.CreatedAt, &res.ModifiedAt)
 	if err == sql.ErrNoRows {
 		return models.Payload{}, models.NoSuchItem
 	}
@@ -248,6 +258,10 @@ func (s *Sqlite) GetPayloadByAlias(short string) (models.Payload, error) {
 		log.Println(err)
 		return models.Payload{}, err
 	}
+	if contentType.Valid {
+		res.ContentType = contentType.String
+	}
+
 	err = json.Unmarshal([]byte(hashes), &res.Hashes)
 	if err != nil {
 		log.Println(err)

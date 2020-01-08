@@ -38,7 +38,7 @@ var createPayloadCmd = &cobra.Command{
 			fmt.Print(err)
 		}
 
-		p, err := api.AddPayload(name, string(content))
+		p, err := api.AddPayload(name, string(content), "application/javascript")
 		if err != nil {
 			log.Fatal("Could not create payload ", err)
 		}

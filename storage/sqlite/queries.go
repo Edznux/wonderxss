@@ -40,6 +40,7 @@ CREATE TABLE payloads (
 	name        TEXT NOT NULL unique,
 	hash        TEXT NOT NULL,
 	content     TEXT NOT NULL,
+	content_type TEXT,
 	created_at  DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	modified_at DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
@@ -82,14 +83,14 @@ WHERE id = ?;
 `
 
 var SELECT_PAYLOAD_BY_ALIAS = `
-SELECT payloads.id, payloads.name, payloads.hash, payloads.content, payloads.created_at, payloads.modified_at
+SELECT payloads.id, payloads.name, payloads.hash, payloads.content, payloads.content_type, payloads.created_at, payloads.modified_at
 FROM aliases, payloads
 WHERE alias = ?
 AND payloads.id = aliases.payload_id;
 `
 
 var SELECT_ALL_PAYLOADS = `
-SELECT *
+SELECT payloads.id, payloads.name, payloads.hash, payloads.content, payloads.content_type, payloads.created_at, payloads.modified_at
 FROM payloads;
 `
 
@@ -110,13 +111,13 @@ FROM aliases;
 `
 
 var SELECT_PAYLOAD_BY_ID = `
-SELECT id, name, hash, content, created_at, modified_at
+SELECT id, name, hash, content, content_type, created_at, modified_at
 FROM payloads
 WHERE id = ?;
 `
 
 var SELECT_PAYLOAD_BY_NAME = `
-SELECT id, name, hash, content, created_at, modified_at
+SELECT id, name, hash, content, content_type, created_at, modified_at
 FROM payloads
 WHERE name = ?;
 `
@@ -159,7 +160,7 @@ FROM injections;
 `
 
 // INSERT
-var INSERT_PAYLOAD = `INSERT INTO payloads (id, name, hash, content) VALUES (?, ?, ?, ?);`
+var INSERT_PAYLOAD = `INSERT INTO payloads (id, name, hash, content, content_type) VALUES (?, ?, ?, ?, ?);`
 var INSERT_USER = `INSERT INTO users (id, username, password) VALUES (?, ?, ?);`
 var INSERT_ALIAS = `INSERT INTO aliases (id, payload_id, alias) VALUES (?, ?, ?);`
 var INSERT_EXECUTION = `INSERT INTO executions (id, payload_id, alias_id) VALUES (?, ?, ?);`

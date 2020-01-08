@@ -33,7 +33,7 @@ func sendResponse(status api.APIError, data interface{}, w http.ResponseWriter) 
 }
 
 func (httpapi *HTTPApi) createInjection(w http.ResponseWriter, req *http.Request) {
-	var data models.Injection
+	var data api.Injection
 
 	err := json.NewDecoder(req.Body).Decode(&data)
 	if err != nil {
@@ -52,7 +52,7 @@ func (httpapi *HTTPApi) createInjection(w http.ResponseWriter, req *http.Request
 	sendResponse(api.Success, returnedInjection, w)
 }
 func (httpapi *HTTPApi) createPayload(w http.ResponseWriter, req *http.Request) {
-	var data models.Payload
+	var data api.Payload
 
 	err := json.NewDecoder(req.Body).Decode(&data)
 	if err != nil {
@@ -61,7 +61,7 @@ func (httpapi *HTTPApi) createPayload(w http.ResponseWriter, req *http.Request) 
 		return
 	}
 
-	returnedPayload, err := api.AddPayload(data.Name, data.Content)
+	returnedPayload, err := api.AddPayload(data.Name, data.Content, data.ContentType)
 	if err != nil {
 		log.Println(err)
 		sendResponse(api.DatabaseError, nil, w)
@@ -73,7 +73,7 @@ func (httpapi *HTTPApi) createPayload(w http.ResponseWriter, req *http.Request) 
 
 func (httpapi *HTTPApi) createCollectors(w http.ResponseWriter, req *http.Request) {
 
-	var data models.Collector
+	var data api.Collector
 
 	err := json.NewDecoder(req.Body).Decode(&data)
 	if err != nil {

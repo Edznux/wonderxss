@@ -14,6 +14,7 @@ class PayloadEditor extends React.Component {
       currentAlias: "",
       currentPayload: "",
       currentPayloadName: "",
+      currentContentType:"",
     };
   }
   createAlias = (payload_id, alias) => {
@@ -41,6 +42,7 @@ class PayloadEditor extends React.Component {
       .post(API_PAYLOADS, {
         name: this.state.currentPayloadName,
         content: this.state.currentPayload,
+        content_type: this.state.currentContentType
       })
       .then(res => {
         let payload_id = "";
@@ -80,6 +82,13 @@ class PayloadEditor extends React.Component {
           placeholder="short-alias"
           onChange={event => {
             this.setState({ currentAlias: event.target.value });
+          }}
+        ></Input>
+        <Input
+          type="text"
+          placeholder="Content Type"
+          onChange={event => {
+            this.setState({ currentContentType: event.target.value });
           }}
         ></Input>
 

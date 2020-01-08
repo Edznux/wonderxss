@@ -60,14 +60,15 @@ func GetPayload(id string) (Payload, error) {
 }
 
 //AddPayload is the API to add a new payload
-func AddPayload(name string, content string) (models.Payload, error) {
-	fmt.Printf("AddPayload(\"%s\", \"%s\")\n", name, content)
+func AddPayload(name string, content string, contentType string) (models.Payload, error) {
+	fmt.Printf("AddPayload(\"%s\", \"%s\", \"%s\")\n", name, content, contentType)
 	hashes := crypto.GenerateSRIHashes(content)
 	p := models.Payload{
-		ID:      uuid.New().String(),
-		Name:    name,
-		Hashes:  hashes,
-		Content: content,
+		ID:          uuid.New().String(),
+		Name:        name,
+		Hashes:      hashes,
+		Content:     content,
+		ContentType: contentType,
 	}
 	fmt.Println(p)
 	returnedPayload, err := store.CreatePayload(p)

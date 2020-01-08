@@ -35,6 +35,14 @@ class Payloads extends React.Component {
           ellipsis: true,
         },
         {
+          id: "ContentType",
+          field: "content_type",
+          numeric: false,
+          disablePadding: false,
+          label: "Content Type",
+          ellipsis: true,
+        },
+        {
           id: "Hashes",
           field: "hashes",
           numeric: false,
