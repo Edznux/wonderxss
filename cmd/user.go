@@ -21,7 +21,7 @@ var userCmd = &cobra.Command{
 }
 
 // createCmd represents the create command
-var createCmd = &cobra.Command{
+var createUserCmd = &cobra.Command{
 	Use:   "create [username]",
 	Short: "Create a new user",
 	Long:  `Create a new user by providing a username and filling out informations`,
@@ -54,5 +54,5 @@ var createCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(userCmd)
-	userCmd.AddCommand(createCmd)
+	userCmd.AddCommand(createUserCmd)
 }

@@ -2,10 +2,10 @@
 
 Blind-XSS tool.
 
-
 **Work in progress**
 
 Features:
+
 - [x] 0 runtime dependencies
 - [ ] Realtime (websocket)
 - [ ] Authentication
@@ -13,6 +13,12 @@ Features:
   - [x] JWT
   - [ ] Oauth2
 - [x] Extensible
+  - [x] Event system
+  - [x] REST API
+  - [x] Internal API
+  - [ ] Interfaces
+    - [x] CLI
+    - [x] Web UI
 - [ ] Notification services
   - [x] Slack
   - [x] Discord
@@ -26,6 +32,7 @@ Features:
   - [ ] Github release (binary)
 
 Roadmap:
+
 - [ ] DNS Listenner
 - [ ] Authorization
 
@@ -60,6 +67,7 @@ sudo setcap 'cap_net_bind_service=+ep' ./wonderxss
 ### Frontend
 
 The frontend UI is really WIP. You will need to run the following commands to get it running:
+
 ```
 cd ui/wonderxss/
 npm install
@@ -83,7 +91,7 @@ Routes:
 /users/{id}           [GET]
 
 /payloads             [POST,GET]
-/payloads/{id}        [GET,PUT,DELETE] 
+/payloads/{id}        [GET,PUT,DELETE]
 
 /aliases              [POST, GET]
 /aliases/{id}         [DELETE]
@@ -101,7 +109,6 @@ Routes:
 /injections/{name}    [GET]
 /injections/{id}      [DELETE]
 ```
-
 
 ## Configuration
 
