@@ -15,7 +15,7 @@ import (
 	"github.com/edznux/wonderxss/webserver"
 	"github.com/gorilla/mux"
 
-	httpApi "github.com/edznux/wonderxss/api/http"
+	httpApi "github.com/edznux/wonderxss/api/http/server"
 )
 
 func gracefulShutdown() {
