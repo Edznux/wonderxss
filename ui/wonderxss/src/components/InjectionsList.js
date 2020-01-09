@@ -5,6 +5,7 @@ import {
   API_PAYLOADS,
   URL_PAYLOAD,
   API_INJECTIONS,
+  API_ALIASES,
 } from "../helpers/constants";
 import {
   Checkbox,
@@ -93,7 +94,7 @@ export default class InjectionsList extends React.Component {
     let found = SRIKinds.indexOf(s);
     if (found > -1) {
       this.setState({ SRIKind: SRIKinds[found] });
-    }else {
+    } else {
       this.setState({ SRIKind: SRIKinds[0] });
     }
     this.updateInjections();
@@ -103,7 +104,7 @@ export default class InjectionsList extends React.Component {
     let found = CROSSORIGIN.indexOf(selected);
     if (found > -1) {
       this.setState({ crossorigin: CROSSORIGIN[found] });
-    }else {
+    } else {
       this.setState({ crossorigin: CROSSORIGIN[0] });
     }
     this.updateInjections();
@@ -128,10 +129,32 @@ export default class InjectionsList extends React.Component {
         }
       })
       .then(rows => {
-        let tmp = [];
+        let tmp = this.state.aliasesOrPayloadsIDs;
         console.log("Payloads: ", rows.data);
         rows.data.map(row => {
           return tmp.push([row.id, row.name]);
+        });
+        this.setState({
+          aliasesOrPayloadsIDs: tmp,
+        });
+      });
+
+    axios
+      .get(API_ALIASES)
+      .then(res => {
+        if (res.status !== 200) {
+          throw new Error("Couldn't load payloads");
+        } else {
+          return res.data;
+        }
+      })
+      .then(rows => {
+        let tmp = this.state.aliasesOrPayloadsIDs;
+        console.log("Aliases: ", rows.data);
+        rows.data.map(row => {
+          // Don't push alias ID, only the alias name to the selector.
+          // We don't refer to the payload using the alias ID, only its alias (and the payload id itself)
+          return tmp.push([row.alias, row.alias]);
         });
         this.setState({
           aliasesOrPayloadsIDs: tmp,
@@ -186,6 +209,7 @@ export default class InjectionsList extends React.Component {
     return res;
   };
   formatPayloadName = (payloadID, payloadName) => {
+    console.log(`formatPayloadName(${payloadID}, ${payloadName})`);
     if (payloadID && payloadName) {
       return payloadID.slice(0, 8) + `... (${payloadName})`;
     }
@@ -301,7 +325,10 @@ export default class InjectionsList extends React.Component {
               <DialogTitle id="form-dialog-title">New injection</DialogTitle>
 
               <DialogContent>
-              <small>Replacement list: {REPLACE_CROSSORIGIN}, {REPLACE_URL_TAG}, {REPLACE_SRI_TAG}</small>
+                <small>
+                  Replacement list: {REPLACE_CROSSORIGIN}, {REPLACE_URL_TAG},{" "}
+                  {REPLACE_SRI_TAG}
+                </small>
                 <Grid container spacing={3}>
                   <Grid item xs={12}>
                     <Input
