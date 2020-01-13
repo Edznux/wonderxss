@@ -1,38 +1,39 @@
-package api
+package local
 
 import (
 	"fmt"
 
+	"github.com/edznux/wonderxss/api"
 	"github.com/edznux/wonderxss/crypto"
 	"github.com/edznux/wonderxss/events"
 	"github.com/edznux/wonderxss/storage/models"
 	"github.com/google/uuid"
 )
 
-func GetPayloads() ([]Payload, error) {
+func (local *Local) GetPayloads() ([]api.Payload, error) {
 	fmt.Println("api.GetPayloads")
-	fmt.Println(store)
-	data, err := store.GetPayloads()
+	fmt.Println(local.store)
+	data, err := local.store.GetPayloads()
 	if err != nil {
 		return nil, err
 	}
-	payloads := []Payload{}
+	payloads := []api.Payload{}
 	for _, p := range data {
-		tmp := Payload{}
-		payloads = append(payloads, tmp.fromStorage(p))
+		tmp := api.Payload{}
+		payloads = append(payloads, tmp.FromStorage(p))
 	}
 
 	return payloads, nil
 }
 
-func ServePayload(idOrAlias string) (string, error) {
+func (local *Local) ServePayload(idOrAlias string) (string, error) {
 	var err error
 	var payload models.Payload
 
-	payload, err = store.GetPayloadByAlias(idOrAlias)
+	payload, err = local.store.GetPayloadByAlias(idOrAlias)
 	if err == models.NoSuchItem {
 		// error will fallback (get overrided by the next call)
-		payload, err = store.GetPayload(idOrAlias)
+		payload, err = local.store.GetPayload(idOrAlias)
 	}
 	if err != nil {
 		return "", err
@@ -44,23 +45,24 @@ func ServePayload(idOrAlias string) (string, error) {
 		events.Events.Pub(payload, events.TOPIC_PAYLOAD_DELIVERED)
 		fmt.Println("=================================")
 		fmt.Println("Saving execution")
-		AddExecution(payload.ID, idOrAlias)
+		local.AddExecution(payload.ID, idOrAlias)
 		fmt.Println("=================================")
 	}()
 	return payload.Content, nil
 }
 
-func GetPayload(id string) (Payload, error) {
-	payload, err := store.GetPayload(id)
+func (local *Local) GetPayload(id string) (api.Payload, error) {
+	payload, err := local.store.GetPayload(id)
 	if err != nil {
-		return Payload{}, err
+		return api.Payload{}, err
 	}
-	res := Payload{}
-	return res.fromStorage(payload), nil
+	res := api.Payload{}
+	return res.FromStorage(payload), nil
 }
 
 //AddPayload is the API to add a new payload
-func AddPayload(name string, content string, contentType string) (models.Payload, error) {
+func (local *Local) AddPayload(name string, content string, contentType string) (api.Payload, error) {
+	var returnedPayload api.Payload
 	fmt.Printf("AddPayload(\"%s\", \"%s\", \"%s\")\n", name, content, contentType)
 	hashes := crypto.GenerateSRIHashes(content)
 	p := models.Payload{
@@ -71,17 +73,17 @@ func AddPayload(name string, content string, contentType string) (models.Payload
 		ContentType: contentType,
 	}
 	fmt.Println(p)
-	returnedPayload, err := store.CreatePayload(p)
+	payload, err := local.store.CreatePayload(p)
 	if err != nil {
-		return models.Payload{}, err
+		return api.Payload{}, err
 	}
 
-	return returnedPayload, nil
+	return returnedPayload.FromStorage(payload), nil
 }
 
-func DeletePayload(id string) error {
+func (local *Local) DeletePayload(id string) error {
 	e := models.Payload{ID: id}
-	err := store.DeletePayload(e)
+	err := local.store.DeletePayload(e)
 	if err != nil {
 		return err
 	}

@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func Serve(router *mux.Router) {
+func (ui *UI) Serve(router *mux.Router) {
 	cfg := config.Current
 	if cfg.StandaloneHTTPS {
 		go func() {

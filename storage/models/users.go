@@ -6,7 +6,6 @@ import (
 
 //User complement the SafeUser model with its password
 type User struct {
-	// Extent the SafeUser model
 	// This should never be returned to other parts of the application
 	Password string `json:"-"` // remove secret from HTTP Response
 	// TOTPSecret represent the shared secret for TOTP

@@ -6,6 +6,7 @@ import (
 	"syscall"
 
 	"github.com/edznux/wonderxss/api/http/client"
+	"github.com/edznux/wonderxss/config"
 	"github.com/spf13/cobra"
 	"golang.org/x/crypto/ssh/terminal"
 )
@@ -15,7 +16,11 @@ var remoteCmd = &cobra.Command{
 	Use:   "remote",
 	Short: "Do all the operations on remote server.",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		c = client.New()
+		cfg, err := config.ReadClientConfig()
+		if err != nil {
+			log.Fatalln(err)
+		}
+		c = client.New(cfg)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()

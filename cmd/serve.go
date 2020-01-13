@@ -8,10 +8,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/edznux/wonderxss/api"
 	"github.com/edznux/wonderxss/api/websocket"
 	"github.com/edznux/wonderxss/notification"
-	"github.com/edznux/wonderxss/ui"
 	"github.com/edznux/wonderxss/webserver"
 	"github.com/gorilla/mux"
 
@@ -31,27 +29,26 @@ func entrypoint() {
 	fmt.Println("Starting web server")
 
 	notification.Setup()
-	api.Init()
 
 	router := mux.NewRouter()
 	api := httpApi.New()
-	ui := ui.New()
+	ui := webserver.New()
 	ws := websocket.New()
 
 	apiRouter := router.PathPrefix(api.UrlPrefix).Subrouter()
 	api.Routes(apiRouter)
 
 	// Return real payload
-	router.HandleFunc("/p/{id}", webserver.HandlePayloadByID)
+	router.HandleFunc("/p/{id}", ui.HandlePayloadByID)
 	router.HandleFunc("/ws", ws.Handle)
-	router.HandleFunc("/login", webserver.Login)
-	router.HandleFunc("/logout", webserver.Logout)
-	router.HandleFunc("/otp/new", webserver.GenerateOTPSecret).Methods("GET")
-	router.HandleFunc("/otp/new", webserver.RegisterOTP).Methods("POST")
+	router.HandleFunc("/login", ui.Login)
+	router.HandleFunc("/logout", ui.Logout)
+	router.HandleFunc("/otp/new", ui.GenerateOTPSecret).Methods("GET")
+	router.HandleFunc("/otp/new", ui.RegisterOTP).Methods("POST")
 
 	router.PathPrefix("/").HandlerFunc(ui.HandleIndex)
 
-	webserver.Serve(router)
+	ui.Serve(router)
 	gracefulShutdown()
 }
 

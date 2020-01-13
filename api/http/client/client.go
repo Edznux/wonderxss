@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/edznux/wonderxss/api"
+	"github.com/edznux/wonderxss/config"
 )
 
 type Client struct {
@@ -23,13 +24,14 @@ type Client struct {
 	apiPrefix string
 }
 
-func New() *Client {
+func New(cfg config.Client) *Client {
 	c := Client{}
-	c.Version = "v1"
+	c.Version = cfg.Version
 	c.apiPrefix = "/api/" + c.Version
 	c.Protocol = "http://"
-	c.Host = "localhost"
-	c.Port = 80
+	c.Host = cfg.Host
+	c.Port = cfg.Port
+	c.jwtToken = cfg.Token
 	return &c
 }
 
@@ -115,10 +117,11 @@ func (c *Client) Login(user, password, otp string) (string, error) {
 	return token, nil
 }
 
-func (c *Client) GetHealth() (api.Response, error) {
+func (c *Client) GetHealth() (string, error) {
 	res, err := c.doAPIRequest("GET", "/healthz", nil)
 	if err != nil {
-		return res, errors.New("Couldn't get HEALTHZ informations: " + err.Error())
+		return "", errors.New("Couldn't get HEALTHZ informations: " + err.Error())
 	}
-	return res, nil
+
+	return res.Data.(string), nil
 }

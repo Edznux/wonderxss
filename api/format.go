@@ -49,7 +49,7 @@ type Response struct {
 }
 
 // Payload represent the structure of the frontend-facing payload. Not the stored one.
-// It offers an `fromStorage` function to convert itself from the storage payload.
+// It offers an `FromStorage` function to convert itself from the storage payload.
 type Payload struct {
 	ID          string           `json:"id"`
 	Name        string           `json:"name"`
@@ -60,7 +60,7 @@ type Payload struct {
 	ModifiedAt  time.Time        `json:"modified_at"`
 }
 
-func (p Payload) fromStorage(s models.Payload) Payload {
+func (p Payload) FromStorage(s models.Payload) Payload {
 	p.ID = s.ID
 	p.Name = s.Name
 	p.Content = s.Content
@@ -72,7 +72,7 @@ func (p Payload) fromStorage(s models.Payload) Payload {
 }
 
 // Aliases represent the structure of the frontend-facing Aliases. Not the stored one.
-// It offers an `fromStorage` function to convert itself from the storage payload.
+// It offers an `FromStorage` function to convert itself from the storage payload.
 type Alias struct {
 	ID         string    `json:"id"`
 	PayloadID  string    `json:"payload_id"` // Used for SRI (sub ressource integrity)
@@ -81,7 +81,7 @@ type Alias struct {
 	ModifiedAt time.Time `json:"modified_at"`
 }
 
-func (p Alias) fromStorage(s models.Alias) Alias {
+func (p Alias) FromStorage(s models.Alias) Alias {
 	p.ID = s.ID
 	p.PayloadID = s.PayloadID
 	p.Alias = s.Short
@@ -91,7 +91,7 @@ func (p Alias) fromStorage(s models.Alias) Alias {
 }
 
 // Execution represent the structure of the frontend-facing Executions. Not the stored one.
-// It offers an `fromStorage` function to convert itself from the storage payload.
+// It offers an `FromStorage` function to convert itself from the storage payload.
 type Execution struct {
 	ID          string    `json:"id"`
 	PayloadID   string    `json:"payload_id"`
@@ -99,7 +99,7 @@ type Execution struct {
 	TriggeredAt time.Time `json:"triggered_at"`
 }
 
-func (l Execution) fromStorage(s models.Execution) Execution {
+func (l Execution) FromStorage(s models.Execution) Execution {
 	l.ID = s.ID
 	l.PayloadID = s.PayloadID
 	l.AliasID = s.AliasID
@@ -108,14 +108,14 @@ func (l Execution) fromStorage(s models.Execution) Execution {
 }
 
 // Collector represent the structure of the frontend-facing Executions. Not the stored one.
-// It offers an `fromStorage` function to convert itself from the storage payload.
+// It offers an `FromStorage` function to convert itself from the storage payload.
 type Collector struct {
 	ID        string    `json:"id"`
 	Data      string    `json:"data"`
 	CreatedAt time.Time `json:"created_at"`
 }
 
-func (l Collector) fromStorage(s models.Collector) Collector {
+func (l Collector) FromStorage(s models.Collector) Collector {
 	l.ID = s.ID
 	l.CreatedAt = s.CreatedAt
 	l.Data = s.Data
@@ -123,7 +123,7 @@ func (l Collector) fromStorage(s models.Collector) Collector {
 }
 
 // Injection represent the structure of the frontend-facing Executions. Not the stored one.
-// It offers an `fromStorage` function to convert itself from the storage payload.
+// It offers an `FromStorage` function to convert itself from the storage payload.
 type Injection struct {
 	ID         string    `json:"id"`
 	Name       string    `json:"name"`
@@ -132,11 +132,33 @@ type Injection struct {
 	ModifiedAt time.Time `json:"modified_at"`
 }
 
-func (l Injection) fromStorage(s models.Injection) Injection {
+func (l Injection) FromStorage(s models.Injection) Injection {
 	l.ID = s.ID
 	l.Name = s.Name
 	l.Content = s.Content
 	l.CreatedAt = s.CreatedAt
 	l.ModifiedAt = s.ModifiedAt
 	return l
+}
+
+// User represent the structure of the frontend-facing user. Not the stored one.
+// It offers an `FromStorage` function to convert itself from the storage payload.
+type User struct {
+	ID string `json:"id"`
+	// The username is the login of the user.
+	Username string `json:"username"`
+	// Is 2FA enabled on this account.
+	// It will be used to determine if it requires another step during the login process
+	TwoFactorEnabled bool      `json:"two_factor_enabled"`
+	CreatedAt        time.Time `json:"created_at"`
+	ModifiedAt       time.Time `json:"modified_at"`
+}
+
+func (u User) FromStorage(s models.User) User {
+	u.ID = s.ID
+	u.Username = s.Username
+	u.TwoFactorEnabled = s.TwoFactorEnabled
+	u.CreatedAt = s.CreatedAt
+	u.ModifiedAt = s.ModifiedAt
+	return u
 }

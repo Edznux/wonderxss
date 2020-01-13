@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/dgryski/dgoogauth"
 	"github.com/edznux/wonderxss/crypto"
 
 	"github.com/edznux/wonderxss/api"
@@ -33,7 +32,7 @@ func getBearer(w http.ResponseWriter, req *http.Request) (string, error) {
 }
 
 // RegisterOTP recieve a new shared secret for TOTP and saves it for a given user
-func RegisterOTP(w http.ResponseWriter, req *http.Request) {
+func (ui *UI) RegisterOTP(w http.ResponseWriter, req *http.Request) {
 
 	otpToken := OtpToken{}
 	res := api.Response{}
@@ -106,34 +105,22 @@ func GenerateOTPSecret(w http.ResponseWriter, req *http.Request) {
 }
 
 // Login is the http handler function for user login
-func Login(w http.ResponseWriter, req *http.Request) {
+func (ui *UI) Login(w http.ResponseWriter, req *http.Request) {
 	log.Printf("Login request")
 	var OTPOk bool
 
 	res := api.Response{}
 	loginParam := req.FormValue("login")
 	passwordParam := req.FormValue("password")
+	OTPToken := req.FormValue("token")
 
-	user, err := api.VerifyUserPassword(loginParam, passwordParam)
+	user, err := ui.api.Login(loginParam, passwordParam, OTPToken)
 	if err != nil {
 		res.Error = err.Error()
 		json.NewEncoder(w).Encode(&res)
 		return
 	}
-	if user.TwoFactorEnabled {
-		OTPToken := req.FormValue("token")
-		OTPOk, err = verifyOTP(user.TOTPSecret, OTPToken)
-		if err != nil {
-			res.Error = err.Error()
-			json.NewEncoder(w).Encode(&res)
-			return
-		}
-		if !OTPOk {
-			res.Error = "Invalid OTP"
-			json.NewEncoder(w).Encode(&res)
-			return
-		}
-	}
+
 	// Get a new JWT Token if the user is validated.
 	jwtToken, err := crypto.GetJWTToken(user)
 	if err != nil {
@@ -156,30 +143,4 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	res := api.Response{}
 	res.Error = "Not implemented yet"
 	json.NewEncoder(w).Encode(&res)
-}
-
-// verifyOTP takes the user's OTP secret and the OTPToken. It will return true if it's valid.
-func verifyOTP(secret string, token string) (bool, error) {
-
-	if len(secret) == 0 {
-		return false, fmt.Errorf("Empty TOTPSecret")
-	}
-
-	otpc := &dgoogauth.OTPConfig{
-		Secret:      secret,
-		WindowSize:  3,
-		HotpCounter: 0,
-	}
-
-	verified, err := otpc.Authenticate(token)
-	if err != nil {
-		log.Println("VerifyOTP failed authenticate:", err)
-		return false, err
-	}
-
-	if !verified {
-		return false, fmt.Errorf("Invalid one-time password")
-	}
-
-	return true, nil
 }

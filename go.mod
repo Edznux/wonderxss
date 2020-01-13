@@ -3,6 +3,7 @@ module github.com/edznux/wonderxss
 go 1.12
 
 require (
+	github.com/BurntSushi/toml v0.3.1
 	github.com/cskr/pubsub v1.0.2
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/dgryski/dgoogauth v0.0.0-20190221195224-5a805980a5f3

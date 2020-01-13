@@ -1,4 +1,4 @@
-package ui
+package webserver
 
 import (
 	"fmt"
@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/edznux/wonderxss/api"
+	"github.com/edznux/wonderxss/api/local"
 	"github.com/edznux/wonderxss/config"
 	"github.com/edznux/wonderxss/storage/models"
 )
@@ -16,12 +17,14 @@ import (
 type UI struct {
 	indexPath  string
 	staticPath string
+	api        api.API
 }
 
 func New() *UI {
 	ui := UI{}
 	ui.indexPath = "/index.html"
 	ui.staticPath = "ui/wonderxss/build"
+	ui.api = local.New()
 	return &ui
 }
 
@@ -31,7 +34,7 @@ func (ui *UI) HandleIndex(w http.ResponseWriter, req *http.Request) {
 	log.Println("req.URL.Path:", req.URL.Path)
 	log.Println("hostname:", hostname)
 	log.Println("Subdomain:", subdomain)
-	content, err := api.ServePayload(subdomain)
+	content, err := ui.api.ServePayload(subdomain)
 
 	// Index page, should return the UI
 	if subdomain == hostname {

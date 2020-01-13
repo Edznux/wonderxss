@@ -1,9 +1,40 @@
 package api
 
-import "github.com/edznux/wonderxss/storage"
+type API interface {
+	GetHealth() (string, error)
 
-var store storage.Storage
+	GetAliases() ([]Alias, error)
+	GetAlias(id string) (Alias, error)
+	GetAliasByID(id string) (Alias, error)
+	GetAliasByPayloadID(id string) (Alias, error)
+	AddAlias(name string, payloadId string) (Alias, error)
+	DeleteAlias(id string) error
 
-func Init() {
-	store = storage.GetDB()
+	GetCollectors() ([]Collector, error)
+	GetCollector(id string) (Collector, error)
+	AddCollector(data string) (Collector, error)
+	DeleteCollector(id string) error
+
+	GetExecutions() ([]Execution, error)
+	GetExecution(id string) (Execution, error)
+	AddExecution(payloadID string, aliasID string) (Execution, error)
+	DeleteExecution(id string) error
+
+	GetInjections() ([]Injection, error)
+	GetInjection(id string) (Injection, error)
+	AddInjection(name string, content string) (Injection, error)
+	DeleteInjection(id string) error
+
+	GetPayloads() ([]Payload, error)
+	ServePayload(idOrAlias string) (string, error)
+	GetPayload(id string) (Payload, error)
+	AddPayload(name string, content string, contentType string) (Payload, error)
+	DeletePayload(id string) error
+
+	Login(loginParam, passwordParam, otp string) (User, error)
+	GetUserByName(name string) (User, error)
+	GetUser(id string) (User, error)
+	CreateOTP(userID string, secret string) (User, error)
+	CreateUser(username, password string) (User, error)
+	DeleteUser(id string) error
 }
