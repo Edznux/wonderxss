@@ -34,7 +34,7 @@ type API interface {
 	Login(loginParam, passwordParam, otp string) (User, error)
 	GetUserByName(name string) (User, error)
 	GetUser(id string) (User, error)
-	CreateOTP(userID string, secret string) (User, error)
+	CreateOTP(userID string, secret string, otp string) (User, error)
 	CreateUser(username, password string) (User, error)
 	DeleteUser(id string) error
 }

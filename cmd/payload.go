@@ -6,7 +6,6 @@ import (
 	"log"
 	"path/filepath"
 
-	"github.com/edznux/wonderxss/api"
 	"github.com/spf13/cobra"
 )
 
@@ -29,7 +28,6 @@ var createPayloadCmd = &cobra.Command{
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 
-		api.Init()
 		path := args[0]
 		name := filepath.Base(path)
 		fmt.Printf("Adding payload: %s (%s)\n", name, path)
@@ -38,7 +36,7 @@ var createPayloadCmd = &cobra.Command{
 			fmt.Print(err)
 		}
 
-		p, err := api.AddPayload(name, string(content), "application/javascript")
+		p, err := currentAPI.AddPayload(name, string(content), "application/javascript")
 		if err != nil {
 			log.Fatal("Could not create payload ", err)
 		}

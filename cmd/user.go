@@ -5,7 +5,6 @@ import (
 	"log"
 	"syscall"
 
-	"github.com/edznux/wonderxss/api"
 	"github.com/spf13/cobra"
 	"golang.org/x/crypto/ssh/terminal"
 )
@@ -29,8 +28,7 @@ var createUserCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		username := args[0]
-		api.Init()
-		user, err := api.GetUserByName(username)
+		user, err := currentAPI.GetUserByName(username)
 		if user.ID != "" {
 			fmt.Println("User already exist.")
 			return
@@ -43,7 +41,7 @@ var createUserCmd = &cobra.Command{
 		}
 		password := string(bytePassword)
 
-		u, err := api.CreateUser(username, password)
+		u, err := currentAPI.CreateUser(username, password)
 
 		if err != nil {
 			log.Fatal("Could not create user ", err)

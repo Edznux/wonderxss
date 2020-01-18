@@ -62,7 +62,7 @@ func (ui *UI) RegisterOTP(w http.ResponseWriter, req *http.Request) {
 	decodedTokenMap := claims.(jwt.MapClaims)
 	userID := decodedTokenMap["user_id"].(string)
 
-	user, err := api.CreateOTP(userID, otpToken.Secret)
+	user, err := ui.api.CreateOTP(userID, otpToken.Secret, otpToken.Token)
 	if err != nil {
 		log.Println(err)
 		res.Error = err.Error()
@@ -75,22 +75,14 @@ func (ui *UI) RegisterOTP(w http.ResponseWriter, req *http.Request) {
 		json.NewEncoder(w).Encode(&res)
 		return
 	}
-	// Verify the token with the secret
-	jwtTokenVerified, err := verifyOTP(user.TOTPSecret, otpToken.Token)
-	if err != nil {
-		log.Println("Could not verify the newly registered OTP:", err)
-		res.Error = err.Error()
-		json.NewEncoder(w).Encode(&res)
-		return
-	}
-	res.Data = jwtTokenVerified
+
 	json.NewEncoder(w).Encode(&res)
 }
 
 // GenerateOTPSecret generates a new secrets (80 bit base32 encoded)
 // FIXME: Shouldn't this only be done client side ?
 // Maybe dont trust client side crypto ? idk
-func GenerateOTPSecret(w http.ResponseWriter, req *http.Request) {
+func (ui *UI) GenerateOTPSecret(w http.ResponseWriter, req *http.Request) {
 	token, err := crypto.GenerateOTPSecret()
 
 	res := api.Response{}
@@ -107,7 +99,6 @@ func GenerateOTPSecret(w http.ResponseWriter, req *http.Request) {
 // Login is the http handler function for user login
 func (ui *UI) Login(w http.ResponseWriter, req *http.Request) {
 	log.Printf("Login request")
-	var OTPOk bool
 
 	res := api.Response{}
 	loginParam := req.FormValue("login")
@@ -138,7 +129,7 @@ func (ui *UI) Login(w http.ResponseWriter, req *http.Request) {
 // Login out with JWT is a bit tricky since there is no real way of invalidating a JWT.
 // We might want to add blacklisting but it's overkill for this usage IMO
 // There MUST be an enforcement in the validity duration of each token tho.
-func Logout(w http.ResponseWriter, r *http.Request) {
+func (ui *UI) Logout(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Request URL : %s, not implemented", r.RequestURI)
 	res := api.Response{}
 	res.Error = "Not implemented yet"

@@ -6,7 +6,6 @@ import (
 	"log"
 	"path/filepath"
 
-	"github.com/edznux/wonderxss/api"
 	"github.com/spf13/cobra"
 )
 
@@ -29,7 +28,6 @@ var createInjectionCmd = &cobra.Command{
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 
-		api.Init()
 		path := args[0]
 		name := filepath.Base(path)
 		fmt.Printf("Adding injection: %s (%s)\n", name, path)
@@ -38,7 +36,7 @@ var createInjectionCmd = &cobra.Command{
 			fmt.Print(err)
 		}
 
-		p, err := api.AddInjection(name, string(content))
+		p, err := currentAPI.AddInjection(name, string(content))
 		if err != nil {
 			log.Fatal("Could not create injection ", err)
 		}

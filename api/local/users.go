@@ -13,7 +13,7 @@ import (
 )
 
 // verifyOTP takes the user's OTP secret and the OTPToken. It will return true if it's valid.
-func verifyOTP(secret string, token string) (bool, error) {
+func verifyOTP(secret string, otp string) (bool, error) {
 
 	if len(secret) == 0 {
 		return false, fmt.Errorf("Empty TOTPSecret")
@@ -25,7 +25,7 @@ func verifyOTP(secret string, token string) (bool, error) {
 		HotpCounter: 0,
 	}
 
-	verified, err := otpc.Authenticate(token)
+	verified, err := otpc.Authenticate(otp)
 	if err != nil {
 		log.Println("VerifyOTP failed authenticate:", err)
 		return false, err
@@ -89,7 +89,7 @@ func (local *Local) GetUser(id string) (api.User, error) {
 	return returnedUser.FromStorage(user), nil
 }
 
-func (local *Local) CreateOTP(userID string, secret string) (api.User, error) {
+func (local *Local) CreateOTP(userID string, secret string, otp string) (api.User, error) {
 	var returnedUser api.User
 	user, err := local.store.GetUser(userID)
 	if err != nil {
@@ -97,6 +97,14 @@ func (local *Local) CreateOTP(userID string, secret string) (api.User, error) {
 	}
 	user, err = local.store.CreateOTP(user, secret)
 	if err != nil {
+		return api.User{}, err
+	}
+	// Verify the token with the secret
+	isTokenVerified, err := verifyOTP(user.TOTPSecret, otp)
+	if err != nil {
+		return api.User{}, err
+	}
+	if !isTokenVerified {
 		return api.User{}, err
 	}
 	return returnedUser.FromStorage(user), nil

@@ -6,10 +6,10 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/edznux/wonderxss/config"
-	"github.com/edznux/wonderxss/storage/models"
+	"github.com/edznux/wonderxss/api"
 )
 
-func GetJWTToken(user models.User) (string, error) {
+func GetJWTToken(user api.User) (string, error) {
 	signingKey := []byte(config.Current.JWTToken)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user_id":   user.ID,       // Unique
