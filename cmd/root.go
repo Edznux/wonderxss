@@ -26,10 +26,24 @@ var rootCmd = &cobra.Command{
 		cmd.Help()
 	},
 }
+var healthCmd = &cobra.Command{
+	Use:   "health",
+	Short: "Get the health of the application",
+	Run: func(cmd *cobra.Command, args []string) {
+		// No arguments called. Abort and print help
+		result, err := currentAPI.GetHealth()
+		if err != nil {
+			fmt.Println("Error :", err.Error())
+		}
+		fmt.Println(result)
+	},
+}
 
 func Execute() {
+	fmt.Println(remote)
 	// set the db globaly. It's already initialised, just "globalify" the object...
 	if remote {
+		fmt.Println("Using remote API!")
 		cfg, err := config.ReadClientConfig()
 		if err != nil {
 			log.Fatalln("Coulnd read client config:", err.Error())
@@ -47,5 +61,8 @@ func Execute() {
 	}
 }
 func init() {
-	rootCmd.PersistentFlags().BoolVar(&remote, "remote", false, "use WonderXSS on remote host")
+	var remoteLocal bool
+	rootCmd.PersistentFlags().BoolVarP(&remoteLocal, "remote", "r", false, "use WonderXSS on remote host")
+	fmt.Println(remoteLocal)
+	rootCmd.AddCommand(healthCmd)
 }
