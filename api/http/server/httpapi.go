@@ -20,6 +20,7 @@ type HTTPApi struct {
 func New() *HTTPApi {
 	httpapi := HTTPApi{}
 	httpapi.UrlPrefix = "/api/v1"
+	log.Println("Connecting to local API from HTTPApi")
 	httpapi.local = local.New()
 	return &httpapi
 }

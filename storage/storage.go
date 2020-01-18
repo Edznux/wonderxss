@@ -64,17 +64,20 @@ type Storage interface {
 	RemoveOTP(models.User) (models.User, error)
 }
 
-func Init() {
-	fmt.Println("Init storage")
+func LoadStorageBackends() {
+	fmt.Println("LoadStorageBackends")
 	backend = map[string]Storage{}
 	s, err := sqlite.New()
 	if err != nil {
 		log.Fatal("Error while initializing storage:", err)
 	}
+	s.Init()
 	backend["sqlite"] = s
+	fmt.Printf("Initialiazed storage backends: %+v\n", backend)
 }
 
 func GetDB() Storage {
+	log.Println("GetDB:", backend)
 	currentStorage = backend[config.Current.Database]
 	return currentStorage
 }

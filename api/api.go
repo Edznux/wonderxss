@@ -31,7 +31,8 @@ type API interface {
 	AddPayload(name string, content string, contentType string) (Payload, error)
 	DeletePayload(id string) error
 
-	Login(loginParam, passwordParam, otp string) (User, error)
+	//Login doesn't return a user but a JWT token if the auth is successful
+	Login(loginParam, passwordParam, otp string) (string, error)
 	GetUserByName(name string) (User, error)
 	GetUser(id string) (User, error)
 	CreateOTP(userID string, secret string, otp string) (User, error)

@@ -99,24 +99,17 @@ func (ui *UI) GenerateOTPSecret(w http.ResponseWriter, req *http.Request) {
 // Login is the http handler function for user login
 func (ui *UI) Login(w http.ResponseWriter, req *http.Request) {
 	log.Printf("Login request")
-
+	log.Printf("%+v\n", ui.api)
 	res := api.Response{}
 	loginParam := req.FormValue("login")
 	passwordParam := req.FormValue("password")
 	OTPToken := req.FormValue("token")
 
-	user, err := ui.api.Login(loginParam, passwordParam, OTPToken)
-	if err != nil {
-		res.Error = err.Error()
-		json.NewEncoder(w).Encode(&res)
-		return
-	}
-
-	// Get a new JWT Token if the user is validated.
-	jwtToken, err := crypto.GetJWTToken(user)
+	jwtToken, err := ui.api.Login(loginParam, passwordParam, OTPToken)
 	if err != nil {
 		log.Println(err)
-		res.Error = "Error getting a new token"
+		res.Error = err.Error()
+		res.Error = "Error getting a new token" + err.Error()
 		json.NewEncoder(w).Encode(&res)
 		return
 	}

@@ -1,13 +1,19 @@
 package local
 
-import "github.com/edznux/wonderxss/storage"
+import (
+	"log"
+
+	"github.com/edznux/wonderxss/storage"
+)
 
 type Local struct {
 	store storage.Storage
 }
 
 func New() *Local {
-	return &Local{store: storage.GetDB()}
+	log.Println("New Local API")
+	str := storage.GetDB()
+	return &Local{store: str}
 }
 
 func (local *Local) GetHealth() (string, error) {

@@ -7,6 +7,7 @@ import (
 
 	"github.com/dgryski/dgoogauth"
 	"github.com/edznux/wonderxss/api"
+	"github.com/edznux/wonderxss/crypto"
 	"github.com/edznux/wonderxss/storage/models"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -38,36 +39,41 @@ func verifyOTP(secret string, otp string) (bool, error) {
 	return true, nil
 }
 
-func (local *Local) Login(loginParam, passwordParam, otp string) (api.User, error) {
+func (local *Local) Login(loginParam, passwordParam, otp string) (string, error) {
 	var err error
 	var user models.User
-	var returnedUser api.User
+	var apiUser api.User
 
 	// Check for empty user / password
 	if loginParam == "" || passwordParam == "" {
-		return api.User{}, errors.New("Empty user or password")
+		return "", errors.New("Empty user or password")
 	}
 	// Get user model by its name
 	user, err = local.store.GetUserByName(loginParam)
 	if err != nil {
-		return api.User{}, errors.New("Invalid user or password")
+		return "", errors.New("Invalid user or password")
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(passwordParam))
 	if err != nil {
-		return api.User{}, errors.New("Invalid user or password")
+		return "", errors.New("Invalid user or password")
 	}
 
 	if user.TwoFactorEnabled {
 		OTPOk, err := verifyOTP(user.TOTPSecret, otp)
 		if err != nil {
-			return api.User{}, err
+			return "", err
 		}
 		if !OTPOk {
-			return api.User{}, errors.New("Invalid OTP")
+			return "", errors.New("Invalid OTP")
 		}
 	}
-	return returnedUser.FromStorage(user), nil
+
+	jwt, err := crypto.GetJWTToken(apiUser.FromStorage(user))
+	if err != nil {
+		return "", err
+	}
+	return jwt, nil
 }
 
 // GetUserByName is a direct replica from the storage.

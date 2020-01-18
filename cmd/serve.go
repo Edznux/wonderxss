@@ -57,7 +57,7 @@ var serveCmd = &cobra.Command{
 	Use:   "serve",
 	Short: "Start the application",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("serve called")
+		log.Println("serve called")
 		entrypoint()
 	},
 }

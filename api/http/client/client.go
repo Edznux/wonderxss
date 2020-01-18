@@ -125,3 +125,95 @@ func (c *Client) GetHealth() (string, error) {
 
 	return res.Data.(string), nil
 }
+
+func (c *Client) GetAliases() ([]api.Alias, error) {
+	return []api.Alias{}, errors.New("Not implemented yet")
+}
+func (c *Client) GetAlias(id string) (api.Alias, error) {
+	return api.Alias{}, errors.New("Not implemented yet")
+}
+func (c *Client) GetAliasByID(id string) (api.Alias, error) {
+	return api.Alias{}, errors.New("Not implemented yet")
+}
+func (c *Client) GetAliasByPayloadID(id string) (api.Alias, error) {
+	return api.Alias{}, errors.New("Not implemented yet")
+}
+
+func (c *Client) AddAlias(name string, payloadId string) (api.Alias, error) {
+	return api.Alias{}, errors.New("Not implemented yet")
+}
+func (c *Client) DeleteAlias(id string) error {
+	return errors.New("Not implemented yet")
+}
+
+func (c *Client) GetCollectors() ([]api.Collector, error) {
+	return []api.Collector{}, errors.New("Not implemented yet")
+}
+func (c *Client) GetCollector(id string) (api.Collector, error) {
+	return api.Collector{}, errors.New("Not implemented yet")
+}
+func (c *Client) AddCollector(data string) (api.Collector, error) {
+	return api.Collector{}, errors.New("Not implemented yet")
+}
+func (c *Client) DeleteCollector(id string) error {
+	return errors.New("Not implemented yet")
+}
+
+func (c *Client) GetExecutions() ([]api.Execution, error) {
+	return []api.Execution{}, errors.New("Not implemented yet")
+}
+func (c *Client) GetExecution(id string) (api.Execution, error) {
+	return api.Execution{}, errors.New("Not implemented yet")
+}
+func (c *Client) AddExecution(payloadID string, aliasID string) (api.Execution, error) {
+	return api.Execution{}, errors.New("Not implemented yet")
+}
+func (c *Client) DeleteExecution(id string) error {
+	return errors.New("Not implemented yet")
+}
+
+func (c *Client) GetInjections() ([]api.Injection, error) {
+	return []api.Injection{}, errors.New("Not implemented yet")
+}
+func (c *Client) GetInjection(id string) (api.Injection, error) {
+	return api.Injection{}, errors.New("Not implemented yet")
+}
+func (c *Client) AddInjection(name string, content string) (api.Injection, error) {
+	return api.Injection{}, errors.New("Not implemented yet")
+}
+func (c *Client) DeleteInjection(id string) error {
+	return errors.New("Not implemented yet")
+}
+
+func (c *Client) GetPayloads() ([]api.Payload, error) {
+	return []api.Payload{}, errors.New("Not implemented yet")
+}
+func (c *Client) ServePayload(idOrAlias string) (string, error) {
+	return "", errors.New("Not implemented yet")
+}
+func (c *Client) GetPayload(id string) (api.Payload, error) {
+	return api.Payload{}, errors.New("Not implemented yet")
+}
+func (c *Client) AddPayload(name string, content string, contentType string) (api.Payload, error) {
+	return api.Payload{}, errors.New("Not implemented yet")
+}
+
+func (c *Client) DeletePayload(id string) error {
+	return errors.New("Not implemented yet")
+}
+
+func (c *Client) GetUserByName(name string) (api.User, error) {
+	return api.User{}, errors.New("Not implemented yet")
+}
+func (c *Client) GetUser(id string) (api.User, error) {
+	return api.User{}, errors.New("Not implemented yet")
+}
+func (c *Client) CreateOTP(userID string, secret string, otp string) (api.User, error) {
+	return api.User{}, errors.New("Not implemented yet")
+}
+func (c *Client) CreateUser(username, password string) (api.User, error) {
+	return api.User{}, errors.New("Not implemented yet")
+}
+func (c *Client) DeleteUser(id string) error {
+	return errors.New("Not implemented yet")
+}

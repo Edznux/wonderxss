@@ -24,6 +24,7 @@ func New() *UI {
 	ui := UI{}
 	ui.indexPath = "/index.html"
 	ui.staticPath = "webserver/wonderxss/build"
+	log.Println("Connecting to local API from ui")
 	ui.api = local.New()
 	return &ui
 }
