@@ -40,7 +40,7 @@ func (c *Client) formatURLApi(path string) string {
 }
 
 func (c *Client) doRequest(method string, path string, body io.Reader) (api.Response, error) {
-	log.Println(method, path)
+	log.Println(method, c.formatURLApi(path))
 	var result api.Response
 	var netClient = &http.Client{
 		Timeout: time.Second * 10,
@@ -74,7 +74,15 @@ func (c *Client) doAuthRequest(method string, path string, body io.Reader) (api.
 
 	response, err := netClient.Do(req)
 	err = json.NewDecoder(response.Body).Decode(&result)
-	return result, err
+	if err != nil {
+		return api.Response{}, err
+	}
+
+	if result.Error != "" {
+		return api.Response{}, errors.New(result.Error)
+	}
+
+	return result, nil
 }
 
 func (c *Client) doAPIRequest(method string, path string, body io.Reader) (api.Response, error) {
@@ -118,11 +126,11 @@ func (c *Client) Login(user, password, otp string) (string, error) {
 }
 
 func (c *Client) GetHealth() (string, error) {
+	var res api.Response
 	res, err := c.doAPIRequest("GET", "/healthz", nil)
 	if err != nil {
 		return "", errors.New("Couldn't get HEALTHZ informations: " + err.Error())
 	}
-
 	return res.Data.(string), nil
 }
 

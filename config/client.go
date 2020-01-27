@@ -1,7 +1,6 @@
 package config
 
 import (
-	"encoding/json"
 	"log"
 	"os"
 	"os/user"
@@ -49,13 +48,7 @@ func configFileExist() bool {
 func ReadClientConfig() (Client, error) {
 	var config Client
 	if !configFileExist() {
-		log.Println("lakjhezlazhel")
-		f, err := os.Create(configFile)
-		if err != nil {
-			return Client{}, err
-		}
-		f.Write([]byte{})
-		f.Close()
+		SaveClientConfig(Client{})
 	}
 	if _, err := toml.DecodeFile(configFile, &config); err != nil {
 		return Client{}, err
@@ -69,7 +62,9 @@ func SaveClientConfig(config Client) error {
 	if err != nil {
 		return err
 	}
-	err = json.NewEncoder(r).Encode(config)
+	defer r.Close()
+
+	err = toml.NewEncoder(r).Encode(config)
 	if err != nil {
 		return err
 	}
