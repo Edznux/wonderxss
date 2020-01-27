@@ -35,13 +35,10 @@ func init() {
 }
 
 func configFileExist() bool {
-	log.Println("configFileExist ?")
 	info, err := os.Stat(configFile)
 	if os.IsNotExist(err) {
-		log.Println(false)
 		return false
 	}
-	log.Println(!info.IsDir())
 	return !info.IsDir()
 }
 

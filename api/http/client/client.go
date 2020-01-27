@@ -135,14 +135,32 @@ func (c *Client) GetHealth() (string, error) {
 }
 
 func (c *Client) GetAliases() ([]api.Alias, error) {
-	return []api.Alias{}, errors.New("Not implemented yet")
+	var res api.Response
+	aliases := []api.Alias{}
+	res, err := c.doAPIRequest("GET", "/aliases", nil)
+	if err != nil {
+		return []api.Alias{}, errors.New("Couldn't get Aliases: " + err.Error())
+	}
+	for _, a := range res.Data.([]interface{}) {
+		aliases = append(aliases, a.(api.Alias))
+	}
+	return aliases, nil
 }
+
 func (c *Client) GetAlias(id string) (api.Alias, error) {
-	return api.Alias{}, errors.New("Not implemented yet")
+	var res api.Response
+	res, err := c.doAPIRequest("GET", "/aliases/"+id, nil)
+	if err != nil {
+		return api.Alias{}, errors.New("Couldn't get Alias " + id + ": " + err.Error())
+	}
+
+	return res.Data.(api.Alias), nil
 }
+
 func (c *Client) GetAliasByID(id string) (api.Alias, error) {
-	return api.Alias{}, errors.New("Not implemented yet")
+	return c.GetAlias(id)
 }
+
 func (c *Client) GetAliasByPayloadID(id string) (api.Alias, error) {
 	return api.Alias{}, errors.New("Not implemented yet")
 }
