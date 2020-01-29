@@ -44,7 +44,34 @@ var createPayloadCmd = &cobra.Command{
 	},
 }
 
+// createCmd represents the create command
+var getPayloadCmd = &cobra.Command{
+	Use:   "get [payload]",
+	Short: "Get all payloads or a specific one",
+	Long:  `Get all payloads or a specific one by specifying it's it as a second argument`,
+	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			payloades, err := currentAPI.GetPayloads()
+			if err != nil {
+				log.Fatal("Could not get payloades", err)
+			}
+			fmt.Printf("%+v\n", payloades)
+			return
+		}
+
+		payloadID := args[0]
+		payload, err := currentAPI.GetPayload(payloadID)
+		if err != nil {
+			log.Fatal("Could not get payload"+payloadID, err)
+		}
+		fmt.Printf("%+v\n", payload)
+		fmt.Printf("Payload: [%s] %s\n", payload.ID, payload.Name)
+
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(payloadCmd)
 	payloadCmd.AddCommand(createPayloadCmd)
+	payloadCmd.AddCommand(getPayloadCmd)
 }
