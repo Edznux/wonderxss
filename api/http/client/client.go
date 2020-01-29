@@ -3,6 +3,7 @@ package client
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -141,8 +142,10 @@ func (c *Client) GetAliases() ([]api.Alias, error) {
 	if err != nil {
 		return []api.Alias{}, errors.New("Couldn't get Aliases: " + err.Error())
 	}
-	if res.Data != nil {
-		aliases = res.Data.([]api.Alias)
+
+	for _, a := range res.Data.([]interface{}) {
+		fmt.Printf("%+v\n", a)
+		aliases = append(aliases, a.(api.Alias))
 	}
 	return aliases, nil
 }
@@ -186,8 +189,8 @@ func (c *Client) GetCollectors() ([]api.Collector, error) {
 		return []api.Collector{}, errors.New("Couldn't get collectors " + err.Error())
 	}
 
-	if res.Data != nil {
-		collectors = res.Data.([]api.Collector)
+	for _, c := range res.Data.([]interface{}) {
+		collectors = append(collectors, c.(api.Collector))
 	}
 
 	return collectors, nil
@@ -224,8 +227,8 @@ func (c *Client) GetExecutions() ([]api.Execution, error) {
 		return []api.Execution{}, errors.New("Couldn't get executions " + err.Error())
 	}
 
-	if res.Data != nil {
-		executions = res.Data.([]api.Execution)
+	for _, e := range res.Data.([]interface{}) {
+		executions = append(executions, e.(api.Execution))
 	}
 
 	return executions, nil
@@ -262,8 +265,8 @@ func (c *Client) GetInjections() ([]api.Injection, error) {
 		return []api.Injection{}, errors.New("Couldn't get Injections: " + err.Error())
 	}
 
-	if res.Data != nil {
-		injections = res.Data.([]api.Injection)
+	for _, i := range res.Data.([]interface{}) {
+		injections = append(injections, i.(api.Injection))
 	}
 
 	return injections, nil
@@ -300,8 +303,8 @@ func (c *Client) GetPayloads() ([]api.Payload, error) {
 		return []api.Payload{}, errors.New("Couldn't get Payload: " + err.Error())
 	}
 
-	if res.Data != nil {
-		payload = res.Data.([]api.Payload)
+	for _, p := range res.Data.([]interface{}) {
+		payload = append(payload, p.(api.Payload))
 	}
 
 	return payload, nil
