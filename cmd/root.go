@@ -2,8 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/edznux/wonderxss/api"
 	"github.com/edznux/wonderxss/api/http/client"

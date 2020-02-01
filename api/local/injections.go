@@ -2,7 +2,8 @@ package local
 
 import (
 	"fmt"
-	"log"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/edznux/wonderxss/api"
 	"github.com/edznux/wonderxss/storage/models"

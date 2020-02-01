@@ -2,9 +2,10 @@ package webserver
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/edznux/wonderxss/config"
 	"github.com/gorilla/mux"

@@ -1,7 +1,7 @@
 package local
 
 import (
-	"log"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/edznux/wonderxss/storage"
 )

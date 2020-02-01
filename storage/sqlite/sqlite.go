@@ -3,7 +3,8 @@ package sqlite
 import (
 	"database/sql"
 	"encoding/json"
-	"log"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/edznux/wonderxss/config"
 	"github.com/edznux/wonderxss/storage/models"

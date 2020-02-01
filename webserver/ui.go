@@ -2,11 +2,12 @@ package webserver
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/edznux/wonderxss/api"
 	"github.com/edznux/wonderxss/api/local"

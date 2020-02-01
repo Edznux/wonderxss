@@ -3,15 +3,16 @@ package cmd
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"path/filepath"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
 )
 
 // aliasesCmd represents the injection command
 var aliasesCmd = &cobra.Command{
-	Use:   "aliases",
+	Use:   "alias",
 	Short: "Do all the operations on aliases.",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Invalid arguments, see `Available Commands`")
@@ -64,7 +65,6 @@ var getAliasesCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal("Could not get alias"+aliasID, err)
 		}
-		fmt.Printf("%+v\n", alias)
 		fmt.Printf("Alias: %s %s\n", alias.ID, alias.Alias)
 	},
 }

@@ -3,9 +3,10 @@ package webserver
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/edznux/wonderxss/crypto"

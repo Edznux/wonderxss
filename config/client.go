@@ -1,10 +1,11 @@
 package config
 
 import (
-	"log"
 	"os"
 	"os/user"
 	"path/filepath"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/BurntSushi/toml"
 )

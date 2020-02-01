@@ -3,8 +3,9 @@ package http
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/edznux/wonderxss/api"
 	"github.com/edznux/wonderxss/api/local"

@@ -2,9 +2,10 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"os/signal"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
 

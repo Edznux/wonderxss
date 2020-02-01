@@ -2,8 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"syscall"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
 	"golang.org/x/crypto/ssh/terminal"

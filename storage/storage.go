@@ -2,7 +2,8 @@ package storage
 
 import (
 	"fmt"
-	"log"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/edznux/wonderxss/config"
 	"github.com/edznux/wonderxss/storage/models"

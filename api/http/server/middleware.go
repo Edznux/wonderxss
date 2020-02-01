@@ -2,8 +2,10 @@ package http
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
+
+	log "github.com/sirupsen/logrus"
+
 	"strings"
 
 	apipkg "github.com/edznux/wonderxss/api"
