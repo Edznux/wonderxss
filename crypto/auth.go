@@ -5,8 +5,10 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/edznux/wonderxss/config"
 	"github.com/edznux/wonderxss/api"
+	"github.com/edznux/wonderxss/config"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func GetJWTToken(user api.User) (string, error) {
@@ -36,7 +38,7 @@ func VerifyJWTToken(tokenString string) (jwt.Claims, error) {
 	ts := int64(data["exp"].(float64))
 	now := time.Now().Unix()
 	diff := (ts - now)
-	fmt.Println("Token exp:", ts, "now is: ", now, "diff :", diff)
+	log.Debug("Token exp:", ts, "now is: ", now, "diff :", diff)
 
 	isValid := data.VerifyExpiresAt(now, true)
 	if !isValid {
