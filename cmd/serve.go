@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 	"os/signal"
 
@@ -22,12 +21,11 @@ func gracefulShutdown() {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 	<-c
-	log.Println("shutting down")
+	log.Info("shutting down")
 	os.Exit(0)
 }
 
 func entrypoint() {
-	fmt.Println("Starting web server")
 
 	notification.Setup()
 

@@ -4,9 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/edznux/wonderxss/events"
 	"github.com/edznux/wonderxss/storage/models"
@@ -22,19 +23,19 @@ type DiscordRequestBody struct {
 }
 
 func New(config Config) *Discord {
-	fmt.Println("New Notification Handler: discord")
+	log.Debugln("New Notification Handler: discord")
 	s := Discord{Name: "WonderXSS"}
 	ch := events.Events.Sub(events.TOPIC_PAYLOAD_DELIVERED)
 
 	go func(ch chan interface{}) {
 		for {
 			if msg, ok := <-ch; ok {
-				fmt.Printf("Received %s, times.\n", msg)
+				log.Debugf("Received %s, times.\n", msg)
 				payload := msg.(models.Payload)
 				notif := "A payload was triggered : " + payload.Name + " at " + time.Now().String()
 				s.sendMessage(notif, config.WebHookURL)
 			} else {
-				fmt.Println("not ok")
+				log.Warn("Message not ok")
 				break
 			}
 		}

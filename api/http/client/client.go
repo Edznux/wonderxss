@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
-	log "github.com/sirupsen/logrus"
 	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/edznux/wonderxss/api"
 	"github.com/edznux/wonderxss/config"
@@ -41,20 +42,24 @@ func (c *Client) formatURLApi(path string) string {
 }
 
 func (c *Client) doRequest(method string, path string, body io.Reader) (api.Response, error) {
-	log.Println(method, c.formatURLApi(path))
+	log.Debugln(method, c.formatURLApi(path))
 	var result api.Response
 	var netClient = &http.Client{
 		Timeout: time.Second * 10,
 	}
 	req, err := http.NewRequest(method, c.formatURLApi(path), body)
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		return result, err
 	}
 
 	req.Header.Add("Authorization", "Bearer "+c.jwtToken)
 
 	response, err := netClient.Do(req)
+	if err != nil {
+		log.Warnln(err)
+		return result, err
+	}
 	err = json.NewDecoder(response.Body).Decode(&result)
 	return result, err
 }
@@ -67,7 +72,7 @@ func (c *Client) doAuthRequest(method string, path string, body io.Reader) (api.
 
 	req, err := http.NewRequest(method, path, body)
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		return result, err
 	}
 
@@ -107,20 +112,19 @@ func (c *Client) Login(user, password, otp string) (string, error) {
 
 	req, err := http.NewRequest("POST", c.formatURLApi("/login"), strings.NewReader(form.Encode()))
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		return "", err
 	}
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	log.Println(req)
 	response, err := netClient.Do(req)
 	err = json.NewDecoder(response.Body).Decode(&result)
 	if result.Error != "" {
-		log.Println(err)
+		log.Warnln(err)
 		return "", errors.New(result.Error)
 	}
 	token := result.Data.(string)
 	if token == "" {
-		log.Println("Empty token")
+		log.Warnln("Empty token")
 		return "", errors.New("Could not connect")
 	}
 	return token, nil

@@ -20,14 +20,13 @@ type Sqlite struct {
 func New() (*Sqlite, error) {
 	cfg := config.Current
 	file := cfg.Storages["sqlite"].File
-	log.Printf("Setup SQLite, using file: %+v\n", file)
+	log.Debugf("Setup SQLite, using file: %+v\n", file)
 	s := Sqlite{file: file}
 
 	return &s, nil
 }
 
 func (s *Sqlite) Init() error {
-	log.Println("Init sqlite")
 	var err error
 	s.db, err = sql.Open("sqlite3", s.file)
 	if err != nil {
@@ -40,45 +39,45 @@ func (s *Sqlite) Setup() error {
 	//return last error, but keep executing all instruction
 	var lastErr error
 
-	log.Println("Creating users' table")
+	log.Debugln("Creating users' table")
 	_, err := s.db.Exec(CREATE_TABLE_USERS)
 	if err != nil {
-		log.Println(err)
+		log.Errorln(err)
 		lastErr = err
 	}
 
-	log.Println("Creating payloads' table")
+	log.Debugln("Creating payloads' table")
 	_, err = s.db.Exec(CREATE_TABLE_PAYLOADS)
 	if err != nil {
-		log.Println(err)
+		log.Errorln(err)
 		lastErr = err
 	}
 
-	log.Println("Creating aliases' table")
+	log.Debugln("Creating aliases' table")
 	_, err = s.db.Exec(CREATE_TABLE_ALIASES)
 	if err != nil {
-		log.Println(err)
+		log.Errorln(err)
 		lastErr = err
 	}
 
-	log.Println("Creating Executions' table")
+	log.Debugln("Creating Executions' table")
 	_, err = s.db.Exec(CREATE_TABLE_EXECUTIONS)
 	if err != nil {
-		log.Println(err)
+		log.Errorln(err)
 		lastErr = err
 	}
 
-	log.Println("Creating Injections' table")
+	log.Debugln("Creating Injections' table")
 	_, err = s.db.Exec(CREATE_TABLE_INJECTIONS)
 	if err != nil {
-		log.Println(err)
+		log.Errorln(err)
 		lastErr = err
 	}
 
-	log.Println("Creating Collectors' table")
+	log.Debugln("Creating Collectors' table")
 	_, err = s.db.Exec(CREATE_TABLE_COLLECTORS)
 	if err != nil {
-		log.Println(err)
+		log.Errorln(err)
 		lastErr = err
 	}
 	return lastErr

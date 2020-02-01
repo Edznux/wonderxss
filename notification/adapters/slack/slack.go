@@ -10,6 +10,7 @@ import (
 
 	"github.com/edznux/wonderxss/events"
 	"github.com/edznux/wonderxss/storage/models"
+	log "github.com/sirupsen/logrus"
 )
 
 type Slack struct {
@@ -21,7 +22,7 @@ type SlackRequestBody struct {
 }
 
 func New(config Config) *Slack {
-	fmt.Println("New Notification Handler: slack")
+	log.Debugln("New Notification Handler: slack")
 	s := Slack{Name: "Slack"}
 	ch := events.Events.Sub(events.TOPIC_PAYLOAD_DELIVERED)
 
@@ -33,7 +34,7 @@ func New(config Config) *Slack {
 				notif := "A payload was triggered : " + payload.Name + " at " + time.Now().String()
 				s.sendMessage(notif, config.WebHookURL)
 			} else {
-				fmt.Println("not ok")
+				log.Warn("Message not ok")
 				break
 			}
 		}

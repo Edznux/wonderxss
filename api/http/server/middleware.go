@@ -14,7 +14,7 @@ import (
 
 func (api *HTTPApi) jsonMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("Request URL : %s", r.RequestURI)
+		log.Debugf("Request URL : %s", r.RequestURI)
 		// Call the next handler, which can be another middleware in the chain, or the final handler.
 		if strings.HasPrefix(r.RequestURI, "/api/v1") {
 			w.Header().Set("Content-Type", "application/json")
@@ -24,7 +24,7 @@ func (api *HTTPApi) jsonMiddleware(next http.Handler) http.Handler {
 }
 func (api *HTTPApi) CORSMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("Request URL : %s", r.RequestURI)
+		log.Debugf("Request URL : %s", r.RequestURI)
 		// Call the next handler, which can be another middleware in the chain, or the final handler.
 		if strings.HasPrefix(r.RequestURI, "/api/v1") {
 			w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -60,7 +60,7 @@ func (api *HTTPApi) authMiddleware(next http.Handler) http.Handler {
 			json.NewEncoder(w).Encode(&res)
 			return
 		}
-		log.Println("Claims:", claims)
+		log.Debugf("Claims:", claims)
 
 		next.ServeHTTP(w, r)
 	})

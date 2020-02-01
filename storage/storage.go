@@ -1,8 +1,6 @@
 package storage
 
 import (
-	"fmt"
-
 	log "github.com/sirupsen/logrus"
 
 	"github.com/edznux/wonderxss/config"
@@ -66,7 +64,6 @@ type Storage interface {
 }
 
 func LoadStorageBackends() {
-	fmt.Println("LoadStorageBackends")
 	backend = map[string]Storage{}
 	s, err := sqlite.New()
 	if err != nil {
@@ -74,11 +71,11 @@ func LoadStorageBackends() {
 	}
 	s.Init()
 	backend["sqlite"] = s
-	fmt.Printf("Initialiazed storage backends: %+v\n", backend)
+	log.Debugf("Initialiazed storage backends: %+v\n", backend)
 }
 
 func GetDB() Storage {
-	log.Println("GetDB:", backend)
+	log.Debug("GetDB:", backend)
 	currentStorage = backend[config.Current.Database]
 	return currentStorage
 }

@@ -25,14 +25,14 @@ var rootCmd = &cobra.Command{
 	Short: "WonderXSS is a pentest tool for discovering Blind XSSs",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		if remote {
-			fmt.Println("Using remote API!")
+			log.Debugln("Using remote API!")
 			cfg, err := config.ReadClientConfig()
 			if err != nil {
 				log.Fatalln("Coulnd read client config:", err.Error())
 			}
 			currentAPI = client.New(cfg)
 		} else {
-			log.Println("Using local API")
+			log.Debugln("Using local API")
 			currentAPI = local.New()
 		}
 	},

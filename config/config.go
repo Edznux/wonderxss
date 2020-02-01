@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 )
@@ -75,16 +77,14 @@ func Setup() {
 	}
 	err = viper.Unmarshal(&Current)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Println(err.Error())
 		os.Exit(1)
 	}
 
-	fmt.Println("Config file loaded !")
-	fmt.Println("=====================================")
-	fmt.Println("Database : ", Current.Database)
-	fmt.Println("HTTPPOrt : ", Current.HTTPPOrt)
-	fmt.Println("=====================================")
+	log.Debugln("Config file loaded !")
+	log.Debugln("Database : ", Current.Database)
+	log.Debugln("HTTPPOrt : ", Current.HTTPPOrt)
 	viper.OnConfigChange(func(e fsnotify.Event) {
-		fmt.Println("Config file changed:", e.Name)
+		log.Debugln("Config file changed:", e.Name)
 	})
 }

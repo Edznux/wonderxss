@@ -2,7 +2,6 @@ package http
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	log "github.com/sirupsen/logrus"
@@ -21,7 +20,7 @@ type HTTPApi struct {
 func New() *HTTPApi {
 	httpapi := HTTPApi{}
 	httpapi.UrlPrefix = "/api/v1"
-	log.Println("Connecting to local API from HTTPApi")
+	log.Debugln("Connecting to local API from HTTPApi")
 	httpapi.local = local.New()
 	return &httpapi
 }
@@ -42,14 +41,14 @@ func (httpapi *HTTPApi) createInjection(w http.ResponseWriter, req *http.Request
 
 	err := json.NewDecoder(req.Body).Decode(&data)
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		sendResponse(api.InvalidInput, nil, w)
 		return
 	}
 
 	returnedInjection, err := httpapi.local.AddInjection(data.Name, data.Content)
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		sendResponse(api.DatabaseError, nil, w)
 		return
 	}
@@ -61,14 +60,14 @@ func (httpapi *HTTPApi) createPayload(w http.ResponseWriter, req *http.Request) 
 
 	err := json.NewDecoder(req.Body).Decode(&data)
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		sendResponse(api.InvalidInput, nil, w)
 		return
 	}
 
 	returnedPayload, err := httpapi.local.AddPayload(data.Name, data.Content, data.ContentType)
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		sendResponse(api.DatabaseError, nil, w)
 		return
 	}
@@ -82,14 +81,14 @@ func (httpapi *HTTPApi) createCollectors(w http.ResponseWriter, req *http.Reques
 
 	err := json.NewDecoder(req.Body).Decode(&data)
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		sendResponse(api.InvalidInput, nil, w)
 		return
 	}
 
 	returnedCollector, err := httpapi.local.AddCollector(data.Data)
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		sendResponse(api.DatabaseError, nil, w)
 		return
 	}
@@ -103,26 +102,26 @@ func (httpapi *HTTPApi) createAlias(w http.ResponseWriter, req *http.Request) {
 
 	err := json.NewDecoder(req.Body).Decode(&data)
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		sendResponse(api.InvalidInput, nil, w)
 		return
 	}
 
-	log.Println("Data recieved & parsed : ", data)
+	log.Debugln("Data recieved & parsed : ", data)
 	if data.Alias == "" || data.PayloadID == "" {
-		log.Println("Empty data")
+		log.Warnln("Empty data")
 		sendResponse(api.InvalidInput, nil, w)
 		return
 	}
 
 	returnedAlias, err := httpapi.local.AddAlias(data.Alias, data.PayloadID)
 	if err == models.AlreadyExist {
-		log.Println("Returned alias error: ", err)
+		log.Warnln("Returned alias error: ", err)
 		sendResponse(api.AlreadyExist, nil, w)
 		return
 	}
 	if err != nil {
-		log.Println("Returned alias DatabaseError", err)
+		log.Warnln("Returned alias DatabaseError", err)
 		sendResponse(api.DatabaseError, nil, w)
 		return
 	}
@@ -131,11 +130,10 @@ func (httpapi *HTTPApi) createAlias(w http.ResponseWriter, req *http.Request) {
 }
 
 func (httpapi *HTTPApi) getUser(w http.ResponseWriter, req *http.Request) {
-	fmt.Println("httpapi.getUser")
 	vars := mux.Vars(req)
 	user, err := httpapi.local.GetUser((vars["id"]))
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		sendResponse(api.DatabaseError, nil, w)
 		return
 	}
@@ -143,10 +141,9 @@ func (httpapi *HTTPApi) getUser(w http.ResponseWriter, req *http.Request) {
 	sendResponse(api.Success, user, w)
 }
 func (httpapi *HTTPApi) getPayloads(w http.ResponseWriter, req *http.Request) {
-	fmt.Println("httpapi.getPayloads")
 	payloads, err := httpapi.local.GetPayloads()
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		sendResponse(api.DatabaseError, nil, w)
 		return
 	}
@@ -155,10 +152,9 @@ func (httpapi *HTTPApi) getPayloads(w http.ResponseWriter, req *http.Request) {
 }
 
 func (httpapi *HTTPApi) getCollectors(w http.ResponseWriter, req *http.Request) {
-	fmt.Println("getCollectors")
 	collectors, err := httpapi.local.GetCollectors()
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		sendResponse(api.DatabaseError, nil, w)
 		return
 	}
@@ -166,10 +162,9 @@ func (httpapi *HTTPApi) getCollectors(w http.ResponseWriter, req *http.Request) 
 	sendResponse(api.Success, collectors, w)
 }
 func (httpapi *HTTPApi) getExecutions(w http.ResponseWriter, req *http.Request) {
-	fmt.Println("getExecutions")
 	executions, err := httpapi.local.GetExecutions()
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		sendResponse(api.DatabaseError, nil, w)
 		return
 	}
@@ -179,7 +174,7 @@ func (httpapi *HTTPApi) getExecutions(w http.ResponseWriter, req *http.Request) 
 func (httpapi *HTTPApi) getAliases(w http.ResponseWriter, req *http.Request) {
 	aliases, err := httpapi.local.GetAliases()
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		sendResponse(api.DatabaseError, nil, w)
 		return
 	}
@@ -190,7 +185,7 @@ func (httpapi *HTTPApi) getPayload(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	returnedPayload, err := httpapi.local.GetPayload(vars["id"])
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		sendResponse(api.NotFound, nil, w)
 		return
 	}
@@ -201,7 +196,7 @@ func (httpapi *HTTPApi) getAlias(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	returnedAlias, err := httpapi.local.GetAlias(vars["alias"])
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		sendResponse(api.NotFound, nil, w)
 		return
 	}
@@ -212,7 +207,7 @@ func (httpapi *HTTPApi) getInjection(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	returnedInjection, err := httpapi.local.GetInjection(vars["injection"])
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		sendResponse(api.NotFound, nil, w)
 		return
 	}
@@ -222,7 +217,7 @@ func (httpapi *HTTPApi) getInjection(w http.ResponseWriter, req *http.Request) {
 func (httpapi *HTTPApi) getInjections(w http.ResponseWriter, req *http.Request) {
 	returnedInjections, err := httpapi.local.GetInjections()
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		sendResponse(api.NotFound, nil, w)
 		return
 	}
@@ -234,7 +229,7 @@ func (httpapi *HTTPApi) getAliasByID(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	returnedAlias, err := httpapi.local.GetAliasByID(vars["id"])
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		sendResponse(api.NotFound, nil, w)
 		return
 	}
@@ -245,7 +240,7 @@ func (httpapi *HTTPApi) getAliasByPayloadID(w http.ResponseWriter, req *http.Req
 	vars := mux.Vars(req)
 	returnedAlias, err := httpapi.local.GetAliasByPayloadID(vars["id"])
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		sendResponse(api.NotFound, nil, w)
 		return
 	}

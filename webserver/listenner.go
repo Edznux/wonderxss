@@ -1,7 +1,6 @@
 package webserver
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -15,7 +14,7 @@ func (ui *UI) Serve(router *mux.Router) {
 	cfg := config.Current
 	if cfg.StandaloneHTTPS {
 		go func() {
-			fmt.Println("Listenning HTTPS on port :", cfg.HTTPSPOrt)
+			log.Println("Listening HTTPS on port :", cfg.HTTPSPOrt)
 			err := http.ListenAndServeTLS(":"+strconv.Itoa(cfg.HTTPSPOrt), "server.crt", "server.key", router)
 			if err != nil {
 				log.Fatal("ListenAndServeTLS: ", err)
@@ -24,7 +23,7 @@ func (ui *UI) Serve(router *mux.Router) {
 	}
 
 	go func() {
-		fmt.Println("Listenning HTTP on port :", cfg.HTTPPOrt)
+		log.Println("Listening HTTP on port :", cfg.HTTPPOrt)
 		err := http.ListenAndServe(":"+strconv.Itoa(cfg.HTTPPOrt), router)
 
 		if err != nil {
