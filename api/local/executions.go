@@ -7,17 +7,17 @@ import (
 	"github.com/edznux/wonderxss/api"
 	"github.com/edznux/wonderxss/storage/models"
 	"github.com/google/uuid"
+	log "github.com/sirupsen/logrus"
 )
 
 // GetExecutions return all the triggered payload stored in the database.
 func (local *Local) GetExecutions() ([]api.Execution, error) {
-	fmt.Println("api.GetExecutions")
 	data, err := local.store.GetExecutions()
 	if err != nil {
 		return nil, err
 	}
 	executions := []api.Execution{}
-	fmt.Println("Executions from store: ", data)
+	log.Debugln("Executions from store: ", data)
 	for _, p := range data {
 		tmp := api.Execution{}
 		executions = append(executions, tmp.FromStorage(p))

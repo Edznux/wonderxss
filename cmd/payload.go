@@ -3,8 +3,10 @@ package cmd
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 
+	"github.com/olekukonko/tablewriter"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
@@ -51,12 +53,17 @@ var getPayloadCmd = &cobra.Command{
 	Short: "Get all payloads or a specific one",
 	Long:  `Get all payloads or a specific one by specifying it's it as a second argument`,
 	Run: func(cmd *cobra.Command, args []string) {
+		table := tablewriter.NewWriter(os.Stdout)
+		table.SetHeader([]string{"ID", "Name", "Content", "Content Type", "Created At"})
 		if len(args) == 0 {
-			payloades, err := currentAPI.GetPayloads()
+			payloads, err := currentAPI.GetPayloads()
 			if err != nil {
-				log.Fatal("Could not get payloades", err)
+				log.Fatal("Could not get payloads", err)
 			}
-			fmt.Printf("%+v\n", payloades)
+			for _, p := range payloads {
+				table.Append([]string{p.ID, p.Name, p.Content, p.ContentType, p.CreatedAt.String()})
+			}
+			table.Render()
 			return
 		}
 
@@ -65,9 +72,8 @@ var getPayloadCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal("Could not get payload"+payloadID, err)
 		}
-		fmt.Printf("%+v\n", payload)
-		fmt.Printf("Payload: [%s] %s\n", payload.ID, payload.Name)
-
+		table.Append([]string{payload.ID, payload.Name, payload.Content, payload.ContentType, payload.CreatedAt.String()})
+		table.Render()
 	},
 }
 

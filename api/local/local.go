@@ -11,7 +11,7 @@ type Local struct {
 }
 
 func New() *Local {
-	log.Println("New Local API")
+	log.Debugln("New Local API")
 	str := storage.GetDB()
 	return &Local{store: str}
 }

@@ -87,7 +87,7 @@ func (s *Sqlite) Setup() error {
 func (s *Sqlite) CreatePayload(payload models.Payload) (models.Payload, error) {
 	_, err := s.db.Exec(INSERT_PAYLOAD, payload.ID, payload.Name, payload.Hashes.String(), payload.Content, payload.ContentType)
 	if err != nil {
-		log.Println(err)
+		log.Errorln(err)
 		return models.Payload{}, err
 	}
 
@@ -97,7 +97,7 @@ func (s *Sqlite) CreatePayload(payload models.Payload) (models.Payload, error) {
 func (s *Sqlite) CreateUser(user models.User) (models.User, error) {
 	_, err := s.db.Exec(INSERT_USER, user.ID, user.Username, user.Password)
 	if err != nil {
-		log.Println(err)
+		log.Errorln(err)
 		return models.User{}, err
 	}
 
@@ -107,7 +107,7 @@ func (s *Sqlite) CreateUser(user models.User) (models.User, error) {
 func (s *Sqlite) CreateOTP(user models.User, TOTPSecret string) (models.User, error) {
 	_, err := s.db.Exec(UPDATE_ADD_TOTP, 1, TOTPSecret, user.ID)
 	if err != nil {
-		log.Println(err)
+		log.Errorln(err)
 		return models.User{}, err
 	}
 
@@ -117,7 +117,7 @@ func (s *Sqlite) CreateOTP(user models.User, TOTPSecret string) (models.User, er
 func (s *Sqlite) RemoveOTP(user models.User) (models.User, error) {
 	_, err := s.db.Exec(UPDATE_ADD_TOTP, 0, "", user.ID)
 	if err != nil {
-		log.Println(err)
+		log.Errorln(err)
 		return models.User{}, err
 	}
 
@@ -128,12 +128,12 @@ func (s *Sqlite) CreateAlias(alias models.Alias) (models.Alias, error) {
 	_, err := s.db.Exec(INSERT_ALIAS, alias.ID, alias.PayloadID, alias.Short)
 	if sqliteErr, ok := err.(sqlite3.Error); ok {
 		if sqliteErr.ExtendedCode == sqlite3.ErrConstraintUnique {
-			log.Println(err)
+			log.Errorln(err)
 			return models.Alias{}, models.AlreadyExist
 		}
 	}
 	if err != nil {
-		log.Println(err)
+		log.Errorln(err)
 		return models.Alias{}, err
 	}
 
@@ -143,7 +143,7 @@ func (s *Sqlite) CreateAlias(alias models.Alias) (models.Alias, error) {
 func (s *Sqlite) CreateCollector(collector models.Collector) (models.Collector, error) {
 	_, err := s.db.Exec(INSERT_COLLECTOR, collector.ID, collector.Data)
 	if err != nil {
-		log.Println(err)
+		log.Errorln(err)
 		return models.Collector{}, err
 	}
 
@@ -153,7 +153,7 @@ func (s *Sqlite) CreateCollector(collector models.Collector) (models.Collector, 
 func (s *Sqlite) CreateInjection(injection models.Injection) (models.Injection, error) {
 	_, err := s.db.Exec(INSERT_INJECTION, injection.ID, injection.Name, injection.Content)
 	if err != nil {
-		log.Println("CreateInjection failed:", err)
+		log.Errorln("CreateInjection failed:", err)
 		return models.Injection{}, err
 	}
 
@@ -165,7 +165,7 @@ func (s *Sqlite) CreateExecution(execution models.Execution, payloadIDOrAlias st
 	// TODO : store the alias_ID and not the alias directly
 	_, err := s.db.Exec(INSERT_EXECUTION, execution.ID, execution.PayloadID, payloadIDOrAlias)
 	if err != nil {
-		log.Println(err)
+		log.Errorln(err)
 		return models.Execution{}, err
 	}
 
@@ -175,12 +175,11 @@ func (s *Sqlite) CreateExecution(execution models.Execution, payloadIDOrAlias st
 // Read
 func (s *Sqlite) GetPayloads() ([]models.Payload, error) {
 
-	log.Println("sqlite.GetPayloads")
 	res := []models.Payload{}
 
 	rows, err := s.db.Query(SELECT_ALL_PAYLOADS)
 	if err != nil {
-		log.Println(err)
+		log.Errorln(err)
 		return nil, err
 	}
 
@@ -192,7 +191,7 @@ func (s *Sqlite) GetPayloads() ([]models.Payload, error) {
 		rows.Scan(&tmpRes.ID, &tmpRes.Name, &hashes, &tmpRes.Content, &contentType, &tmpRes.CreatedAt, &tmpRes.ModifiedAt)
 		err := json.Unmarshal([]byte(hashes), &tmpRes.Hashes)
 		if err != nil {
-			log.Println(err)
+			log.Warnln(err)
 		}
 		if contentType.Valid {
 			tmpRes.ContentType = contentType.String
@@ -205,11 +204,10 @@ func (s *Sqlite) GetPayloads() ([]models.Payload, error) {
 	}
 
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		return nil, err
 	}
 
-	log.Println(res)
 	return res, nil
 }
 
@@ -226,7 +224,7 @@ func (s *Sqlite) GetPayload(id string) (models.Payload, error) {
 	}
 
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		return models.Payload{}, err
 	}
 
@@ -236,7 +234,7 @@ func (s *Sqlite) GetPayload(id string) (models.Payload, error) {
 
 	err = json.Unmarshal([]byte(hashes), &res.Hashes)
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		return models.Payload{}, err
 	}
 	return res, nil
@@ -255,7 +253,7 @@ func (s *Sqlite) GetPayloadByAlias(short string) (models.Payload, error) {
 	}
 
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		return models.Payload{}, err
 	}
 	if contentType.Valid {
@@ -264,7 +262,7 @@ func (s *Sqlite) GetPayloadByAlias(short string) (models.Payload, error) {
 
 	err = json.Unmarshal([]byte(hashes), &res.Hashes)
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		return models.Payload{}, err
 	}
 	return res, nil
@@ -296,7 +294,7 @@ func (s *Sqlite) GetInjectionByName(name string) (models.Injection, error) {
 	}
 
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		return models.Injection{}, err
 	}
 	return res, nil
@@ -308,7 +306,7 @@ func (s *Sqlite) GetInjections() ([]models.Injection, error) {
 
 	rows, err := s.db.Query(SELECT_ALL_INJECTION)
 	if err != nil {
-		log.Println("Error querying the db (Injection):", err)
+		log.Errorln("Error querying the db (Injection):", err)
 		return nil, err
 	}
 
@@ -323,11 +321,10 @@ func (s *Sqlite) GetInjections() ([]models.Injection, error) {
 	}
 
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		return nil, err
 	}
 
-	log.Println(res)
 	return res, nil
 }
 func (s *Sqlite) GetAlias(alias string) (models.Alias, error) {
@@ -341,7 +338,7 @@ func (s *Sqlite) GetAlias(alias string) (models.Alias, error) {
 	}
 
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		return models.Alias{}, err
 	}
 	return res, nil
@@ -358,7 +355,7 @@ func (s *Sqlite) GetAliasByID(id string) (models.Alias, error) {
 	}
 
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		return models.Alias{}, err
 	}
 	return res, nil
@@ -375,7 +372,7 @@ func (s *Sqlite) GetAliasByPayloadID(id string) (models.Alias, error) {
 	}
 
 	if err != nil {
-		log.Println(err)
+		log.Warnln(err)
 		return models.Alias{}, err
 	}
 	return res, nil
@@ -383,7 +380,7 @@ func (s *Sqlite) GetAliasByPayloadID(id string) (models.Alias, error) {
 
 func (s *Sqlite) GetExecution(id string) (models.Execution, error) {
 
-	log.Println("GetExecution(", id, ")")
+	log.Debugln("GetExecution(", id, ")")
 	row := s.db.QueryRow(SELECT_EXECUTION, id)
 
 	var res models.Execution
@@ -400,8 +397,6 @@ func (s *Sqlite) GetExecution(id string) (models.Execution, error) {
 }
 
 func (s *Sqlite) GetExecutions() ([]models.Execution, error) {
-
-	log.Println("GetExecutions")
 
 	res := []models.Execution{}
 
@@ -426,13 +421,12 @@ func (s *Sqlite) GetExecutions() ([]models.Execution, error) {
 		return nil, err
 	}
 
-	log.Println(res)
 	return res, nil
 }
 
 func (s *Sqlite) GetCollector(id string) (models.Collector, error) {
 
-	log.Println("GetCollector(", id, ")")
+	log.Debugln("GetCollector(", id, ")")
 	row := s.db.QueryRow(SELECT_COLLECTOR, id)
 
 	var res models.Collector
@@ -449,8 +443,6 @@ func (s *Sqlite) GetCollector(id string) (models.Collector, error) {
 }
 
 func (s *Sqlite) GetCollectors() ([]models.Collector, error) {
-
-	log.Println("GetCollectors")
 
 	res := []models.Collector{}
 
@@ -475,13 +467,10 @@ func (s *Sqlite) GetCollectors() ([]models.Collector, error) {
 		return nil, err
 	}
 
-	log.Println(res)
 	return res, nil
 }
 
 func (s *Sqlite) GetAliases() ([]models.Alias, error) {
-
-	log.Println("GetAliases")
 
 	res := []models.Alias{}
 
@@ -506,7 +495,6 @@ func (s *Sqlite) GetAliases() ([]models.Alias, error) {
 		return nil, err
 	}
 
-	log.Println(res)
 	return res, nil
 }
 

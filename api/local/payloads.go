@@ -1,18 +1,15 @@
 package local
 
 import (
-	"fmt"
-
 	"github.com/edznux/wonderxss/api"
 	"github.com/edznux/wonderxss/crypto"
 	"github.com/edznux/wonderxss/events"
 	"github.com/edznux/wonderxss/storage/models"
 	"github.com/google/uuid"
+	log "github.com/sirupsen/logrus"
 )
 
 func (local *Local) GetPayloads() ([]api.Payload, error) {
-	fmt.Println("api.GetPayloads")
-	fmt.Println(local.store)
 	data, err := local.store.GetPayloads()
 	if err != nil {
 		return nil, err
@@ -40,13 +37,10 @@ func (local *Local) ServePayload(idOrAlias string) (string, error) {
 	}
 	// Run alert and store in DB without blocking.
 	go func() {
-		fmt.Println("=================================")
-		fmt.Println("Notification should be sent now !")
+		log.Debugf("Notification should be sent now !")
 		events.Events.Pub(payload, events.TOPIC_PAYLOAD_DELIVERED)
-		fmt.Println("=================================")
-		fmt.Println("Saving execution")
+		log.Debugln("Saving execution")
 		local.AddExecution(payload.ID, idOrAlias)
-		fmt.Println("=================================")
 	}()
 	return payload.Content, nil
 }
@@ -63,7 +57,7 @@ func (local *Local) GetPayload(id string) (api.Payload, error) {
 //AddPayload is the API to add a new payload
 func (local *Local) AddPayload(name string, content string, contentType string) (api.Payload, error) {
 	var returnedPayload api.Payload
-	fmt.Printf("AddPayload(\"%s\", \"%s\", \"%s\")\n", name, content, contentType)
+	log.Debugf("AddPayload(\"%s\", \"%s\", \"%s\")\n", name, content, contentType)
 	hashes := crypto.GenerateSRIHashes(content)
 	p := models.Payload{
 		ID:          uuid.New().String(),
@@ -72,7 +66,7 @@ func (local *Local) AddPayload(name string, content string, contentType string) 
 		Content:     content,
 		ContentType: contentType,
 	}
-	fmt.Println(p)
+	log.Debugln(p)
 	payload, err := local.store.CreatePayload(p)
 	if err != nil {
 		return api.Payload{}, err

@@ -63,6 +63,6 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.PersistentFlags().BoolVarP(&remote, "remote", "t", false, "remote bool")
+	rootCmd.PersistentFlags().BoolVarP(&remote, "remote", "t", false, "Use remote API instead of local")
 	rootCmd.AddCommand(healthCmd)
 }

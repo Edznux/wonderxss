@@ -7,17 +7,17 @@ import (
 	"github.com/edznux/wonderxss/api"
 	"github.com/edznux/wonderxss/storage/models"
 	"github.com/google/uuid"
+	log "github.com/sirupsen/logrus"
 )
 
 // GetCollectors return all the triggered payload stored in the database.
 func (local *Local) GetCollectors() ([]api.Collector, error) {
-	fmt.Println("api.GetCollectors")
 	data, err := local.store.GetCollectors()
 	if err != nil {
 		return nil, err
 	}
 	collectors := []api.Collector{}
-	fmt.Println("Collectors from store: ", data)
+	log.Debugln("Collectors from store: ", data)
 	for _, p := range data {
 		tmp := api.Collector{}
 		collectors = append(collectors, tmp.FromStorage(p))

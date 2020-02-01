@@ -100,7 +100,6 @@ func (ui *UI) GenerateOTPSecret(w http.ResponseWriter, req *http.Request) {
 // Login is the http handler function for user login
 func (ui *UI) Login(w http.ResponseWriter, req *http.Request) {
 	log.Printf("Login request")
-	log.Printf("%+v\n", ui.api)
 	res := api.Response{}
 	loginParam := req.FormValue("login")
 	passwordParam := req.FormValue("password")
