@@ -6,10 +6,11 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/edznux/wonderxss/api"
 	"github.com/olekukonko/tablewriter"
-	log "github.com/sirupsen/logrus"
-
 	"github.com/spf13/cobra"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // payloadCmd represents the payload command
@@ -17,7 +18,14 @@ var payloadCmd = &cobra.Command{
 	Use:   "payload",
 	Short: "Do all the operations on payloads.",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Invalid arguments, see `Available Commands`")
+		if len(args) == 0 {
+			payloads, err := currentAPI.GetPayloads()
+			if err != nil {
+				log.Println(err)
+			}
+			tablePayloads(payloads)
+			return
+		}
 		cmd.Help()
 	},
 }
@@ -53,28 +61,40 @@ var getPayloadCmd = &cobra.Command{
 	Short: "Get all payloads or a specific one",
 	Long:  `Get all payloads or a specific one by specifying it's it as a second argument`,
 	Run: func(cmd *cobra.Command, args []string) {
-		table := tablewriter.NewWriter(os.Stdout)
-		table.SetHeader([]string{"ID", "Name", "Content", "Content Type", "Created At"})
+		var payloads []api.Payload
+		var err error
+
 		if len(args) == 0 {
-			payloads, err := currentAPI.GetPayloads()
+			payloads, err = currentAPI.GetPayloads()
 			if err != nil {
 				log.Fatal("Could not get payloads", err)
 			}
-			for _, p := range payloads {
-				table.Append([]string{p.ID, p.Name, p.Content, p.ContentType, p.CreatedAt.String()})
-			}
-			table.Render()
 			return
+		} else {
+			payloadID := args[0]
+			payload, err := currentAPI.GetPayload(payloadID)
+			if err != nil {
+				log.Fatal("Could not get payload"+payloadID, err)
+			}
+			payloads = append(payloads, payload)
 		}
-
-		payloadID := args[0]
-		payload, err := currentAPI.GetPayload(payloadID)
-		if err != nil {
-			log.Fatal("Could not get payload"+payloadID, err)
+		// TODO: replace the error from the api to custom api.Error
+		// so we can do if err == api.ErrNotFound
+		if payloads[0].ID != "" {
+			tablePayloads(payloads)
+		} else {
+			fmt.Println("No payloads found.")
 		}
-		table.Append([]string{payload.ID, payload.Name, payload.Content, payload.ContentType, payload.CreatedAt.String()})
-		table.Render()
 	},
+}
+
+func tablePayloads(payloads []api.Payload) {
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"ID", "Name", "Content", "Content Type", "Created At"})
+	for _, p := range payloads {
+		table.Append([]string{p.ID, p.Name, p.Content, p.CreatedAt.String()})
+	}
+	table.Render()
 }
 
 func init() {

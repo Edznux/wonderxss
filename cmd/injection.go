@@ -3,8 +3,11 @@ package cmd
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 
+	"github.com/edznux/wonderxss/api"
+	"github.com/olekukonko/tablewriter"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
@@ -15,7 +18,14 @@ var injectionCmd = &cobra.Command{
 	Use:   "injection",
 	Short: "Do all the operations on injections.",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Invalid arguments, see `Available Commands`")
+		if len(args) == 0 {
+			injections, err := currentAPI.GetInjections()
+			if err != nil {
+				log.Println(err)
+			}
+			tableInjection(injections)
+			return
+		}
 		cmd.Help()
 	},
 }
@@ -45,7 +55,47 @@ var createInjectionCmd = &cobra.Command{
 	},
 }
 
+var getInjectionCmd = &cobra.Command{
+	Use:   "get [injection]",
+	Short: "Get all injections or a specific one",
+	Long:  `Get all injections or a specific one by specifying it's it as a second argument`,
+	Run: func(cmd *cobra.Command, args []string) {
+		var err error
+		var injections []api.Injection
+		if len(args) == 0 {
+			injections, err = currentAPI.GetInjections()
+			if err != nil {
+				log.Fatal("Could not get injections", err)
+			}
+		} else {
+			injectionID := args[0]
+			injection, err := currentAPI.GetInjection(injectionID)
+			if err != nil {
+				log.Warnf("Could not get Injection: [%s], %s", injectionID, err)
+			}
+			injections = append(injections, injection)
+		}
+		// TODO: replace the error from the api to custom api.Error
+		// so we can do if err == api.ErrNotFound
+		if injections[0].ID != "" {
+			tableInjection(injections)
+		} else {
+			fmt.Println("No injection found.")
+		}
+	},
+}
+
+func tableInjection(injections []api.Injection) {
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"ID", "Name", "Content", "Created At"})
+	for _, p := range injections {
+		table.Append([]string{p.ID, p.Name, p.Content, p.CreatedAt.String()})
+	}
+	table.Render()
+}
+
 func init() {
 	rootCmd.AddCommand(injectionCmd)
 	injectionCmd.AddCommand(createInjectionCmd)
+	injectionCmd.AddCommand(getInjectionCmd)
 }

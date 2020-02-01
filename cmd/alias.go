@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/edznux/wonderxss/api"
 	"github.com/olekukonko/tablewriter"
 	log "github.com/sirupsen/logrus"
 
@@ -53,38 +54,39 @@ var getAliasesCmd = &cobra.Command{
 	Long: `Create a new alias by providing a file path to the alias.
 	The (basename of the) path will be the name of the alias`,
 	Run: func(cmd *cobra.Command, args []string) {
-
-		table := tablewriter.NewWriter(os.Stdout)
-		table.SetHeader([]string{"ID", "Alias", "Created At"})
-
+		var aliases []api.Alias
+		var err error
 		if len(args) == 0 {
-			aliases, err := currentAPI.GetAliases()
+			aliases, err = currentAPI.GetAliases()
 			if err != nil {
 				log.Fatal("Could not get aliases", err)
 			}
-			for _, a := range aliases {
-				table.Append([]string{a.ID, a.Alias, a.CreatedAt.String()})
-			}
-			table.Render()
-			return
-		}
-
-		aliasID := args[0]
-		alias, err := currentAPI.GetAlias(aliasID)
-		if err != nil {
-			fmt.Println("Could not get alias "+aliasID, err)
-		}
-
-		if alias.ID != "" {
-			table.Append([]string{alias.ID, alias.Alias, alias.CreatedAt.String()})
-			table.Render()
 		} else {
-			fmt.Println("No alias found")
+			aliasID := args[0]
+			alias, err := currentAPI.GetAlias(aliasID)
+			if err != nil {
+				fmt.Println("Could not get alias "+aliasID, err)
+			}
+			aliases = append(aliases, alias)
 		}
-
+		// TODO: replace the error from the api to custom api.Error
+		// so we can do if err == api.ErrNotFound
+		if aliases[0].ID != "" {
+			tableAliases(aliases)
+		} else {
+			fmt.Println("No aliases found.")
+		}
 	},
 }
 
+func tableAliases(payloads []api.Alias) {
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"ID", "Alias", "Created At"})
+	for _, p := range payloads {
+		table.Append([]string{p.ID, p.Alias, p.CreatedAt.String()})
+	}
+	table.Render()
+}
 func init() {
 	rootCmd.AddCommand(aliasesCmd)
 	aliasesCmd.AddCommand(createAliasesCmd)
