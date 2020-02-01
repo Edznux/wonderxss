@@ -205,7 +205,7 @@ func (httpapi *HTTPApi) getAlias(w http.ResponseWriter, req *http.Request) {
 }
 func (httpapi *HTTPApi) getInjection(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
-	returnedInjection, err := httpapi.local.GetInjection(vars["injection"])
+	returnedInjection, err := httpapi.local.GetInjection(vars["name"])
 	if err != nil {
 		log.Warnln(err)
 		sendResponse(api.NotFound, nil, w)
