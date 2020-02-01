@@ -3,7 +3,6 @@ package client
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -14,6 +13,7 @@ import (
 
 	"github.com/edznux/wonderxss/api"
 	"github.com/edznux/wonderxss/config"
+	"github.com/mitchellh/mapstructure"
 )
 
 type Client struct {
@@ -142,10 +142,12 @@ func (c *Client) GetAliases() ([]api.Alias, error) {
 	if err != nil {
 		return []api.Alias{}, errors.New("Couldn't get Aliases: " + err.Error())
 	}
-
-	for _, a := range res.Data.([]interface{}) {
-		fmt.Printf("%+v\n", a)
-		aliases = append(aliases, a.(api.Alias))
+	if res.Data != nil {
+		for _, a := range res.Data.([]interface{}) {
+			tmpAlias := api.Alias{}
+			mapstructure.Decode(a, &tmpAlias)
+			aliases = append(aliases, tmpAlias)
+		}
 	}
 	return aliases, nil
 }
@@ -159,7 +161,7 @@ func (c *Client) GetAlias(id string) (api.Alias, error) {
 	}
 
 	if res.Data != nil {
-		alias = res.Data.(api.Alias)
+		mapstructure.Decode(res.Data, &alias)
 	}
 
 	return alias, nil
@@ -188,9 +190,12 @@ func (c *Client) GetCollectors() ([]api.Collector, error) {
 	if err != nil {
 		return []api.Collector{}, errors.New("Couldn't get collectors " + err.Error())
 	}
-
-	for _, c := range res.Data.([]interface{}) {
-		collectors = append(collectors, c.(api.Collector))
+	if res.Data != nil {
+		for _, c := range res.Data.([]interface{}) {
+			tmpCollector := api.Collector{}
+			mapstructure.Decode(c, &tmpCollector)
+			collectors = append(collectors, tmpCollector)
+		}
 	}
 
 	return collectors, nil
@@ -205,7 +210,7 @@ func (c *Client) GetCollector(id string) (api.Collector, error) {
 	}
 
 	if res.Data != nil {
-		collector = res.Data.(api.Collector)
+		mapstructure.Decode(res.Data, &collector)
 	}
 
 	return collector, nil
@@ -226,9 +231,12 @@ func (c *Client) GetExecutions() ([]api.Execution, error) {
 	if err != nil {
 		return []api.Execution{}, errors.New("Couldn't get executions " + err.Error())
 	}
-
-	for _, e := range res.Data.([]interface{}) {
-		executions = append(executions, e.(api.Execution))
+	if res.Data != nil {
+		for _, e := range res.Data.([]interface{}) {
+			tmpExecutions := api.Execution{}
+			mapstructure.Decode(e, &tmpExecutions)
+			executions = append(executions, tmpExecutions)
+		}
 	}
 
 	return executions, nil
@@ -243,7 +251,7 @@ func (c *Client) GetExecution(id string) (api.Execution, error) {
 	}
 
 	if res.Data != nil {
-		execution = res.Data.(api.Execution)
+		mapstructure.Decode(res.Data, &execution)
 	}
 
 	return execution, nil
@@ -264,11 +272,13 @@ func (c *Client) GetInjections() ([]api.Injection, error) {
 	if err != nil {
 		return []api.Injection{}, errors.New("Couldn't get Injections: " + err.Error())
 	}
-
-	for _, i := range res.Data.([]interface{}) {
-		injections = append(injections, i.(api.Injection))
+	if res.Data != nil {
+		for _, i := range res.Data.([]interface{}) {
+			tmpInjection := api.Injection{}
+			mapstructure.Decode(i, &tmpInjection)
+			injections = append(injections, tmpInjection)
+		}
 	}
-
 	return injections, nil
 }
 
@@ -281,7 +291,7 @@ func (c *Client) GetInjection(id string) (api.Injection, error) {
 	}
 
 	if res.Data != nil {
-		injection = res.Data.(api.Injection)
+		mapstructure.Decode(res.Data, &injection)
 	}
 
 	return injection, nil
@@ -297,17 +307,19 @@ func (c *Client) DeleteInjection(id string) error {
 
 func (c *Client) GetPayloads() ([]api.Payload, error) {
 	var res api.Response
-	var payload []api.Payload
+	var payloads []api.Payload
 	res, err := c.doAPIRequest("GET", "/payloads", nil)
 	if err != nil {
 		return []api.Payload{}, errors.New("Couldn't get Payload: " + err.Error())
 	}
-
-	for _, p := range res.Data.([]interface{}) {
-		payload = append(payload, p.(api.Payload))
+	if res.Data != nil {
+		for _, p := range res.Data.([]interface{}) {
+			tmpPayload := api.Payload{}
+			mapstructure.Decode(p, &tmpPayload)
+			payloads = append(payloads, tmpPayload)
+		}
 	}
-
-	return payload, nil
+	return payloads, nil
 }
 
 func (c *Client) ServePayload(idOrAlias string) (string, error) {
@@ -323,7 +335,7 @@ func (c *Client) GetPayload(id string) (api.Payload, error) {
 	}
 
 	if res.Data != nil {
-		payload = res.Data.(api.Payload)
+		mapstructure.Decode(res.Data, &payload)
 	}
 
 	return payload, nil
@@ -350,7 +362,7 @@ func (c *Client) GetUser(id string) (api.User, error) {
 	}
 
 	if res.Data != nil {
-		user = res.Data.(api.User)
+		mapstructure.Decode(res.Data, &user)
 	}
 
 	return user, nil

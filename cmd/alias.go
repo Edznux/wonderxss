@@ -65,7 +65,7 @@ var getAliasesCmd = &cobra.Command{
 			log.Fatal("Could not get alias"+aliasID, err)
 		}
 		fmt.Printf("%+v\n", alias)
-		fmt.Printf("Alias: [%s] %s\n", alias.ID, alias.Alias)
+		fmt.Printf("Alias: %s %s\n", alias.ID, alias.Alias)
 	},
 }
 
