@@ -1,7 +1,6 @@
 package webserver
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -54,7 +53,7 @@ func (ui *UI) HandleIndex(w http.ResponseWriter, req *http.Request) {
 
 	// Index page, should return the UI
 	if subdomain == hostname {
-		fmt.Println("Index page called, redirecting to UI")
+		log.Debug("Index page called, redirecting to UI")
 		ui.ServeUI(w, req)
 		return
 	}
@@ -70,7 +69,7 @@ func (ui *UI) HandleIndex(w http.ResponseWriter, req *http.Request) {
 }
 
 func (ui *UI) ServeUI(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Serving UI")
+	log.Debugln("Serving UI")
 	// get the absolute path to prevent directory traversal
 	path, err := filepath.Abs(r.URL.Path)
 	if err != nil {
@@ -81,19 +80,18 @@ func (ui *UI) ServeUI(w http.ResponseWriter, r *http.Request) {
 	}
 	// prepend the path with the path to the static directory
 	path = filepath.Join(ui.staticPath, path)
-	fmt.Println("Path:", path)
 
 	// check whether a file exists at the given path
 	_, err = os.Stat(path)
 	if os.IsNotExist(err) {
 		fullIndexPath := filepath.Join(ui.staticPath, ui.indexPath)
-		fmt.Println("Non-existing path, returning indexPath", fullIndexPath)
+		log.Info("Non-existing path, returning indexPath", fullIndexPath)
 		http.ServeFile(w, r, fullIndexPath)
 		return
 	} else if err != nil {
 		// if we got an error (that wasn't that the file doesn't exist) stating the
 		// file, return a 500 internal server error and stop
-		fmt.Println(err)
+		log.Error(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
