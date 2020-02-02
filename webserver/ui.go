@@ -29,13 +29,27 @@ func New() *UI {
 	ui.api = local.New()
 	return &ui
 }
+func (ui *UI) LoggingMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Infof("%s - %s - \"%s %s %s\"-\"%s\"",
+			r.RemoteAddr,
+			strings.Split(r.Host, ":")[0],
+			r.Method,
+			r.RequestURI,
+			r.Proto,
+			r.UserAgent(),
+		)
+		// Call the next handler, which can be another middleware in the chain, or the final handler.
+		next.ServeHTTP(w, r)
+	})
+}
 
 func (ui *UI) HandleIndex(w http.ResponseWriter, req *http.Request) {
 	hostname := req.Host
 	subdomain := strings.TrimSuffix(hostname, "."+config.Current.Domain)
-	log.Println("req.URL.Path:", req.URL.Path)
-	log.Println("hostname:", hostname)
-	log.Println("Subdomain:", subdomain)
+	log.Debugln("req.URL.Path:", req.URL.Path)
+	log.Debugln("hostname:", hostname)
+	log.Debugln("Subdomain:", subdomain)
 	content, err := ui.api.ServePayload(subdomain)
 
 	// Index page, should return the UI

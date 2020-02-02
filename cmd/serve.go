@@ -34,9 +34,9 @@ func entrypoint() {
 	ui := webserver.New()
 	ws := websocket.New()
 
+	router.Use(ui.LoggingMiddleware)
 	apiRouter := router.PathPrefix(api.UrlPrefix).Subrouter()
 	api.Routes(apiRouter)
-
 	// Return real payload
 	router.HandleFunc("/ws", ws.Handle)
 	ui.Serve(router)
@@ -45,8 +45,9 @@ func entrypoint() {
 
 // serveCmd represents the serve command
 var serveCmd = &cobra.Command{
-	Use:   "serve",
-	Short: "Start the application",
+	Use:     "serve",
+	Aliases: []string{"server"},
+	Short:   "Start the application server",
 	Run: func(cmd *cobra.Command, args []string) {
 		entrypoint()
 	},
