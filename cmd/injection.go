@@ -23,7 +23,13 @@ var injectionCmd = &cobra.Command{
 			if err != nil {
 				log.Println(err)
 			}
-			tableInjection(injections)
+			// TODO: replace the error from the api to custom api.Error
+			// so we can do if err == api.ErrNotFound
+			if injections[0].ID != "" {
+				tableInjections(injections)
+			} else {
+				fmt.Println("No injections found.")
+			}
 			return
 		}
 		cmd.Help()
@@ -78,14 +84,14 @@ var getInjectionCmd = &cobra.Command{
 		// TODO: replace the error from the api to custom api.Error
 		// so we can do if err == api.ErrNotFound
 		if injections[0].ID != "" {
-			tableInjection(injections)
+			tableInjections(injections)
 		} else {
 			fmt.Println("No injection found.")
 		}
 	},
 }
 
-func tableInjection(injections []api.Injection) {
+func tableInjections(injections []api.Injection) {
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader([]string{"ID", "Name", "Content", "Created At"})
 	for _, p := range injections {

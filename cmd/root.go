@@ -17,6 +17,7 @@ import (
 var (
 	db         storage.Storage
 	remote     bool
+	verbose    bool
 	currentAPI api.API
 )
 
@@ -24,6 +25,10 @@ var rootCmd = &cobra.Command{
 	Use:   "wonderxss",
 	Short: "WonderXSS is a pentest tool for discovering Blind XSSs",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		if verbose {
+			log.Infoln("Enabling verbose")
+			log.SetLevel(log.DebugLevel)
+		}
 		if remote {
 			log.Debugln("Using remote API!")
 			cfg, err := config.ReadClientConfig()
@@ -64,5 +69,6 @@ func Execute() {
 
 func init() {
 	rootCmd.PersistentFlags().BoolVarP(&remote, "remote", "t", false, "Use remote API instead of local")
+	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Enable verbose (debug) logs")
 	rootCmd.AddCommand(healthCmd)
 }

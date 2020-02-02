@@ -60,7 +60,7 @@ func (api *HTTPApi) authMiddleware(next http.Handler) http.Handler {
 			json.NewEncoder(w).Encode(&res)
 			return
 		}
-		log.Debugf("Claims:", claims)
+		log.Debugf("Claims: %+v", claims)
 
 		next.ServeHTTP(w, r)
 	})

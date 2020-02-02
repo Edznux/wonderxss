@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"syscall"
 
+	"github.com/edznux/wonderxss/config"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
@@ -17,6 +18,42 @@ var userCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Invalid arguments, see `Available Commands`")
 		cmd.Help()
+	},
+}
+
+var loginCmd = &cobra.Command{
+	Use:   "login",
+	Short: "Do all the operations on users.",
+	Args:  cobra.MinimumNArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		user := args[0]
+		fmt.Println("Please enter a password:")
+		bytePassword, err := terminal.ReadPassword(int(syscall.Stdin))
+		if err != nil {
+			log.Fatal("Could not read password", err)
+		}
+		password := string(bytePassword)
+
+		fmt.Println("Please enter your OTP:")
+		byteOTP, err := terminal.ReadPassword(int(syscall.Stdin))
+		if err != nil {
+			log.Fatal("Could not read OTP", err)
+		}
+		otp := string(byteOTP)
+
+		log.Debugln("trying to connect the user", user)
+		fmt.Println(password)
+		res, err := currentAPI.Login(user, password, otp)
+
+		if err != nil {
+			fmt.Println(err)
+			//exit early
+			return
+		}
+		config.SaveClientConfig(config.Client{
+			Token:   res,
+			Version: "v1",
+		})
 	},
 }
 
@@ -53,5 +90,6 @@ var createUserCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(userCmd)
+	rootCmd.AddCommand(loginCmd)
 	userCmd.AddCommand(createUserCmd)
 }

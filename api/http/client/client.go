@@ -79,6 +79,10 @@ func (c *Client) doAuthRequest(method string, path string, body io.Reader) (api.
 	req.Header.Add("Authorization", "Bearer "+c.jwtToken)
 
 	response, err := netClient.Do(req)
+	if err != nil {
+		log.Errorln(err)
+		return result, err
+	}
 	err = json.NewDecoder(response.Body).Decode(&result)
 	if err != nil {
 		return api.Response{}, err
@@ -132,7 +136,7 @@ func (c *Client) Login(user, password, otp string) (string, error) {
 
 func (c *Client) GetHealth() (string, error) {
 	var res api.Response
-	res, err := c.doAPIRequest("GET", "/healthz", nil)
+	res, err := c.doAuthAPIRequest("GET", "/healthz", nil)
 	if err != nil {
 		return "", errors.New("Couldn't get HEALTHZ informations: " + err.Error())
 	}
@@ -142,7 +146,7 @@ func (c *Client) GetHealth() (string, error) {
 func (c *Client) GetAliases() ([]api.Alias, error) {
 	var res api.Response
 	aliases := []api.Alias{}
-	res, err := c.doAPIRequest("GET", "/aliases", nil)
+	res, err := c.doAuthAPIRequest("GET", "/aliases", nil)
 	if err != nil {
 		return []api.Alias{}, errors.New("Couldn't get Aliases: " + err.Error())
 	}
@@ -159,7 +163,7 @@ func (c *Client) GetAliases() ([]api.Alias, error) {
 func (c *Client) GetAlias(id string) (api.Alias, error) {
 	var res api.Response
 	var alias api.Alias
-	res, err := c.doAPIRequest("GET", "/aliases/"+id, nil)
+	res, err := c.doAuthAPIRequest("GET", "/aliases/"+id, nil)
 	if err != nil {
 		return api.Alias{}, errors.New("Couldn't get Alias " + id + ": " + err.Error())
 	}
@@ -190,7 +194,7 @@ func (c *Client) DeleteAlias(id string) error {
 func (c *Client) GetCollectors() ([]api.Collector, error) {
 	var res api.Response
 	var collectors []api.Collector
-	res, err := c.doAPIRequest("GET", "/collectors/", nil)
+	res, err := c.doAuthAPIRequest("GET", "/collectors/", nil)
 	if err != nil {
 		return []api.Collector{}, errors.New("Couldn't get collectors " + err.Error())
 	}
@@ -208,7 +212,7 @@ func (c *Client) GetCollectors() ([]api.Collector, error) {
 func (c *Client) GetCollector(id string) (api.Collector, error) {
 	var res api.Response
 	var collector api.Collector
-	res, err := c.doAPIRequest("GET", "/collectors/"+id, nil)
+	res, err := c.doAuthAPIRequest("GET", "/collectors/"+id, nil)
 	if err != nil {
 		return api.Collector{}, errors.New("Couldn't get Collector " + id + ": " + err.Error())
 	}
@@ -231,7 +235,7 @@ func (c *Client) DeleteCollector(id string) error {
 func (c *Client) GetExecutions() ([]api.Execution, error) {
 	var res api.Response
 	var executions []api.Execution
-	res, err := c.doAPIRequest("GET", "/executions/", nil)
+	res, err := c.doAuthAPIRequest("GET", "/executions/", nil)
 	if err != nil {
 		return []api.Execution{}, errors.New("Couldn't get executions " + err.Error())
 	}
@@ -249,7 +253,7 @@ func (c *Client) GetExecutions() ([]api.Execution, error) {
 func (c *Client) GetExecution(id string) (api.Execution, error) {
 	var res api.Response
 	var execution api.Execution
-	res, err := c.doAPIRequest("GET", "/executions/"+id, nil)
+	res, err := c.doAuthAPIRequest("GET", "/executions/"+id, nil)
 	if err != nil {
 		return api.Execution{}, errors.New("Couldn't get Execution " + id + ": " + err.Error())
 	}
@@ -272,7 +276,7 @@ func (c *Client) DeleteExecution(id string) error {
 func (c *Client) GetInjections() ([]api.Injection, error) {
 	var res api.Response
 	var injections []api.Injection
-	res, err := c.doAPIRequest("GET", "/injections", nil)
+	res, err := c.doAuthAPIRequest("GET", "/injections", nil)
 	if err != nil {
 		return []api.Injection{}, errors.New("Couldn't get Injections: " + err.Error())
 	}
@@ -289,7 +293,7 @@ func (c *Client) GetInjections() ([]api.Injection, error) {
 func (c *Client) GetInjection(id string) (api.Injection, error) {
 	var res api.Response
 	var injection api.Injection
-	res, err := c.doAPIRequest("GET", "/injections/"+id, nil)
+	res, err := c.doAuthAPIRequest("GET", "/injections/"+id, nil)
 	if err != nil {
 		return api.Injection{}, errors.New("Couldn't get Injection " + id + ": " + err.Error())
 	}
@@ -312,7 +316,7 @@ func (c *Client) DeleteInjection(id string) error {
 func (c *Client) GetPayloads() ([]api.Payload, error) {
 	var res api.Response
 	var payloads []api.Payload
-	res, err := c.doAPIRequest("GET", "/payloads", nil)
+	res, err := c.doAuthAPIRequest("GET", "/payloads", nil)
 	if err != nil {
 		return []api.Payload{}, errors.New("Couldn't get Payload: " + err.Error())
 	}
@@ -333,7 +337,7 @@ func (c *Client) ServePayload(idOrAlias string) (string, error) {
 func (c *Client) GetPayload(id string) (api.Payload, error) {
 	var res api.Response
 	var payload api.Payload
-	res, err := c.doAPIRequest("GET", "/payloads/"+id, nil)
+	res, err := c.doAuthAPIRequest("GET", "/payloads/"+id, nil)
 	if err != nil {
 		return api.Payload{}, errors.New("Couldn't get Payload " + id + ": " + err.Error())
 	}
@@ -360,7 +364,7 @@ func (c *Client) GetUserByName(name string) (api.User, error) {
 func (c *Client) GetUser(id string) (api.User, error) {
 	var res api.Response
 	var user api.User
-	res, err := c.doAPIRequest("GET", "/users/"+id, nil)
+	res, err := c.doAuthAPIRequest("GET", "/users/"+id, nil)
 	if err != nil {
 		return api.User{}, errors.New("Couldn't get User " + id + ": " + err.Error())
 	}
