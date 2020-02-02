@@ -6,13 +6,12 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/edznux/wonderxss/api"
-	"github.com/edznux/wonderxss/config"
 
 	log "github.com/sirupsen/logrus"
 )
 
-func GetJWTToken(user api.User) (string, error) {
-	signingKey := []byte(config.Current.JWTToken)
+func GetJWTToken(user api.User, key string) (string, error) {
+	signingKey := []byte(key)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user_id":   user.ID,       // Unique
 		"user_name": user.Username, // This help for UI, I don't want to make http req to get the username...
@@ -24,8 +23,8 @@ func GetJWTToken(user api.User) (string, error) {
 	return tokenString, err
 }
 
-func VerifyJWTToken(tokenString string) (jwt.Claims, error) {
-	signingKey := []byte(config.Current.JWTToken)
+func VerifyJWTToken(tokenString string, key string) (jwt.Claims, error) {
+	signingKey := []byte(key)
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return signingKey, nil
 	})

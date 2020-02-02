@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	apipkg "github.com/edznux/wonderxss/api"
+	"github.com/edznux/wonderxss/config"
 	"github.com/edznux/wonderxss/crypto"
 )
 
@@ -53,7 +54,7 @@ func (api *HTTPApi) authMiddleware(next http.Handler) http.Handler {
 		}
 		token := bearer[1]
 
-		claims, err := crypto.VerifyJWTToken(token)
+		claims, err := crypto.VerifyJWTToken(token, config.Current.JWTToken)
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			res.Error = "Error verifying JWT token: " + err.Error()

@@ -9,6 +9,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/edznux/wonderxss/config"
 	"github.com/edznux/wonderxss/crypto"
 
 	"github.com/edznux/wonderxss/api"
@@ -52,7 +53,7 @@ func (ui *UI) RegisterOTP(w http.ResponseWriter, req *http.Request) {
 		json.NewEncoder(w).Encode(&res)
 		return
 	}
-	claims, err := crypto.VerifyJWTToken(bearer)
+	claims, err := crypto.VerifyJWTToken(bearer, config.Current.JWTToken)
 	if err != nil {
 		log.Println("Error verifying the JWT Token:", err)
 		res.Error = err.Error()

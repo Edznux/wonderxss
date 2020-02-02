@@ -8,6 +8,7 @@ import (
 
 	"github.com/dgryski/dgoogauth"
 	"github.com/edznux/wonderxss/api"
+	"github.com/edznux/wonderxss/config"
 	"github.com/edznux/wonderxss/crypto"
 	"github.com/edznux/wonderxss/storage/models"
 	"github.com/google/uuid"
@@ -70,7 +71,7 @@ func (local *Local) Login(loginParam, passwordParam, otp string) (string, error)
 		}
 	}
 
-	jwt, err := crypto.GetJWTToken(apiUser.FromStorage(user))
+	jwt, err := crypto.GetJWTToken(apiUser.FromStorage(user), config.Current.JWTToken)
 	if err != nil {
 		return "", err
 	}
