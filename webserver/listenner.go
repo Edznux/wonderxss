@@ -11,6 +11,8 @@ import (
 )
 
 func (ui *UI) Serve(router *mux.Router) {
+	ui.Routes(router)
+
 	cfg := config.Current
 	if cfg.StandaloneHTTPS {
 		go func() {
