@@ -41,6 +41,9 @@ func New(cfg config.Client) *Client {
 func (c *Client) formatURLApi(path string) string {
 	return c.Protocol + c.Host + ":" + strconv.Itoa(c.Port) + path
 }
+func (c *Client) setUserAgent(req *http.Request) {
+	req.Header.Set("User-Agent", "WonderXSS "+c.Version+" (https://github.com/edznux/wonderxss)")
+}
 
 func (c *Client) doRequest(method string, path string, body io.Reader) (api.Response, error) {
 	log.Debugln(method, c.formatURLApi(path))
@@ -53,7 +56,7 @@ func (c *Client) doRequest(method string, path string, body io.Reader) (api.Resp
 		log.Warnln(err)
 		return result, err
 	}
-
+	c.setUserAgent(req)
 	req.Header.Add("Authorization", "Bearer "+c.jwtToken)
 
 	response, err := netClient.Do(req)
@@ -76,7 +79,7 @@ func (c *Client) doAuthRequest(method string, path string, body io.Reader) (api.
 		log.Warnln(err)
 		return result, err
 	}
-
+	c.setUserAgent(req)
 	req.Header.Add("Authorization", "Bearer "+c.jwtToken)
 
 	response, err := netClient.Do(req)
@@ -189,7 +192,12 @@ func (c *Client) AddAlias(name string, payloadId string) (api.Alias, error) {
 }
 
 func (c *Client) DeleteAlias(id string) error {
-	return errors.New("Not implemented yet")
+	res, err := c.doAuthAPIRequest("DELETE", "/aliases/"+id, nil)
+	if err != nil {
+		return errors.New("Couldn't delete alias " + id + " " + err.Error())
+	}
+	log.Info(res)
+	return err
 }
 
 func (c *Client) GetCollectors() ([]api.Collector, error) {
@@ -230,7 +238,12 @@ func (c *Client) AddCollector(data string) (api.Collector, error) {
 }
 
 func (c *Client) DeleteCollector(id string) error {
-	return errors.New("Not implemented yet")
+	res, err := c.doAuthAPIRequest("DELETE", "/collectors/"+id, nil)
+	if err != nil {
+		return errors.New("Couldn't delete collector " + id + " " + err.Error())
+	}
+	log.Info(res)
+	return err
 }
 
 func (c *Client) GetExecutions() ([]api.Execution, error) {
@@ -271,7 +284,12 @@ func (c *Client) AddExecution(payloadID string, aliasID string) (api.Execution, 
 }
 
 func (c *Client) DeleteExecution(id string) error {
-	return errors.New("Not implemented yet")
+	res, err := c.doAuthAPIRequest("DELETE", "/executions/"+id, nil)
+	if err != nil {
+		return errors.New("Couldn't delete execution " + id + " " + err.Error())
+	}
+	log.Info(res)
+	return err
 }
 
 func (c *Client) GetInjections() ([]api.Injection, error) {
@@ -311,7 +329,12 @@ func (c *Client) AddInjection(name string, content string) (api.Injection, error
 }
 
 func (c *Client) DeleteInjection(id string) error {
-	return errors.New("Not implemented yet")
+	res, err := c.doAuthAPIRequest("DELETE", "/injections/"+id, nil)
+	if err != nil {
+		return errors.New("Couldn't delete injection " + id + " " + err.Error())
+	}
+	log.Info(res)
+	return err
 }
 
 func (c *Client) GetPayloads() ([]api.Payload, error) {
@@ -355,7 +378,12 @@ func (c *Client) AddPayload(name string, content string, contentType string) (ap
 }
 
 func (c *Client) DeletePayload(id string) error {
-	return errors.New("Not implemented yet")
+	res, err := c.doAuthAPIRequest("DELETE", "/payloads/"+id, nil)
+	if err != nil {
+		return errors.New("Couldn't delete payload " + id + " " + err.Error())
+	}
+	log.Info(res)
+	return err
 }
 
 func (c *Client) GetUserByName(name string) (api.User, error) {
@@ -386,5 +414,10 @@ func (c *Client) CreateUser(username, password string) (api.User, error) {
 }
 
 func (c *Client) DeleteUser(id string) error {
-	return errors.New("Not implemented yet")
+	res, err := c.doAuthAPIRequest("DELETE", "/users/"+id, nil)
+	if err != nil {
+		return errors.New("Couldn't delete users " + id + " " + err.Error())
+	}
+	log.Info(res)
+	return err
 }

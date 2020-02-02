@@ -48,6 +48,23 @@ var createAliasesCmd = &cobra.Command{
 	},
 }
 
+// deleteAliasesCmd represents the delete command
+var deleteAliasesCmd = &cobra.Command{
+	Use:   "delete [alias]",
+	Short: "delete an alias",
+	Long:  `delete an alias based on it's ID`,
+	Args:  cobra.MinimumNArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+
+		ID := args[0]
+		err := currentAPI.DeleteAlias(ID)
+		if err != nil {
+			log.Fatal("Could not delete alias ", err)
+		}
+		fmt.Printf("Alias deleted: [%s] \n", ID)
+	},
+}
+
 var getAliasesCmd = &cobra.Command{
 	Use:   "get [alias]",
 	Short: "Create a new alias",
@@ -69,9 +86,7 @@ var getAliasesCmd = &cobra.Command{
 			}
 			aliases = append(aliases, alias)
 		}
-		// TODO: replace the error from the api to custom api.Error
-		// so we can do if err == api.ErrNotFound
-		if aliases[0].ID != "" {
+		if len(aliases) > 0 {
 			tableAliases(aliases)
 		} else {
 			fmt.Println("No aliases found.")
@@ -91,4 +106,5 @@ func init() {
 	rootCmd.AddCommand(aliasesCmd)
 	aliasesCmd.AddCommand(createAliasesCmd)
 	aliasesCmd.AddCommand(getAliasesCmd)
+	aliasesCmd.AddCommand(deleteAliasesCmd)
 }

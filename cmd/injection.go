@@ -15,17 +15,16 @@ import (
 
 // injectionCmd represents the injection command
 var injectionCmd = &cobra.Command{
-	Use:   "injection",
-	Short: "Do all the operations on injections.",
+	Aliases: []string{"injection", "injections"},
+	Use:     "injection",
+	Short:   "Do all the operations on injections.",
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			injections, err := currentAPI.GetInjections()
 			if err != nil {
 				log.Println(err)
 			}
-			// TODO: replace the error from the api to custom api.Error
-			// so we can do if err == api.ErrNotFound
-			if injections[0].ID != "" {
+			if len(injections) > 0 {
 				tableInjections(injections)
 			} else {
 				fmt.Println("No injections found.")
@@ -81,13 +80,28 @@ var getInjectionCmd = &cobra.Command{
 			}
 			injections = append(injections, injection)
 		}
-		// TODO: replace the error from the api to custom api.Error
-		// so we can do if err == api.ErrNotFound
-		if injections[0].ID != "" {
+		if len(injections) > 0 {
 			tableInjections(injections)
 		} else {
 			fmt.Println("No injection found.")
 		}
+	},
+}
+
+// deleteInjectionsCmd represents the delete command
+var deleteInjectionsCmd = &cobra.Command{
+	Use:   "delete [injection]",
+	Short: "delete an injection",
+	Long:  `delete an injection based on it's ID`,
+	Args:  cobra.MinimumNArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+
+		ID := args[0]
+		err := currentAPI.DeleteInjection(ID)
+		if err != nil {
+			log.Fatal("Could not delete injection ", err)
+		}
+		fmt.Printf("Injection deleted: [%s] \n", ID)
 	},
 }
 
@@ -104,4 +118,5 @@ func init() {
 	rootCmd.AddCommand(injectionCmd)
 	injectionCmd.AddCommand(createInjectionCmd)
 	injectionCmd.AddCommand(getInjectionCmd)
+	injectionCmd.AddCommand(deleteInjectionsCmd)
 }

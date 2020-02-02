@@ -84,13 +84,28 @@ var getPayloadCmd = &cobra.Command{
 			}
 			payloads = append(payloads, payload)
 		}
-		// TODO: replace the error from the api to custom api.Error
-		// so we can do if err == api.ErrNotFound
-		if payloads[0].ID != "" {
+		if len(payloads) > 0 {
 			tablePayloads(payloads)
 		} else {
 			fmt.Println("No payloads found.")
 		}
+	},
+}
+
+// deletePayloadsCmd represents the delete command
+var deletePayloadsCmd = &cobra.Command{
+	Use:   "delete [payload]",
+	Short: "delete an payload",
+	Long:  `delete an payload based on it's ID`,
+	Args:  cobra.MinimumNArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+
+		ID := args[0]
+		err := currentAPI.DeletePayload(ID)
+		if err != nil {
+			log.Fatal("Could not delete payload ", err)
+		}
+		fmt.Printf("Payload deleted: [%s] \n", ID)
 	},
 }
 
@@ -107,4 +122,5 @@ func init() {
 	rootCmd.AddCommand(payloadCmd)
 	payloadCmd.AddCommand(createPayloadCmd)
 	payloadCmd.AddCommand(getPayloadCmd)
+	payloadCmd.AddCommand(deletePayloadsCmd)
 }

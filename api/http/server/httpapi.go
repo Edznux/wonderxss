@@ -254,36 +254,60 @@ func (httpapi *HTTPApi) updatePayload(w http.ResponseWriter, req *http.Request) 
 
 func (httpapi *HTTPApi) deletePayload(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
-	httpapi.local.DeletePayload(vars["id"])
+	err := httpapi.local.DeletePayload(vars["id"])
+	if err != nil {
+		sendResponse(api.DatabaseError, nil, w)
+		return
+	}
 	sendResponse(api.Success, "", w)
 }
 
 func (httpapi *HTTPApi) deleteExecution(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
-	httpapi.local.DeleteExecution(vars["id"])
+	err := httpapi.local.DeleteExecution(vars["id"])
+	if err != nil {
+		sendResponse(api.DatabaseError, nil, w)
+		return
+	}
 	sendResponse(api.Success, "", w)
 }
 
 func (httpapi *HTTPApi) deleteUser(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
-	httpapi.local.DeleteUser(vars["id"])
+	err := httpapi.local.DeleteUser(vars["id"])
+	if err != nil {
+		sendResponse(api.DatabaseError, nil, w)
+		return
+	}
 	sendResponse(api.Success, "", w)
 }
 
 func (httpapi *HTTPApi) deleteAlias(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
-	httpapi.local.DeleteAlias(vars["id"])
+	err := httpapi.local.DeleteAlias(vars["id"])
+	if err != nil {
+		sendResponse(api.DatabaseError, nil, w)
+		return
+	}
 	sendResponse(api.Success, "", w)
 }
 
 func (httpapi *HTTPApi) deleteInjection(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
-	httpapi.local.DeleteInjection(vars["id"])
+	err := httpapi.local.DeleteInjection(vars["id"])
+	if err != nil {
+		sendResponse(api.DatabaseError, nil, w)
+		return
+	}
 	sendResponse(api.Success, "", w)
 }
 
 func (httpapi *HTTPApi) deleteCollector(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
-	httpapi.local.DeleteCollector(vars["id"])
+	err := httpapi.local.DeleteCollector(vars["id"])
+	if err != nil {
+		sendResponse(api.DatabaseError, nil, w)
+		return
+	}
 	sendResponse(api.Success, "", w)
 }
