@@ -15,6 +15,7 @@ import (
 	"github.com/edznux/wonderxss/api"
 )
 
+// OtpToken reprensent the One Time Password token AND secret
 type OtpToken struct {
 	Token  string `json:"token,omitempty"`
 	Secret string `json:"secret,omitempty"`

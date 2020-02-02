@@ -60,6 +60,7 @@ var healthCmd = &cobra.Command{
 	},
 }
 
+//Execute is the "main" function for the CLI
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)

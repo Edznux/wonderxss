@@ -102,6 +102,7 @@ func tableAliases(payloads []api.Alias) {
 	}
 	table.Render()
 }
+
 func init() {
 	rootCmd.AddCommand(aliasesCmd)
 	aliasesCmd.AddCommand(createAliasesCmd)

@@ -2,6 +2,7 @@ package webserver
 
 import "github.com/gorilla/mux"
 
+// Routes defines the non-api routes (User interface and Payload serving using path)
 func (ui *UI) Routes(router *mux.Router) {
 	router.HandleFunc("/p/{id}", ui.HandlePayloadByID)
 	router.HandleFunc("/login", ui.Login)

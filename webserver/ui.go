@@ -14,12 +14,15 @@ import (
 	"github.com/edznux/wonderxss/storage/models"
 )
 
+//UI is the interface/struct for the web server (excluding the APIs)
 type UI struct {
 	indexPath  string
 	staticPath string
 	api        api.API
 }
 
+// New return a new UI struct.
+// It's already set up and have create a new *local* api.
 func New() *UI {
 	ui := UI{}
 	ui.indexPath = "/index.html"
@@ -28,6 +31,8 @@ func New() *UI {
 	ui.api = local.New()
 	return &ui
 }
+
+// LoggingMiddleware print all the http requests done by the application on a standard format
 func (ui *UI) LoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Infof("%s - %s - \"%s %s %s\"-\"%s\"",
@@ -43,6 +48,9 @@ func (ui *UI) LoggingMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+// HandleIndex differenciate request to be able to send the correct response
+// If there is no subdomain, send the user interface (React app)
+// Else, return the payload (if it exist, otherwise 404)
 func (ui *UI) HandleIndex(w http.ResponseWriter, req *http.Request) {
 	hostname := req.Host
 	subdomain := strings.TrimSuffix(hostname, "."+config.Current.Domain)
@@ -58,16 +66,20 @@ func (ui *UI) HandleIndex(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	if err == models.NoSuchItem {
+		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("No such payload"))
 		return
 	}
 	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("Encountered an error :/"))
 		return
 	}
 	w.Write([]byte(content))
 }
 
+// ServeUI render the React APP
+// TODO: use bindata to embed it in the golang binary
 func (ui *UI) ServeUI(w http.ResponseWriter, r *http.Request) {
 	log.Debugln("Serving UI")
 	// get the absolute path to prevent directory traversal

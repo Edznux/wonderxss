@@ -25,7 +25,7 @@ func New() *HTTPApi {
 	return &httpapi
 }
 
-func sendResponse(status api.APIError, data interface{}, w http.ResponseWriter) error {
+func sendResponse(status api.Error, data interface{}, w http.ResponseWriter) error {
 	var res api.Response
 	if status != api.Success {
 		res.Error = status.Error()

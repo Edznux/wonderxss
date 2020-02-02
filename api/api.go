@@ -1,5 +1,9 @@
 package api
 
+// API is the general API interface used by all the API.
+// All field must be implemented to be able to create a new "api"
+// For example, the Local and HTTP APIs are using the same interface
+// so we can call them with the same calling convention
 type API interface {
 	GetHealth() (string, error)
 
@@ -7,7 +11,7 @@ type API interface {
 	GetAlias(id string) (Alias, error)
 	GetAliasByID(id string) (Alias, error)
 	GetAliasByPayloadID(id string) (Alias, error)
-	AddAlias(name string, payloadId string) (Alias, error)
+	AddAlias(name string, payloadID string) (Alias, error)
 	DeleteAlias(id string) error
 
 	GetCollectors() ([]Collector, error)

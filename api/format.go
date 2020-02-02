@@ -6,11 +6,13 @@ import (
 	"github.com/edznux/wonderxss/storage/models"
 )
 
-// APIError defines all the errors that can be sent by the API.
-type APIError int
+// Error defines all the errors that can be sent by the API.
+type Error int
 
+// Enum all the possible error from the API
+// They all have String() representation
 const (
-	Success APIError = iota
+	Success Error = iota
 	NotFound
 	AlreadyExist
 	DatabaseError
@@ -20,7 +22,7 @@ const (
 	NotImplementedYet
 )
 
-func (s APIError) Error() string {
+func (s Error) Error() string {
 	switch s {
 	case Success:
 		return "OK"
@@ -39,10 +41,14 @@ func (s APIError) Error() string {
 	case NotImplementedYet:
 		return "This feature is not implemented yet"
 	default:
-		return "Unknown APIError Code  (The developer forgot to add it to the String() switch ?)"
+		return "Unknown Error Code  (The developer forgot to add it to the String() switch ?)"
 	}
 }
 
+// Response represent the main structure for ALL the response from the API
+// The error must be empty if there wasn't an error
+// They should also be only using the api.Error model
+// Data can be anything but we try to not nest to many things
 type Response struct {
 	Error string      `json:"error,omitempty"`
 	Data  interface{} `json:"data,omitempty"`

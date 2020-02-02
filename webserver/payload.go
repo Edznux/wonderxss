@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// HandlePayloadByID Serve payload by its ID (used only in subpath)
 func (ui *UI) HandlePayloadByID(w http.ResponseWriter, req *http.Request) {
 	var err error
 

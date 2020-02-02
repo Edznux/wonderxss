@@ -12,11 +12,14 @@ import (
 	sqlite3 "github.com/mattn/go-sqlite3"
 )
 
+// Sqlite struct represent the base Sqlite object
+// It implements the storage.Storage interface
 type Sqlite struct {
 	file string
 	db   *sql.DB
 }
 
+// New return a new Sqlite object
 func New() (*Sqlite, error) {
 	cfg := config.Current
 	file := cfg.Storages["sqlite"].File
@@ -26,6 +29,7 @@ func New() (*Sqlite, error) {
 	return &s, nil
 }
 
+// Init open the SQLite3 database
 func (s *Sqlite) Init() error {
 	var err error
 	s.db, err = sql.Open("sqlite3", s.file)
@@ -35,6 +39,7 @@ func (s *Sqlite) Init() error {
 	return nil
 }
 
+// Setup create all the tables for the database
 func (s *Sqlite) Setup() error {
 	//return last error, but keep executing all instruction
 	var lastErr error
@@ -83,7 +88,8 @@ func (s *Sqlite) Setup() error {
 	return lastErr
 }
 
-//Create
+// CreatePayload create a payload based on models.Payload
+// It also returns it if sucessfuly stored
 func (s *Sqlite) CreatePayload(payload models.Payload) (models.Payload, error) {
 	_, err := s.db.Exec(INSERT_PAYLOAD, payload.ID, payload.Name, payload.Hashes.String(), payload.Content, payload.ContentType)
 	if err != nil {
@@ -94,6 +100,8 @@ func (s *Sqlite) CreatePayload(payload models.Payload) (models.Payload, error) {
 	return s.GetPayload(payload.ID)
 }
 
+// CreateUser create a user based on models.User
+// It also returns it if sucessfuly stored
 func (s *Sqlite) CreateUser(user models.User) (models.User, error) {
 	_, err := s.db.Exec(INSERT_USER, user.ID, user.Username, user.Password)
 	if err != nil {
@@ -104,6 +112,8 @@ func (s *Sqlite) CreateUser(user models.User) (models.User, error) {
 	return s.GetUser(user.ID)
 }
 
+// CreateOTP create an OTP token
+// It returns the User if sucessfuly stored
 func (s *Sqlite) CreateOTP(user models.User, TOTPSecret string) (models.User, error) {
 	_, err := s.db.Exec(UPDATE_ADD_TOTP, 1, TOTPSecret, user.ID)
 	if err != nil {
@@ -114,6 +124,7 @@ func (s *Sqlite) CreateOTP(user models.User, TOTPSecret string) (models.User, er
 	return s.GetUser(user.ID)
 }
 
+// RemoveOTP remove the OTP for the user provided
 func (s *Sqlite) RemoveOTP(user models.User) (models.User, error) {
 	_, err := s.db.Exec(UPDATE_ADD_TOTP, 0, "", user.ID)
 	if err != nil {
@@ -124,6 +135,8 @@ func (s *Sqlite) RemoveOTP(user models.User) (models.User, error) {
 	return s.GetUser(user.ID)
 }
 
+// CreateAlias create an alias token based on models.Alias
+// It also returns it if sucessfuly stored
 func (s *Sqlite) CreateAlias(alias models.Alias) (models.Alias, error) {
 	_, err := s.db.Exec(INSERT_ALIAS, alias.ID, alias.PayloadID, alias.Short)
 	if sqliteErr, ok := err.(sqlite3.Error); ok {
@@ -140,6 +153,8 @@ func (s *Sqlite) CreateAlias(alias models.Alias) (models.Alias, error) {
 	return s.GetAlias(alias.ID)
 }
 
+// CreateCollector create a collector token based on models.Collector
+// It also returns it if sucessfuly stored
 func (s *Sqlite) CreateCollector(collector models.Collector) (models.Collector, error) {
 	_, err := s.db.Exec(INSERT_COLLECTOR, collector.ID, collector.Data)
 	if err != nil {
@@ -150,6 +165,8 @@ func (s *Sqlite) CreateCollector(collector models.Collector) (models.Collector, 
 	return s.GetCollector(collector.ID)
 }
 
+// CreateInjection create an injection token based on models.Injection
+// It also returns it if sucessfuly stored
 func (s *Sqlite) CreateInjection(injection models.Injection) (models.Injection, error) {
 	_, err := s.db.Exec(INSERT_INJECTION, injection.ID, injection.Name, injection.Content)
 	if err != nil {
@@ -160,6 +177,8 @@ func (s *Sqlite) CreateInjection(injection models.Injection) (models.Injection, 
 	return s.GetInjection(injection.ID)
 }
 
+// CreateExecution create an execution token based on models.Execution
+// It also returns it if sucessfuly stored
 func (s *Sqlite) CreateExecution(execution models.Execution, payloadIDOrAlias string) (models.Execution, error) {
 	// id, payload_id, alias_id
 	// TODO : store the alias_ID and not the alias directly
@@ -172,7 +191,7 @@ func (s *Sqlite) CreateExecution(execution models.Execution, payloadIDOrAlias st
 	return s.GetExecution(execution.ID)
 }
 
-// Read
+// GetPayloads returns all the payloads stored in the database
 func (s *Sqlite) GetPayloads() ([]models.Payload, error) {
 
 	res := []models.Payload{}
@@ -211,6 +230,7 @@ func (s *Sqlite) GetPayloads() ([]models.Payload, error) {
 	return res, nil
 }
 
+// GetPayload returns the select payload based on its ID
 func (s *Sqlite) GetPayload(id string) (models.Payload, error) {
 
 	row := s.db.QueryRow(SELECT_PAYLOAD_BY_ID, id)
@@ -240,6 +260,7 @@ func (s *Sqlite) GetPayload(id string) (models.Payload, error) {
 	return res, nil
 }
 
+// GetPayloadByAlias returns the select payload based on its alias
 func (s *Sqlite) GetPayloadByAlias(short string) (models.Payload, error) {
 
 	row := s.db.QueryRow(SELECT_PAYLOAD_BY_ALIAS, short)
@@ -268,6 +289,7 @@ func (s *Sqlite) GetPayloadByAlias(short string) (models.Payload, error) {
 	return res, nil
 }
 
+// GetInjection returns the select Injection based on its ID
 func (s *Sqlite) GetInjection(id string) (models.Injection, error) {
 	row := s.db.QueryRow(SELECT_INJECTION, id)
 
@@ -284,6 +306,7 @@ func (s *Sqlite) GetInjection(id string) (models.Injection, error) {
 	return res, nil
 }
 
+// GetInjectionByName returns the select Injection based on its name
 func (s *Sqlite) GetInjectionByName(name string) (models.Injection, error) {
 	row := s.db.QueryRow(SELECT_INJECTION_BY_NAME, name)
 
@@ -300,6 +323,7 @@ func (s *Sqlite) GetInjectionByName(name string) (models.Injection, error) {
 	return res, nil
 }
 
+// GetInjections returns all injection from the database
 func (s *Sqlite) GetInjections() ([]models.Injection, error) {
 
 	res := []models.Injection{}
@@ -327,6 +351,8 @@ func (s *Sqlite) GetInjections() ([]models.Injection, error) {
 
 	return res, nil
 }
+
+//GetAlias returns the selected alias by its short name
 func (s *Sqlite) GetAlias(alias string) (models.Alias, error) {
 
 	row := s.db.QueryRow(SELECT_ALIAS_BY_SHORTNAME, alias)
@@ -344,6 +370,7 @@ func (s *Sqlite) GetAlias(alias string) (models.Alias, error) {
 	return res, nil
 }
 
+//GetAliasByID returns the selected alias by its ID
 func (s *Sqlite) GetAliasByID(id string) (models.Alias, error) {
 
 	row := s.db.QueryRow(SELECT_ALIAS_BY_ID, id)
@@ -361,6 +388,7 @@ func (s *Sqlite) GetAliasByID(id string) (models.Alias, error) {
 	return res, nil
 }
 
+//GetAliasByPayloadID returns the selected alias by its payloadID
 func (s *Sqlite) GetAliasByPayloadID(id string) (models.Alias, error) {
 
 	row := s.db.QueryRow(SELECT_ALIAS_BY_PAYLOAD_ID, id)
@@ -378,6 +406,7 @@ func (s *Sqlite) GetAliasByPayloadID(id string) (models.Alias, error) {
 	return res, nil
 }
 
+//GetExecution returns the execution selected by its ID
 func (s *Sqlite) GetExecution(id string) (models.Execution, error) {
 
 	log.Debugln("GetExecution(", id, ")")
@@ -396,6 +425,7 @@ func (s *Sqlite) GetExecution(id string) (models.Execution, error) {
 	return res, nil
 }
 
+//GetExecutions returns all the executions from the database
 func (s *Sqlite) GetExecutions() ([]models.Execution, error) {
 
 	res := []models.Execution{}
@@ -424,6 +454,7 @@ func (s *Sqlite) GetExecutions() ([]models.Execution, error) {
 	return res, nil
 }
 
+//GetCollector returns the selected collector based on its ID
 func (s *Sqlite) GetCollector(id string) (models.Collector, error) {
 
 	log.Debugln("GetCollector(", id, ")")
@@ -442,6 +473,7 @@ func (s *Sqlite) GetCollector(id string) (models.Collector, error) {
 	return res, nil
 }
 
+//GetCollectors returns all the collectors from the database
 func (s *Sqlite) GetCollectors() ([]models.Collector, error) {
 
 	res := []models.Collector{}
@@ -470,6 +502,7 @@ func (s *Sqlite) GetCollectors() ([]models.Collector, error) {
 	return res, nil
 }
 
+//GetAliases returns all the Aliases from the database
 func (s *Sqlite) GetAliases() ([]models.Alias, error) {
 
 	res := []models.Alias{}
@@ -498,6 +531,7 @@ func (s *Sqlite) GetAliases() ([]models.Alias, error) {
 	return res, nil
 }
 
+//GetUser return a user based on its ID
 func (s *Sqlite) GetUser(id string) (models.User, error) {
 	var user models.User
 	var TOTPSecret sql.NullString
@@ -523,6 +557,7 @@ func (s *Sqlite) GetUser(id string) (models.User, error) {
 	return user, nil
 }
 
+//GetUserByName return an user by its name
 func (s *Sqlite) GetUserByName(name string) (models.User, error) {
 	var user models.User
 	var TOTPSecret sql.NullString
@@ -548,36 +583,53 @@ func (s *Sqlite) GetUserByName(name string) (models.User, error) {
 	return user, nil
 }
 
-//Update
+//UpdatePayload Not Implemented Yet
+//Update the payload based on the provided one.
+//Only the ID field must be correct. All other field will be changed
 func (s *Sqlite) UpdatePayload(models.Payload) error {
 	return nil
 }
 
+//UpdateUser Not Implemented Yet
+//Update the User based on the provided one.
+//Only the ID field must be correct. All other field will be changed
 func (s *Sqlite) UpdateUser(models.User) error {
 	return nil
 }
 
 //Delete
+
+//DeletePayload delete the provided payload from the database
 func (s *Sqlite) DeletePayload(p models.Payload) error {
 	_, err := s.db.Exec(DELETE_PAYLOAD, p.ID)
 	return err
 }
+
+//DeleteUser delete the provided User from the database
 func (s *Sqlite) DeleteUser(u models.User) error {
 	_, err := s.db.Exec(DELETE_USER, u.ID)
 	return err
 }
+
+//DeleteAlias delete the provided Alias from the database
 func (s *Sqlite) DeleteAlias(a models.Alias) error {
 	_, err := s.db.Exec(DELETE_ALIAS, a.ID)
 	return err
 }
+
+//DeleteExecution delete the provided Execution from the database
 func (s *Sqlite) DeleteExecution(e models.Execution) error {
 	_, err := s.db.Exec(DELETE_EXECUTION, e.ID)
 	return err
 }
+
+//DeleteCollector delete the provided Collector from the database
 func (s *Sqlite) DeleteCollector(c models.Collector) error {
 	_, err := s.db.Exec(DELETE_COLLECTOR, c.ID)
 	return err
 }
+
+//DeleteInjection delete the provided Injection from the database
 func (s *Sqlite) DeleteInjection(i models.Injection) error {
 	_, err := s.db.Exec(DELETE_INJECTION, i.ID)
 	return err

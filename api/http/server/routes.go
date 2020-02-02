@@ -3,17 +3,17 @@ package http
 import (
 	"net/http"
 
-	log "github.com/sirupsen/logrus"
-
 	"encoding/json"
 
 	"github.com/edznux/wonderxss/api"
 	"github.com/gorilla/mux"
 )
 
+//Routes are all the routes from the API.
+//It also sets the different middleware (json, cors, auth)
 func (httpapi *HTTPApi) Routes(router *mux.Router) {
 	router.Use(httpapi.jsonMiddleware)
-	router.Use(httpapi.CORSMiddleware)
+	router.Use(httpapi.corsMiddleware)
 	router.Use(httpapi.authMiddleware)
 
 	// HealthZ endpoint.
@@ -49,13 +49,6 @@ func (httpapi *HTTPApi) Routes(router *mux.Router) {
 	router.HandleFunc("/injections", httpapi.getInjections).Methods("GET")
 	router.HandleFunc("/injections", httpapi.createInjection).Methods("POST")
 	router.HandleFunc("/injections/{id}", httpapi.deleteInjection).Methods("DELETE")
-}
-
-func (httpapi *HTTPApi) NotImplementedYet(w http.ResponseWriter, r *http.Request) {
-	log.Printf("Request URL : %s, not implemented", r.RequestURI)
-	res := api.Response{}
-	res.Error = "Not implemented yet"
-	json.NewEncoder(w).Encode(&res)
 }
 
 func (httpapi *HTTPApi) healthz(w http.ResponseWriter, req *http.Request) {

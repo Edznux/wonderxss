@@ -10,6 +10,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+//Serve run the webserve on http & https (if enabled)
 func (ui *UI) Serve(router *mux.Router) {
 	ui.Routes(router)
 
