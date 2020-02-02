@@ -34,6 +34,7 @@ func New(cfg config.Client) *Client {
 	c.Host = cfg.Host
 	c.Port = cfg.Port
 	c.jwtToken = cfg.Token
+	log.Debugf("Version: %s, prefix: %s, protocol:%s, host:%s, port:%d", c.Version, c.apiPrefix, c.Protocol, c.Host, c.Port)
 	return &c
 }
 
@@ -70,7 +71,7 @@ func (c *Client) doAuthRequest(method string, path string, body io.Reader) (api.
 		Timeout: time.Second * 10,
 	}
 
-	req, err := http.NewRequest(method, path, body)
+	req, err := http.NewRequest(method, c.formatURLApi(path), body)
 	if err != nil {
 		log.Warnln(err)
 		return result, err

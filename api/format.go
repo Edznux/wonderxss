@@ -51,13 +51,13 @@ type Response struct {
 // Payload represent the structure of the frontend-facing payload. Not the stored one.
 // It offers an `FromStorage` function to convert itself from the storage payload.
 type Payload struct {
-	ID          string           `json:"id"`
-	Name        string           `json:"name"`
-	Content     string           `json:"content"`
-	ContentType string           `json:"content_type"`
-	Hashes      models.SRIHashes `json:"hashes"` // Used for SRI (sub ressource integrity)
-	CreatedAt   time.Time        `json:"created_at"`
-	ModifiedAt  time.Time        `json:"modified_at"`
+	ID          string           `json:"id" mapstructure:"id"`
+	Name        string           `json:"name" mapstructure:"name"`
+	Content     string           `json:"content" mapstructure:"content"`
+	ContentType string           `json:"content_type" mapstructure:"content_type"`
+	Hashes      models.SRIHashes `json:"hashes" mapstructure:"hashes"` // Used for SRI (sub ressource integrity)
+	CreatedAt   time.Time        `json:"created_at" mapstructure:"created_at"`
+	ModifiedAt  time.Time        `json:"modified_at" mapstructure:"modified_at"`
 }
 
 func (p Payload) FromStorage(s models.Payload) Payload {
@@ -74,11 +74,11 @@ func (p Payload) FromStorage(s models.Payload) Payload {
 // Aliases represent the structure of the frontend-facing Aliases. Not the stored one.
 // It offers an `FromStorage` function to convert itself from the storage payload.
 type Alias struct {
-	ID         string    `json:"id"`
-	PayloadID  string    `json:"payload_id"` // Used for SRI (sub ressource integrity)
-	Alias      string    `json:"alias"`      // Used for SRI (sub ressource integrity)
-	CreatedAt  time.Time `json:"created_at"`
-	ModifiedAt time.Time `json:"modified_at"`
+	ID         string    `json:"id" mapstructure:"id"`
+	PayloadID  string    `json:"payload_id" mapstructure:"payload_id"` // Used for SRI (sub ressource integrity)
+	Alias      string    `json:"alias" mapstructure:"alias"`           // Used for SRI (sub ressource integrity)
+	CreatedAt  time.Time `json:"created_at" mapstructure:"created_at"`
+	ModifiedAt time.Time `json:"modified_at" mapstructure:"modified_at"`
 }
 
 func (p Alias) FromStorage(s models.Alias) Alias {
@@ -93,10 +93,10 @@ func (p Alias) FromStorage(s models.Alias) Alias {
 // Execution represent the structure of the frontend-facing Executions. Not the stored one.
 // It offers an `FromStorage` function to convert itself from the storage payload.
 type Execution struct {
-	ID          string    `json:"id"`
-	PayloadID   string    `json:"payload_id"`
-	AliasID     string    `json:"alias_id"`
-	TriggeredAt time.Time `json:"triggered_at"`
+	ID          string    `json:"id" mapstructure:"id"`
+	PayloadID   string    `json:"payload_id" mapstructure:"payload_id"`
+	AliasID     string    `json:"alias_id" mapstructure:"alias_id"`
+	TriggeredAt time.Time `json:"triggered_at" mapstructure:"triggered_at"`
 }
 
 func (l Execution) FromStorage(s models.Execution) Execution {
@@ -110,9 +110,9 @@ func (l Execution) FromStorage(s models.Execution) Execution {
 // Collector represent the structure of the frontend-facing Executions. Not the stored one.
 // It offers an `FromStorage` function to convert itself from the storage payload.
 type Collector struct {
-	ID        string    `json:"id"`
-	Data      string    `json:"data"`
-	CreatedAt time.Time `json:"created_at"`
+	ID        string    `json:"id" mapstructure:"id"`
+	Data      string    `json:"data" mapstructure:"data"`
+	CreatedAt time.Time `json:"created_at" mapstructure:"created_at"`
 }
 
 func (l Collector) FromStorage(s models.Collector) Collector {
@@ -125,11 +125,11 @@ func (l Collector) FromStorage(s models.Collector) Collector {
 // Injection represent the structure of the frontend-facing Executions. Not the stored one.
 // It offers an `FromStorage` function to convert itself from the storage payload.
 type Injection struct {
-	ID         string    `json:"id"`
-	Name       string    `json:"name"`
-	Content    string    `json:"content"`
-	CreatedAt  time.Time `json:"created_at"`
-	ModifiedAt time.Time `json:"modified_at"`
+	ID         string    `json:"id" mapstructure:"id"`
+	Name       string    `json:"name" mapstructure:"name"`
+	Content    string    `json:"content" mapstructure:"content"`
+	CreatedAt  time.Time `json:"created_at" mapstructure:"created_at"`
+	ModifiedAt time.Time `json:"modified_at" mapstructure:"modified_at"`
 }
 
 func (l Injection) FromStorage(s models.Injection) Injection {
@@ -144,14 +144,14 @@ func (l Injection) FromStorage(s models.Injection) Injection {
 // User represent the structure of the frontend-facing user. Not the stored one.
 // It offers an `FromStorage` function to convert itself from the storage payload.
 type User struct {
-	ID string `json:"id"`
+	ID string `json:"id" mapstructure:"id"`
 	// The username is the login of the user.
-	Username string `json:"username"`
+	Username string `json:"username" mapstructure:"username"`
 	// Is 2FA enabled on this account.
 	// It will be used to determine if it requires another step during the login process
-	TwoFactorEnabled bool      `json:"two_factor_enabled"`
-	CreatedAt        time.Time `json:"created_at"`
-	ModifiedAt       time.Time `json:"modified_at"`
+	TwoFactorEnabled bool      `json:"two_factor_enabled" mapstructure:"two_factor_enabled"`
+	CreatedAt        time.Time `json:"created_at" mapstructure:"created_at"`
+	ModifiedAt       time.Time `json:"modified_at" mapstructure:"modified_at"`
 }
 
 func (u User) FromStorage(s models.User) User {

@@ -76,12 +76,11 @@ var getPayloadCmd = &cobra.Command{
 			if err != nil {
 				log.Fatal("Could not get payloads", err)
 			}
-			return
 		} else {
 			payloadID := args[0]
 			payload, err := currentAPI.GetPayload(payloadID)
 			if err != nil {
-				log.Fatal("Could not get payload"+payloadID, err)
+				log.Fatal("Could not get payload "+payloadID, err)
 			}
 			payloads = append(payloads, payload)
 		}
@@ -99,7 +98,7 @@ func tablePayloads(payloads []api.Payload) {
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader([]string{"ID", "Name", "Content", "Content Type", "Created At"})
 	for _, p := range payloads {
-		table.Append([]string{p.ID, p.Name, p.Content, p.CreatedAt.String()})
+		table.Append([]string{p.ID, p.Name, p.Content, p.ContentType, p.CreatedAt.String()})
 	}
 	table.Render()
 }

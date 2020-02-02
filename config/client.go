@@ -46,6 +46,7 @@ func configFileExist() bool {
 func ReadClientConfig() (Client, error) {
 	var config Client
 	if !configFileExist() {
+		log.Debugln("Config file does not exist, creating.")
 		SaveClientConfig(Client{})
 	}
 	if _, err := toml.DecodeFile(configFile, &config); err != nil {
