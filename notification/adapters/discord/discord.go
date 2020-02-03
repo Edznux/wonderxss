@@ -13,11 +13,12 @@ import (
 	"github.com/edznux/wonderxss/storage/models"
 )
 
+//Discord represent the Discord Object
 type Discord struct {
 	Name string
 }
 
-type DiscordRequestBody struct {
+type discordRequestBody struct {
 	Content  string `json:"content"`
 	Username string `json:"username"`
 }
@@ -45,7 +46,7 @@ func New(config Config) *Discord {
 }
 
 func (s *Discord) sendMessage(data string, destination string) error {
-	discordBody, _ := json.Marshal(DiscordRequestBody{
+	discordBody, _ := json.Marshal(discordRequestBody{
 		Content:  data,
 		Username: s.Name,
 	})

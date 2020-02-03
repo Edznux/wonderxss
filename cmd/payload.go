@@ -24,9 +24,7 @@ var payloadCmd = &cobra.Command{
 				log.Errorln(err)
 				return
 			}
-			// TODO: replace the error from the api to custom api.Error
-			// so we can do if err == api.ErrNotFound
-			if payloads[0].ID != "" {
+			if len(payloads) > 0 {
 				tablePayloads(payloads)
 			} else {
 				fmt.Println("No payloads found.")

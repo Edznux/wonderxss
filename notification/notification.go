@@ -6,6 +6,7 @@ import (
 	"github.com/edznux/wonderxss/notification/adapters/slack"
 )
 
+//Setup load all the notifications system with their config (if they are enabled)
 func Setup() {
 	cfg := config.Current
 	for _, nsCfg := range cfg.Notifications {

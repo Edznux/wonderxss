@@ -8,17 +8,29 @@ import (
 
 	"github.com/edznux/wonderxss/api"
 	"github.com/olekukonko/tablewriter"
-	log "github.com/sirupsen/logrus"
-
 	"github.com/spf13/cobra"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // aliasesCmd represents the injection command
 var aliasesCmd = &cobra.Command{
-	Use:   "alias",
-	Short: "Do all the operations on aliases.",
+	Use:     "alias",
+	Aliases: []string{"aliases"},
+	Short:   "Do all the operations on aliases.",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Invalid arguments, see `Available Commands`")
+		if len(args) == 0 {
+			aliases, err := currentAPI.GetAliases()
+			if err != nil {
+				log.Println(err)
+			}
+			if len(aliases) > 0 {
+				tableAliases(aliases)
+			} else {
+				fmt.Println("No Aliases found.")
+			}
+			return
+		}
 		cmd.Help()
 	},
 }

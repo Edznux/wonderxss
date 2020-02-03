@@ -13,11 +13,12 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+//Slack represent the slack Object
 type Slack struct {
 	Name string
 }
 
-type SlackRequestBody struct {
+type requestBody struct {
 	Text string `json:"text"`
 }
 
@@ -44,7 +45,7 @@ func New(config Config) *Slack {
 }
 
 func (s *Slack) sendMessage(data string, destination string) error {
-	slackBody, _ := json.Marshal(SlackRequestBody{Text: data})
+	slackBody, _ := json.Marshal(requestBody{Text: data})
 	req, err := http.NewRequest(http.MethodPost, destination, bytes.NewBuffer(slackBody))
 	if err != nil {
 		return err

@@ -63,6 +63,7 @@ type Storage interface {
 	RemoveOTP(models.User) (models.User, error)
 }
 
+//LoadStorageBackends creates all the storage backend
 func LoadStorageBackends() {
 	backend = map[string]Storage{}
 	s, err := sqlite.New()
@@ -74,6 +75,7 @@ func LoadStorageBackends() {
 	log.Debugf("Initialiazed storage backends: %+v\n", backend)
 }
 
+//GetDB returns the configured database
 func GetDB() Storage {
 	log.Debug("GetDB:", backend)
 	currentStorage = backend[config.Current.Database]

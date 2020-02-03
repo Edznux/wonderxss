@@ -66,6 +66,7 @@ type Payload struct {
 	ModifiedAt  time.Time        `json:"modified_at" mapstructure:"modified_at"`
 }
 
+//FromStorage convert a models.Payload to an api.Payload
 func (p Payload) FromStorage(s models.Payload) Payload {
 	p.ID = s.ID
 	p.Name = s.Name
@@ -77,7 +78,7 @@ func (p Payload) FromStorage(s models.Payload) Payload {
 	return p
 }
 
-// Aliases represent the structure of the frontend-facing Aliases. Not the stored one.
+// Alias represent the structure of the frontend-facing Aliases. Not the stored one.
 // It offers an `FromStorage` function to convert itself from the storage payload.
 type Alias struct {
 	ID         string    `json:"id" mapstructure:"id"`
@@ -87,6 +88,7 @@ type Alias struct {
 	ModifiedAt time.Time `json:"modified_at" mapstructure:"modified_at"`
 }
 
+//FromStorage convert a models.Alias to an api.Alias
 func (p Alias) FromStorage(s models.Alias) Alias {
 	p.ID = s.ID
 	p.PayloadID = s.PayloadID
@@ -105,6 +107,7 @@ type Execution struct {
 	TriggeredAt time.Time `json:"triggered_at" mapstructure:"triggered_at"`
 }
 
+//FromStorage convert a models.Execution to an api.Execution
 func (l Execution) FromStorage(s models.Execution) Execution {
 	l.ID = s.ID
 	l.PayloadID = s.PayloadID
@@ -121,6 +124,7 @@ type Collector struct {
 	CreatedAt time.Time `json:"created_at" mapstructure:"created_at"`
 }
 
+//FromStorage convert a models.Collector to an api.Collector
 func (l Collector) FromStorage(s models.Collector) Collector {
 	l.ID = s.ID
 	l.CreatedAt = s.CreatedAt
@@ -138,6 +142,7 @@ type Injection struct {
 	ModifiedAt time.Time `json:"modified_at" mapstructure:"modified_at"`
 }
 
+//FromStorage convert a models.Injection to an api.Injection
 func (l Injection) FromStorage(s models.Injection) Injection {
 	l.ID = s.ID
 	l.Name = s.Name
@@ -160,6 +165,7 @@ type User struct {
 	ModifiedAt       time.Time `json:"modified_at" mapstructure:"modified_at"`
 }
 
+//FromStorage convert a models.User to an api.User
 func (u User) FromStorage(s models.User) User {
 	u.ID = s.ID
 	u.Username = s.Username
