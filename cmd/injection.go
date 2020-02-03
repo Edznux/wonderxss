@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/edznux/wonderxss/api"
 	"github.com/olekukonko/tablewriter"
@@ -13,11 +14,43 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	REPLACE_URL_TAG     = "##URL##"
+	REPLACE_SRI_TAG     = "##SRI_HASH##"
+	REPLACE_CROSSORIGIN = "##CROSSORIGIN##"
+)
+
+var (
+	SRIKinds     = []string{"sha256", "sha384", "sha512"}
+	CROSSORIGIN  = []string{"anonymous", "use-credentials"}
+	url          string
+	sri          string
+	crossorigin  string
+	payload      string
+	protocol     string
+	isRaw        bool
+	useSubdomain bool
+	useHTTPS     bool
+)
+
 // injectionCmd represents the injection command
 var injectionCmd = &cobra.Command{
 	Aliases: []string{"injection", "injections"},
 	Use:     "injection",
 	Short:   "Do all the operations on injections.",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		globalFlagsSetup(cmd, args)
+		protocol = "http://"
+		if useHTTPS {
+			protocol = "https://"
+		}
+		//FIXME Change port (handle https with 443)
+		if useSubdomain {
+			url = protocol + payload + "." + cfg.Host
+		} else {
+			url = protocol + cfg.Host + "/p/" + payload
+		}
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			injections, err := currentAPI.GetInjections()
@@ -67,6 +100,7 @@ var getInjectionCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		var err error
 		var injections []api.Injection
+		log.Debugf("Current api ?%+v", currentAPI)
 		if len(args) == 0 {
 			injections, err = currentAPI.GetInjections()
 			if err != nil {
@@ -108,15 +142,36 @@ var deleteInjectionsCmd = &cobra.Command{
 func tableInjections(injections []api.Injection) {
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader([]string{"ID", "Name", "Content", "Created At"})
+	var content string
 	for _, p := range injections {
-		table.Append([]string{p.ID, p.Name, p.Content, p.CreatedAt.String()})
+		if isRaw {
+			content = p.Content
+		} else {
+			content = replacePlaceholders(p.Content)
+		}
+		table.Append([]string{p.ID, p.Name, content, p.CreatedAt.String()})
 	}
 	table.Render()
 }
 
+func replacePlaceholders(input string) string {
+	input = strings.Replace(input, REPLACE_URL_TAG, url, -1)
+	input = strings.Replace(input, REPLACE_SRI_TAG, sri, -1)
+	input = strings.Replace(input, REPLACE_CROSSORIGIN, crossorigin, -1)
+	return input
+}
+
 func init() {
+
 	rootCmd.AddCommand(injectionCmd)
+
 	injectionCmd.AddCommand(createInjectionCmd)
 	injectionCmd.AddCommand(getInjectionCmd)
 	injectionCmd.AddCommand(deleteInjectionsCmd)
+
+	injectionCmd.PersistentFlags().BoolVar(&isRaw, "raw", false, "Do not replace placeholder in the injections")
+	injectionCmd.PersistentFlags().BoolVar(&useSubdomain, "use-subdomain", true, "Use the subdomain as the payload id (enabled by default)")
+	injectionCmd.PersistentFlags().BoolVar(&useHTTPS, "use-https", true, "Use HTTPS (enabled by default)")
+	injectionCmd.PersistentFlags().StringVar(&sri, "sri", "sha256", "SRI Type [sha256,sha384,sha512]")
+	injectionCmd.PersistentFlags().StringVar(&payload, "payload", "", "Payload ID or Name")
 }

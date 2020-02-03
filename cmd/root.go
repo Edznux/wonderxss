@@ -19,27 +19,34 @@ var (
 	remote     bool
 	verbose    bool
 	currentAPI api.API
+	cfg        config.Client
 )
+
+func globalFlagsSetup(cmd *cobra.Command, args []string) {
+	var err error
+	if verbose {
+		log.Infoln("Enabling verbose")
+		log.SetLevel(log.DebugLevel)
+	}
+
+	if remote {
+		log.Debugln("Using remote API!")
+		cfg, err = config.ReadClientConfig()
+		if err != nil {
+			log.Fatalln("Coulnd read client config:", err.Error())
+		}
+		currentAPI = client.New(cfg)
+	} else {
+		log.Debugln("Using local API")
+		currentAPI = local.New()
+	}
+}
 
 var rootCmd = &cobra.Command{
 	Use:   "wonderxss",
 	Short: "WonderXSS is a pentest tool for discovering Blind XSSs",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		if verbose {
-			log.Infoln("Enabling verbose")
-			log.SetLevel(log.DebugLevel)
-		}
-		if remote {
-			log.Debugln("Using remote API!")
-			cfg, err := config.ReadClientConfig()
-			if err != nil {
-				log.Fatalln("Coulnd read client config:", err.Error())
-			}
-			currentAPI = client.New(cfg)
-		} else {
-			log.Debugln("Using local API")
-			currentAPI = local.New()
-		}
+		globalFlagsSetup(cmd, args)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		// No arguments called. Abort and print help
@@ -69,7 +76,7 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.PersistentFlags().BoolVarP(&remote, "remote", "t", false, "Use remote API instead of local")
+	rootCmd.PersistentFlags().BoolVarP(&remote, "remote", "r", false, "Use remote API instead of local")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Enable verbose (debug) logs")
 	rootCmd.AddCommand(healthCmd)
 }
