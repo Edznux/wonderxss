@@ -11,5 +11,5 @@ export const API_USER = API_BASE + "/users";
 export const API_PAYLOADS = API_BASE + "/payloads";
 export const API_INJECTIONS = API_BASE + "/injections";
 export const API_ALIASES = API_BASE + "/aliases";
-export const API_COLLECTORS = API_BASE + "/collectors";
+export const API_LOOTS = API_BASE + "/loots";
 export const API_EXECUTIONS = API_BASE + "/executions";

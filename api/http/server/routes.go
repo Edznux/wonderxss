@@ -40,9 +40,9 @@ func (httpapi *HTTPApi) Routes(router *mux.Router) {
 	router.HandleFunc("/executions/{id}", httpapi.deleteExecution).Methods("DELETE")
 
 	// Colletors CRUD
-	router.HandleFunc("/collectors", httpapi.getCollectors).Methods("GET")
-	router.HandleFunc("/collectors", httpapi.createCollectors).Methods("POST")
-	router.HandleFunc("/collectors/{id}", httpapi.deleteCollector).Methods("DELETE")
+	router.HandleFunc("/loots", httpapi.getLoots).Methods("GET")
+	router.HandleFunc("/loots", httpapi.createLoots).Methods("POST")
+	router.HandleFunc("/loots/{id}", httpapi.deleteLoot).Methods("DELETE")
 
 	// Colletors CRUD
 	router.HandleFunc("/injections/{name}", httpapi.getInjection).Methods("GET")

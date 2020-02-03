@@ -116,16 +116,16 @@ func (l Execution) FromStorage(s models.Execution) Execution {
 	return l
 }
 
-// Collector represent the structure of the frontend-facing Executions. Not the stored one.
+// Loot represent the structure of the frontend-facing Executions. Not the stored one.
 // It offers an `FromStorage` function to convert itself from the storage payload.
-type Collector struct {
+type Loot struct {
 	ID        string    `json:"id" mapstructure:"id"`
 	Data      string    `json:"data" mapstructure:"data"`
 	CreatedAt time.Time `json:"created_at" mapstructure:"created_at"`
 }
 
-//FromStorage convert a models.Collector to an api.Collector
-func (l Collector) FromStorage(s models.Collector) Collector {
+//FromStorage convert a models.Loot to an api.Loot
+func (l Loot) FromStorage(s models.Loot) Loot {
 	l.ID = s.ID
 	l.CreatedAt = s.CreatedAt
 	l.Data = s.Data

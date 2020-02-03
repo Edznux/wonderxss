@@ -75,9 +75,9 @@ func (httpapi *HTTPApi) createPayload(w http.ResponseWriter, req *http.Request) 
 	sendResponse(api.Success, returnedPayload, w)
 }
 
-func (httpapi *HTTPApi) createCollectors(w http.ResponseWriter, req *http.Request) {
+func (httpapi *HTTPApi) createLoots(w http.ResponseWriter, req *http.Request) {
 
-	var data api.Collector
+	var data api.Loot
 
 	err := json.NewDecoder(req.Body).Decode(&data)
 	if err != nil {
@@ -86,14 +86,14 @@ func (httpapi *HTTPApi) createCollectors(w http.ResponseWriter, req *http.Reques
 		return
 	}
 
-	returnedCollector, err := httpapi.local.AddCollector(data.Data)
+	returnedLoot, err := httpapi.local.AddLoot(data.Data)
 	if err != nil {
 		log.Warnln(err)
 		sendResponse(api.DatabaseError, nil, w)
 		return
 	}
 
-	sendResponse(api.Success, returnedCollector, w)
+	sendResponse(api.Success, returnedLoot, w)
 }
 
 func (httpapi *HTTPApi) createAlias(w http.ResponseWriter, req *http.Request) {
@@ -151,15 +151,15 @@ func (httpapi *HTTPApi) getPayloads(w http.ResponseWriter, req *http.Request) {
 	sendResponse(api.Success, payloads, w)
 }
 
-func (httpapi *HTTPApi) getCollectors(w http.ResponseWriter, req *http.Request) {
-	collectors, err := httpapi.local.GetCollectors()
+func (httpapi *HTTPApi) getLoots(w http.ResponseWriter, req *http.Request) {
+	loots, err := httpapi.local.GetLoots()
 	if err != nil {
 		log.Warnln(err)
 		sendResponse(api.DatabaseError, nil, w)
 		return
 	}
 
-	sendResponse(api.Success, collectors, w)
+	sendResponse(api.Success, loots, w)
 }
 func (httpapi *HTTPApi) getExecutions(w http.ResponseWriter, req *http.Request) {
 	executions, err := httpapi.local.GetExecutions()
@@ -302,9 +302,9 @@ func (httpapi *HTTPApi) deleteInjection(w http.ResponseWriter, req *http.Request
 	sendResponse(api.Success, "", w)
 }
 
-func (httpapi *HTTPApi) deleteCollector(w http.ResponseWriter, req *http.Request) {
+func (httpapi *HTTPApi) deleteLoot(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
-	err := httpapi.local.DeleteCollector(vars["id"])
+	err := httpapi.local.DeleteLoot(vars["id"])
 	if err != nil {
 		sendResponse(api.DatabaseError, nil, w)
 		return

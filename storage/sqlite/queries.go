@@ -46,8 +46,8 @@ CREATE TABLE payloads (
 );
 `
 
-var CREATE_TABLE_COLLECTORS = `
-CREATE TABLE collectors (
+var CREATE_TABLE_LOOTS = `
+CREATE TABLE loots (
 	id          TEXT NOT NULL PRIMARY KEY,
 	data    	TEXT NOT NULL,
 	created_at  DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
@@ -134,15 +134,15 @@ FROM users
 WHERE username = ?;
 `
 
-var SELECT_COLLECTOR = `
+var SELECT_LOOT = `
 SELECT id, data, created_at
-FROM collectors
+FROM loots
 WHERE id = ?;
 `
 
-var SELECT_ALL_COLLECTOR = `
+var SELECT_ALL_LOOT = `
 SELECT id, data, created_at
-FROM collectors;
+FROM loots;
 `
 var SELECT_INJECTION = `
 SELECT id, name, content, created_at, modified_at
@@ -164,7 +164,7 @@ var INSERT_PAYLOAD = `INSERT INTO payloads (id, name, hash, content, content_typ
 var INSERT_USER = `INSERT INTO users (id, username, password) VALUES (?, ?, ?);`
 var INSERT_ALIAS = `INSERT INTO aliases (id, payload_id, alias) VALUES (?, ?, ?);`
 var INSERT_EXECUTION = `INSERT INTO executions (id, payload_id, alias_id) VALUES (?, ?, ?);`
-var INSERT_COLLECTOR = `INSERT INTO collectors (id, data) VALUES (?, ?);`
+var INSERT_LOOT = `INSERT INTO loots (id, data) VALUES (?, ?);`
 var INSERT_INJECTION = `INSERT INTO injections (id, name, content) VALUES (?, ?, ?);`
 
 // UPDATE
@@ -179,5 +179,5 @@ var DELETE_PAYLOAD = `DELETE FROM payloads WHERE id = ?;`
 var DELETE_USER = `DELETE FROM users WHERE id = ?;`
 var DELETE_ALIAS = `DELETE FROM aliases WHERE id = ?;`
 var DELETE_EXECUTION = `DELETE FROM executions WHERE id = ?;`
-var DELETE_COLLECTOR = `DELETE FROM collectors WHERE id = ?;`
+var DELETE_LOOT = `DELETE FROM loots WHERE id = ?;`
 var DELETE_INJECTION = `DELETE FROM injections WHERE id = ?;`

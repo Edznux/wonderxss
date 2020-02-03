@@ -79,8 +79,8 @@ func (s *Sqlite) Setup() error {
 		lastErr = err
 	}
 
-	log.Debugln("Creating Collectors' table")
-	_, err = s.db.Exec(CREATE_TABLE_COLLECTORS)
+	log.Debugln("Creating Loots' table")
+	_, err = s.db.Exec(CREATE_TABLE_LOOTS)
 	if err != nil {
 		log.Errorln(err)
 		lastErr = err
@@ -153,16 +153,16 @@ func (s *Sqlite) CreateAlias(alias models.Alias) (models.Alias, error) {
 	return s.GetAlias(alias.ID)
 }
 
-// CreateCollector create a collector token based on models.Collector
+// CreateLoot create a loot token based on models.Loot
 // It also returns it if sucessfuly stored
-func (s *Sqlite) CreateCollector(collector models.Collector) (models.Collector, error) {
-	_, err := s.db.Exec(INSERT_COLLECTOR, collector.ID, collector.Data)
+func (s *Sqlite) CreateLoot(loot models.Loot) (models.Loot, error) {
+	_, err := s.db.Exec(INSERT_LOOT, loot.ID, loot.Data)
 	if err != nil {
 		log.Errorln(err)
-		return models.Collector{}, err
+		return models.Loot{}, err
 	}
 
-	return s.GetCollector(collector.ID)
+	return s.GetLoot(loot.ID)
 }
 
 // CreateInjection create an injection token based on models.Injection
@@ -454,37 +454,37 @@ func (s *Sqlite) GetExecutions() ([]models.Execution, error) {
 	return res, nil
 }
 
-//GetCollector returns the selected collector based on its ID
-func (s *Sqlite) GetCollector(id string) (models.Collector, error) {
+//GetLoot returns the selected loot based on its ID
+func (s *Sqlite) GetLoot(id string) (models.Loot, error) {
 
-	log.Debugln("GetCollector(", id, ")")
-	row := s.db.QueryRow(SELECT_COLLECTOR, id)
+	log.Debugln("GetLoot(", id, ")")
+	row := s.db.QueryRow(SELECT_LOOT, id)
 
-	var res models.Collector
+	var res models.Loot
 	err := row.Scan(&res.ID, &res.Data, &res.CreatedAt)
 	if err == sql.ErrNoRows {
-		return models.Collector{}, models.NoSuchItem
+		return models.Loot{}, models.NoSuchItem
 	}
 
 	if err != nil {
 		log.Println(err)
-		return models.Collector{}, err
+		return models.Loot{}, err
 	}
 	return res, nil
 }
 
-//GetCollectors returns all the collectors from the database
-func (s *Sqlite) GetCollectors() ([]models.Collector, error) {
+//GetLoots returns all the loots from the database
+func (s *Sqlite) GetLoots() ([]models.Loot, error) {
 
-	res := []models.Collector{}
+	res := []models.Loot{}
 
-	rows, err := s.db.Query(SELECT_ALL_COLLECTOR)
+	rows, err := s.db.Query(SELECT_ALL_LOOT)
 	if err != nil {
-		log.Println("Error querying the db (Collector):", err)
+		log.Println("Error querying the db (Loot):", err)
 		return nil, err
 	}
 
-	var tmpRes models.Collector
+	var tmpRes models.Loot
 	for rows.Next() {
 		rows.Scan(&tmpRes.ID, &tmpRes.Data, &tmpRes.CreatedAt)
 		res = append(res, tmpRes)
@@ -623,9 +623,9 @@ func (s *Sqlite) DeleteExecution(e models.Execution) error {
 	return err
 }
 
-//DeleteCollector delete the provided Collector from the database
-func (s *Sqlite) DeleteCollector(c models.Collector) error {
-	_, err := s.db.Exec(DELETE_COLLECTOR, c.ID)
+//DeleteLoot delete the provided Loot from the database
+func (s *Sqlite) DeleteLoot(c models.Loot) error {
+	_, err := s.db.Exec(DELETE_LOOT, c.ID)
 	return err
 }
 

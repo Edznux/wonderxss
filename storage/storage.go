@@ -25,7 +25,7 @@ type Storage interface {
 	CreateUser(models.User) (models.User, error)
 	CreateAlias(models.Alias) (models.Alias, error)
 	CreateExecution(execution models.Execution, payloadIDOrAlias string) (models.Execution, error)
-	CreateCollector(collector models.Collector) (models.Collector, error)
+	CreateLoot(loot models.Loot) (models.Loot, error)
 	CreateInjection(injection models.Injection) (models.Injection, error)
 	CreateOTP(user models.User, TOTPSecret string) (models.User, error)
 	// Read
@@ -44,8 +44,8 @@ type Storage interface {
 	GetExecutions() ([]models.Execution, error)
 	GetExecution(id string) (models.Execution, error)
 
-	GetCollectors() ([]models.Collector, error)
-	GetCollector(id string) (models.Collector, error)
+	GetLoots() ([]models.Loot, error)
+	GetLoot(id string) (models.Loot, error)
 
 	GetInjections() ([]models.Injection, error)
 	GetInjection(id string) (models.Injection, error)
@@ -56,7 +56,7 @@ type Storage interface {
 	// Delete
 	DeleteExecution(models.Execution) error
 	DeleteInjection(models.Injection) error
-	DeleteCollector(models.Collector) error
+	DeleteLoot(models.Loot) error
 	DeletePayload(models.Payload) error
 	DeleteAlias(models.Alias) error
 	DeleteUser(models.User) error

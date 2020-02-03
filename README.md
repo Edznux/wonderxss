@@ -102,8 +102,8 @@ Routes:
 /executions           [GET]
 /executions/{id}      [DELETE]
 
-/collectors           [GET,POST]
-/collectors/{id}      [DELETE]
+/loots           [GET,POST]
+/loots/{id}      [DELETE]
 
 /injections           [GET,POST]
 /injections/{name}    [GET]

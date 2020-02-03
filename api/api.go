@@ -14,10 +14,10 @@ type API interface {
 	AddAlias(name string, payloadID string) (Alias, error)
 	DeleteAlias(id string) error
 
-	GetCollectors() ([]Collector, error)
-	GetCollector(id string) (Collector, error)
-	AddCollector(data string) (Collector, error)
-	DeleteCollector(id string) error
+	GetLoots() ([]Loot, error)
+	GetLoot(id string) (Loot, error)
+	AddLoot(data string) (Loot, error)
+	DeleteLoot(id string) error
 
 	GetExecutions() ([]Execution, error)
 	GetExecution(id string) (Execution, error)
