@@ -2,7 +2,9 @@ package crypto
 
 import (
 	"reflect"
+	"strings"
 	"testing"
+	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/edznux/wonderxss/api"
@@ -16,10 +18,34 @@ func TestGetJWTToken(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    string
+		isOk    func(input string) bool
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			name: "Test JWT Creation",
+			args: args{
+				user: api.User{
+					ID:               "1234-4567-8901",
+					Username:         "test",
+					TwoFactorEnabled: false,
+					CreatedAt:        time.Now(),
+					ModifiedAt:       time.Now(),
+				},
+				key: "fakekey",
+			},
+			isOk: func(input string) bool {
+				splitted := strings.Split(input, ".")
+				if len(splitted) != 3 {
+					return false
+				}
+				if splitted[0] == "" || splitted[1] == "" || splitted[2] == "" {
+					return false
+				}
+				// TODO: We should add base64 decoding and stuff in tests
+				return true
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -28,8 +54,8 @@ func TestGetJWTToken(t *testing.T) {
 				t.Errorf("GetJWTToken() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if got != tt.want {
-				t.Errorf("GetJWTToken() = %v, want %v", got, tt.want)
+			if !tt.isOk(got) {
+				t.Errorf("GetJWTToken() = %v", got)
 			}
 		})
 	}
@@ -68,7 +94,7 @@ func TestVerifyJWTToken(t *testing.T) {
 				key:         "some-fixed-test-key",
 				tokenString: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYm9iIiwidXNlcl9uYW1lIjoiYm9iIiwicm9sZSI6ImFkbWluIiwiZXhwIjoxNTgwNjE0NTA0LCJqdGkiOiJhZTI5NGQ1YS03ZTIzLTRjMjctOGFlNy02ZDdjMDk3MGI5YmIiLCJpYXQiOjE1ODA2MTA5MDR9.N3LjjBl7mvb9GwDKmTJWnB8goXE1c3IbUTsnXp7RZ4w",
 			},
-			wantErr: false,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {

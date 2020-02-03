@@ -7,3 +7,4 @@ vendor
 .vscode
 deploy/ansible/hosts
 deploy/ansible/wonderxss.retry
+coverage.out
