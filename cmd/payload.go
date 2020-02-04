@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	defaultPayloadHeader = []string{"ID", "Name", "Content", "Content Type", "Created At"}
-	fieldsPayload        []string
+	defaultPayloadTableHeader = []string{"ID", "Name", "Content", "Content Type", "Created At"}
+	fieldsPayload             []string
 )
 
 // payloadCmd represents the payload command
@@ -119,6 +119,13 @@ func renderPayloads(payloads []api.Payload) {
 
 func buildPayloadsTable(payloads []api.Payload) [][]string {
 	var rows [][]string
+
+	if len(fieldsPayload) == 0 {
+		fields = defaultPayloadTableHeader
+	} else {
+		fields = fieldsPayload
+	}
+
 	rows = make([][]string, len(payloads))
 
 	for i, p := range payloads {
@@ -145,5 +152,5 @@ func init() {
 	payloadCmd.AddCommand(createPayloadCmd)
 	payloadCmd.AddCommand(getPayloadCmd)
 	payloadCmd.AddCommand(deletePayloadsCmd)
-	payloadCmd.PersistentFlags().StringSliceVar(&fieldsPayload, "fields", defaultPayloadHeader, "Fields you want to query")
+	payloadCmd.PersistentFlags().StringSliceVar(&fieldsPayload, "fields", defaultPayloadTableHeader, "Fields you want to query")
 }

@@ -149,6 +149,12 @@ func renderInjections(injections []api.Injection) {
 
 func buildInjectionsTable(injections []api.Injection) [][]string {
 	var rows [][]string
+	if len(fieldsInjection) == 0 {
+		fields = defaultInjectionTableHeader
+	} else {
+		fields = fieldsInjection
+	}
+
 	rows = make([][]string, len(injections))
 
 	for i, p := range injections {
@@ -185,7 +191,7 @@ func init() {
 	injectionCmd.AddCommand(getInjectionCmd)
 	injectionCmd.AddCommand(deleteInjectionsCmd)
 
-	injectionCmd.PersistentFlags().BoolVar(&isReplace, "replace", false, "Do not replace placeholder in the injections")
+	injectionCmd.PersistentFlags().BoolVar(&isReplace, "no-replace", false, "Do not replace placeholder in the injections")
 	injectionCmd.PersistentFlags().BoolVar(&useSubdomain, "use-subdomain", true, "Use the subdomain as the payload id (enabled by default)")
 	injectionCmd.PersistentFlags().BoolVar(&useHTTPS, "use-https", true, "Use HTTPS (enabled by default)")
 	injectionCmd.PersistentFlags().StringVar(&sri, "sri", "sha256", "SRI Type [sha256,sha384,sha512]")
