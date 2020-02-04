@@ -3,14 +3,17 @@ package cmd
 import (
 	"fmt"
 	"io/ioutil"
-	"os"
 	"path/filepath"
 
 	"github.com/edznux/wonderxss/api"
-	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 
 	log "github.com/sirupsen/logrus"
+)
+
+var (
+	defaultAliasesTableHeader = []string{"ID", "Alias", "Created At"}
+	fieldsAliases             []string
 )
 
 // aliasesCmd represents the injection command
@@ -24,11 +27,7 @@ var aliasesCmd = &cobra.Command{
 			if err != nil {
 				log.Println(err)
 			}
-			if len(aliases) > 0 {
-				tableAliases(aliases)
-			} else {
-				fmt.Println("No Aliases found.")
-			}
+			renderAliases(aliases)
 			return
 		}
 		cmd.Help()
@@ -98,21 +97,40 @@ var getAliasesCmd = &cobra.Command{
 			}
 			aliases = append(aliases, alias)
 		}
-		if len(aliases) > 0 {
-			tableAliases(aliases)
-		} else {
-			fmt.Println("No aliases found.")
-		}
+		renderAliases(aliases)
 	},
 }
 
-func tableAliases(payloads []api.Alias) {
-	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"ID", "Alias", "Created At"})
-	for _, p := range payloads {
-		table.Append([]string{p.ID, p.Alias, p.CreatedAt.String()})
+func renderAliases(aliases []api.Alias) {
+	rows := buildAliasesTable(aliases)
+	if isRaw {
+		renderRaw(rows)
+		return
 	}
-	table.Render()
+
+	if len(rows) > 0 {
+		renderTable(rows)
+	} else {
+		fmt.Println("No Aliases found.")
+	}
+}
+
+func buildAliasesTable(aliases []api.Alias) [][]string {
+	var rows [][]string
+	if len(fieldsAliases) == 0 {
+		fields = defaultAliasesTableHeader
+	} else {
+		fields = fieldsAliases
+	}
+
+	rows = make([][]string, len(aliases))
+	for i, a := range aliases {
+		rows[i] = make([]string, 0)
+		for _, f := range fields {
+			rows[i] = append(rows[i], getFieldString(a, f))
+		}
+	}
+	return rows
 }
 
 func init() {
@@ -120,4 +138,5 @@ func init() {
 	aliasesCmd.AddCommand(createAliasesCmd)
 	aliasesCmd.AddCommand(getAliasesCmd)
 	aliasesCmd.AddCommand(deleteAliasesCmd)
+	aliasesCmd.PersistentFlags().StringSliceVar(&fieldsAliases, "fields", defaultAliasesTableHeader, "Fields you want to query")
 }

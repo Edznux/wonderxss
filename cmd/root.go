@@ -3,7 +3,10 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"reflect"
+	"strings"
 
+	"github.com/olekukonko/tablewriter"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/edznux/wonderxss/api"
@@ -42,6 +45,28 @@ func globalFlagsSetup(cmd *cobra.Command, args []string) {
 	}
 }
 
+func renderRaw(rows [][]string) {
+	for _, row := range rows {
+		for _, col := range row {
+			fmt.Printf("%s", col)
+		}
+		fmt.Printf("\n")
+	}
+}
+
+func renderTable(rows [][]string) {
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader(fields)
+	table.AppendBulk(rows)
+	table.Render()
+}
+
+func getFieldString(i interface{}, field string) string {
+	r := reflect.ValueOf(i)
+	f := reflect.Indirect(r).FieldByNameFunc(func(n string) bool { return strings.ToLower(n) == strings.ToLower(field) })
+	return f.String()
+}
+
 var rootCmd = &cobra.Command{
 	Use:   "wonderxss",
 	Short: "WonderXSS is a pentest tool for discovering Blind XSSs",
@@ -78,5 +103,6 @@ func Execute() {
 func init() {
 	rootCmd.PersistentFlags().BoolVarP(&remote, "remote", "r", false, "Use remote API instead of local")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Enable verbose (debug) logs")
+	rootCmd.PersistentFlags().BoolVar(&isRaw, "raw", false, "Output without any formating (good for scripting)")
 	rootCmd.AddCommand(healthCmd)
 }

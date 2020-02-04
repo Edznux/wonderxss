@@ -3,20 +3,24 @@ package cmd
 import (
 	"fmt"
 	"io/ioutil"
-	"os"
 	"path/filepath"
 
 	"github.com/edznux/wonderxss/api"
-	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 
 	log "github.com/sirupsen/logrus"
 )
 
+var (
+	defaultPayloadHeader = []string{"ID", "Name", "Content", "Content Type", "Created At"}
+	fieldsPayload        []string
+)
+
 // payloadCmd represents the payload command
 var payloadCmd = &cobra.Command{
-	Use:   "payload",
-	Short: "Do all the operations on payloads.",
+	Use:     "payload",
+	Aliases: []string{"payloads"},
+	Short:   "Do all the operations on payloads.",
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			payloads, err := currentAPI.GetPayloads()
@@ -24,11 +28,7 @@ var payloadCmd = &cobra.Command{
 				log.Errorln(err)
 				return
 			}
-			if len(payloads) > 0 {
-				tablePayloads(payloads)
-			} else {
-				fmt.Println("No payloads found.")
-			}
+			renderPayloads(payloads)
 			return
 		}
 		cmd.Help()
@@ -82,11 +82,7 @@ var getPayloadCmd = &cobra.Command{
 			}
 			payloads = append(payloads, payload)
 		}
-		if len(payloads) > 0 {
-			tablePayloads(payloads)
-		} else {
-			fmt.Println("No payloads found.")
-		}
+		renderPayloads(payloads)
 	},
 }
 
@@ -107,13 +103,41 @@ var deletePayloadsCmd = &cobra.Command{
 	},
 }
 
-func tablePayloads(payloads []api.Payload) {
-	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"ID", "Name", "Content", "Content Type", "Created At"})
-	for _, p := range payloads {
-		table.Append([]string{p.ID, p.Name, p.Content, p.ContentType, p.CreatedAt.String()})
+func renderPayloads(payloads []api.Payload) {
+	rows := buildPayloadsTable(payloads)
+	if isRaw {
+		renderRaw(rows)
+		return
 	}
-	table.Render()
+
+	if len(payloads) > 0 {
+		renderTable(rows)
+	} else {
+		fmt.Println("No payloads found.")
+	}
+}
+
+func buildPayloadsTable(payloads []api.Payload) [][]string {
+	var rows [][]string
+	rows = make([][]string, len(payloads))
+
+	for i, p := range payloads {
+		content := ""
+		rows[i] = make([]string, 0)
+		for _, f := range fields {
+			if f == "Content" {
+				if isReplace {
+					content = p.Content
+				} else {
+					content = replacePlaceholders(p.Content)
+				}
+				rows[i] = append(rows[i], content)
+			} else {
+				rows[i] = append(rows[i], getFieldString(p, f))
+			}
+		}
+	}
+	return rows
 }
 
 func init() {
@@ -121,4 +145,5 @@ func init() {
 	payloadCmd.AddCommand(createPayloadCmd)
 	payloadCmd.AddCommand(getPayloadCmd)
 	payloadCmd.AddCommand(deletePayloadsCmd)
+	payloadCmd.PersistentFlags().StringSliceVar(&fieldsPayload, "fields", defaultPayloadHeader, "Fields you want to query")
 }

@@ -3,12 +3,10 @@ package cmd
 import (
 	"fmt"
 	"io/ioutil"
-	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/edznux/wonderxss/api"
-	"github.com/olekukonko/tablewriter"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
@@ -21,16 +19,20 @@ const (
 )
 
 var (
-	SRIKinds     = []string{"sha256", "sha384", "sha512"}
-	CROSSORIGIN  = []string{"anonymous", "use-credentials"}
-	url          string
-	sri          string
-	crossorigin  string
-	payload      string
-	protocol     string
-	isRaw        bool
-	useSubdomain bool
-	useHTTPS     bool
+	SRIKinds                    = []string{"sha256", "sha384", "sha512"}
+	CROSSORIGIN                 = []string{"anonymous", "use-credentials"}
+	defaultInjectionTableHeader = []string{"ID", "Name", "Content", "Created At"}
+	url                         string
+	sri                         string
+	crossorigin                 string
+	payload                     string
+	protocol                    string
+	fields                      []string
+	fieldsInjection             []string
+	isRaw                       bool
+	isReplace                   bool
+	useSubdomain                bool
+	useHTTPS                    bool
 )
 
 // injectionCmd represents the injection command
@@ -57,11 +59,7 @@ var injectionCmd = &cobra.Command{
 			if err != nil {
 				log.Println(err)
 			}
-			if len(injections) > 0 {
-				tableInjections(injections)
-			} else {
-				fmt.Println("No injections found.")
-			}
+			renderInjections(injections)
 			return
 		}
 		cmd.Help()
@@ -114,11 +112,7 @@ var getInjectionCmd = &cobra.Command{
 			}
 			injections = append(injections, injection)
 		}
-		if len(injections) > 0 {
-			tableInjections(injections)
-		} else {
-			fmt.Println("No injection found.")
-		}
+		renderInjections(injections)
 	},
 }
 
@@ -139,19 +133,41 @@ var deleteInjectionsCmd = &cobra.Command{
 	},
 }
 
-func tableInjections(injections []api.Injection) {
-	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"ID", "Name", "Content", "Created At"})
-	var content string
-	for _, p := range injections {
-		if isRaw {
-			content = p.Content
-		} else {
-			content = replacePlaceholders(p.Content)
-		}
-		table.Append([]string{p.ID, p.Name, content, p.CreatedAt.String()})
+func renderInjections(injections []api.Injection) {
+	rows := buildInjectionsTable(injections)
+	if isRaw {
+		renderRaw(rows)
+		return
 	}
-	table.Render()
+
+	if len(rows) > 0 {
+		renderTable(rows)
+	} else {
+		fmt.Println("No injections found.")
+	}
+}
+
+func buildInjectionsTable(injections []api.Injection) [][]string {
+	var rows [][]string
+	rows = make([][]string, len(injections))
+
+	for i, p := range injections {
+		content := ""
+		rows[i] = make([]string, 0)
+		for _, f := range fields {
+			if f == "Content" {
+				if isReplace {
+					content = p.Content
+				} else {
+					content = replacePlaceholders(p.Content)
+				}
+				rows[i] = append(rows[i], content)
+			} else {
+				rows[i] = append(rows[i], getFieldString(p, f))
+			}
+		}
+	}
+	return rows
 }
 
 func replacePlaceholders(input string) string {
@@ -169,9 +185,10 @@ func init() {
 	injectionCmd.AddCommand(getInjectionCmd)
 	injectionCmd.AddCommand(deleteInjectionsCmd)
 
-	injectionCmd.PersistentFlags().BoolVar(&isRaw, "raw", false, "Do not replace placeholder in the injections")
+	injectionCmd.PersistentFlags().BoolVar(&isReplace, "replace", false, "Do not replace placeholder in the injections")
 	injectionCmd.PersistentFlags().BoolVar(&useSubdomain, "use-subdomain", true, "Use the subdomain as the payload id (enabled by default)")
 	injectionCmd.PersistentFlags().BoolVar(&useHTTPS, "use-https", true, "Use HTTPS (enabled by default)")
 	injectionCmd.PersistentFlags().StringVar(&sri, "sri", "sha256", "SRI Type [sha256,sha384,sha512]")
 	injectionCmd.PersistentFlags().StringVar(&payload, "payload", "", "Payload ID or Name")
+	injectionCmd.PersistentFlags().StringSliceVar(&fieldsInjection, "fields", defaultInjectionTableHeader, "Fields you want to query")
 }
