@@ -1,8 +1,22 @@
 import React from "react";
-import { Container, TextField, Select } from "@material-ui/core";
+import {
+  Container,
+  TextField,
+  Select,
+  InputLabel,
+  Button,
+  Grid,
+  Input,
+  Dialog,
+  DialogTitle,
+  DialogActions,
+  DialogContent
+} from "@material-ui/core";
+
 import EnhancedTable from "../components/Table";
 import { API_ALIASES, API_PAYLOADS } from "../helpers/constants";
 import axios from "axios";
+import "./Aliases.css";
 
 export default class Aliases extends React.Component {
   constructor(props) {
@@ -74,6 +88,12 @@ export default class Aliases extends React.Component {
         console.log(res);
       });
   };
+  handleClickOpenClose = () => {
+    this.setState({
+      openDialog: !this.state.openDialog,
+    });
+  };
+
   componentDidMount() {
     axios
       .get(API_PAYLOADS)
@@ -121,21 +141,51 @@ export default class Aliases extends React.Component {
           : 
           <div>No aliases found</div>
         }
-        Alias :{" "}
-        <TextField
-          className="alias-field"
-          type="text"
-          onChange={event =>
-            this.setState({ currentAlias: event.target.value })
-          }
-        />
-        Payload :
-        <Select onChange={this.setCurrentPayload}>
-          {this.state.payloads.map(payload => {
-            return <option value={payload.id}>{payload.name}</option>;
-          })}
-        </Select>
-        <input type="submit" value="Submit" onClick={this.createAlias} />
+        <Button
+          className="submit-button"
+          variant="outlined"
+          color="primary"
+          onClick={this.handleClickOpenClose}
+        >
+        Create new alias
+        </Button>
+        <Dialog
+          open={this.state.openDialog}
+          onClose={this.handleClickOpenClose}
+          aria-labelledby="form-dialog-title"
+        >
+          <DialogTitle id="form-dialog-title">New alias</DialogTitle>
+
+          <DialogContent>
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <Input
+                  type="text"
+                  placeholder="Alias"
+                  className="input"
+                  onChange={event =>
+                    this.setState({ currentAlias: event.target.value })
+                  }
+                ></Input>
+              </Grid>
+              <Grid item xs={12}>
+                <Select onChange={this.setCurrentPayload} style={{width:"100%"}}>
+                  {this.state.payloads.map(payload => {
+                    return <option value={payload.id}>{payload.name}</option>;
+                  })}
+                </Select>
+              </Grid>
+            </Grid>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleClickOpenClose} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={this.createAlias} color="primary">
+              Create
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Container>
     );
   }
