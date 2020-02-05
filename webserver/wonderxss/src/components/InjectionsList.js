@@ -302,11 +302,20 @@ export default class InjectionsList extends React.Component {
             </FormLabel>
           </Grid>
           <Grid item xs={12}>
+          {
+            this.state.injections.length > 0 ?
             <EnhancedTable
               headCells={this.state.headCells}
               data={this.state.injections}
               isDeleteButtonEnabled={true}
             ></EnhancedTable>
+            :
+            <center>
+              No injections found. <br/>
+              You can start using the app by creating a new injection.
+            </center>
+          }
+            
           </Grid>
           <Grid item xs={12}>
             <Button

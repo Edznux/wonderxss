@@ -110,12 +110,17 @@ export default class Aliases extends React.Component {
   render() {
     return (
       <Container className="container">
-        Aliases list:
-        <EnhancedTable
-          headCells={this.state.headCells}
-          data={this.state.aliases}
-          isDeleteButtonEnabled={true}
-        ></EnhancedTable>
+        <h1>Aliases</h1>
+        {
+          this.state.aliases.length > 0 ?
+          <EnhancedTable
+            headCells={this.state.headCells}
+            data={this.state.aliases}
+            isDeleteButtonEnabled={true}
+          ></EnhancedTable>
+          : 
+          <div>No aliases found</div>
+        }
         Alias :{" "}
         <TextField
           className="alias-field"

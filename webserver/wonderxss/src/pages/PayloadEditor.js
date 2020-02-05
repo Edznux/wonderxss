@@ -58,6 +58,7 @@ class PayloadEditor extends React.Component {
   render() {
     return (
       <Container className="container">
+        <h1>Payload editor</h1>
         <AceEditor
           width="100%"
           ref="aceEditor"

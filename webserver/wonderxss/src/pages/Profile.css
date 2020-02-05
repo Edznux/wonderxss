@@ -1,0 +1,40 @@
+.profile-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.profile-sidebar a {
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+  color: #000;
+}
+
+.profile-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-left: 40px;
+  width: 60%;
+}
+
+.profile-sidebar {
+  margin-top: 30px;
+  padding: 10px;
+  width: 20%;
+  background-color: #ececec;
+  text-align: right;
+  color: #fff;
+}
+
+.profile-sidebar-item:last-child {
+  border-bottom: 0px solid black;
+}
+.profile-sidebar-item {
+  height: 40px;
+  line-height: 40px;
+  width: 100%;
+  border-bottom: 1px solid black;
+}

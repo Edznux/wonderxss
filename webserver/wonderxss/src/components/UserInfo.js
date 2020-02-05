@@ -40,9 +40,9 @@ export default class UserInfo extends React.Component {
         <div>
           2FA Enabled:
           {this.state.twoFactorEnabled ? (
-            <span style={{ color: "green" }}>YES</span>
+            <span style={{ color: "green" }}> YES</span>
           ) : (
-            <span style={{ color: "red" }}>NO</span>
+            <span style={{ color: "red" }}> NO</span>
           )}
           <br />
           Created at: {this.state.createdAt} <br />

@@ -5,6 +5,8 @@ import OTPRegister from "../components/OTP";
 import UserInfo from "../components/UserInfo";
 import { Redirect } from "react-router-dom";
 
+import "./Profile.css";
+
 export default class Profile extends React.Component {
   constructor(props) {
     super(props);
@@ -29,25 +31,33 @@ export default class Profile extends React.Component {
   };
   render() {
     return (
-      <Container className="container">
+      <Container className="container profile-container">
+      <div class="profile-sidebar">
+        <div class="profile-sidebar-item">
+          <Link
+            to="/profile/info"
+            onClick={event =>
+              this.setState({ currentPage: event.target.pathname })
+            }
+            >
+            Info
+          </Link>
+        </div>
+        <div class="profile-sidebar-item">
+          <Link
+            to="/profile/otp"
+            onClick={event =>
+              this.setState({ currentPage: event.target.pathname })
+            }
+            >
+            Security & 2FA
+          </Link>
+        </div>
+      </div>
+      <div class="profile-body">
         <h1>Profile</h1>
-        <Link
-          to="/profile/info"
-          onClick={event =>
-            this.setState({ currentPage: event.target.pathname })
-          }
-        >
-          Info
-        </Link>
-        <Link
-          to="/profile/otp"
-          onClick={event =>
-            this.setState({ currentPage: event.target.pathname })
-          }
-        >
-          Security & 2FA
-        </Link>
         {this.selectPage()}
+      </div>
       </Container>
     );
   }
