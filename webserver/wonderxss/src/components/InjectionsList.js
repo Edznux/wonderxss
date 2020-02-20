@@ -8,10 +8,7 @@ import {
   API_ALIASES,
 } from "../helpers/constants";
 import {
-  Checkbox,
-  Select,
   Container,
-  FormLabel,
   Button,
   Input,
   Grid,
@@ -23,6 +20,10 @@ import {
 } from "@material-ui/core";
 import EnhancedTable from "./Table";
 import "../styles/InjectionsList.css";
+import PayloadSelector from "./PayloadSelector";
+import SRISelector from "./SRISelector";
+import CustomCheckbox from "./CustomCheckbox";
+import CrossOriginSelector from "./CrossOriginSelector";
 
 const REPLACE_URL_TAG = "##URL##";
 const REPLACE_SRI_TAG = "##SRI_HASH##";
@@ -87,38 +88,32 @@ export default class InjectionsList extends React.Component {
       s = "";
     }
     this.setState({ currentAlias: s });
-    this.updateInjections();
   };
   setCurrentSRI = event => {
     let s = event.target.value;
     let found = SRIKinds.indexOf(s);
     if (found > -1) {
-      this.setState({ SRIKind: SRIKinds[found] });
+      this.setState({ SRIKind: SRIKinds[found] }, this.formatInjections);
     } else {
-      this.setState({ SRIKind: SRIKinds[0] });
+      this.setState({ SRIKind: SRIKinds[0] }, this.formatInjections);
     }
-    this.updateInjections();
   };
   setCurrentCrossOrigin = event => {
     let selected = event.target.value;
     let found = CROSSORIGIN.indexOf(selected);
     if (found > -1) {
-      this.setState({ crossorigin: CROSSORIGIN[found] });
+      this.setState({ crossorigin: CROSSORIGIN[found] }, this.formatInjections);
     } else {
-      this.setState({ crossorigin: CROSSORIGIN[0] });
+      this.setState({ crossorigin: CROSSORIGIN[0] }, this.formatInjections);
     }
-    this.updateInjections();
   };
   toggleSubdomain = event => {
-    this.setState({ useSubdomain: event.target.checked });
-    this.updateInjections();
+    this.setState({ useSubdomain: event.target.checked }, this.formatInjections);
   };
   toggleHTTPS = event => {
-    this.setState({ useHTTPS: event.target.checked });
-    this.updateInjections();
+    this.setState({ useHTTPS: event.target.checked }, this.formatInjections);
   };
   componentDidMount() {
-    //TODO: fetch a new endpoint which lists all the injections payload.
     axios
       .get(API_PAYLOADS)
       .then(res => {
@@ -136,7 +131,7 @@ export default class InjectionsList extends React.Component {
         });
         this.setState({
           aliasesOrPayloadsIDs: tmp,
-        });
+        }, this.formatInjections);
       });
 
     axios
@@ -158,7 +153,7 @@ export default class InjectionsList extends React.Component {
         });
         this.setState({
           aliasesOrPayloadsIDs: tmp,
-        });
+        }, this.formatInjections);
       });
 
     axios
@@ -171,26 +166,21 @@ export default class InjectionsList extends React.Component {
         }
       })
       .then(rows => {
-        rows.data.map(injection => {
-          injection.formatedContent = this.formatInjection(injection.content);
-          return injection;
-        });
+        // rows.data.map(injection => {
+        //   injection.formatedContent = this.formatInjection(injection.content);
+        //   return injection;
+        // });
         this.setState({
           injections: rows.data,
-        });
-        this.updateInjections();
+        }, this.formatInjections);
       });
   }
-  updateInjections = () => {
-    let injections = this.state.injections.map(injection => {
+  formatInjections = () =>{
+    this.state.injections.map(injection => {
       injection.formatedContent = this.formatInjection(injection.content);
       return injection;
     });
-    console.log(injections);
-    this.setState({
-      injections: injections,
-    });
-  };
+  }
   formatInjection = injection => {
     console.log("injection:", injection);
     let url = "";
@@ -208,13 +198,7 @@ export default class InjectionsList extends React.Component {
     console.log("res:", res);
     return res;
   };
-  formatPayloadName = (payloadID, payloadName) => {
-    console.log(`formatPayloadName(${payloadID}, ${payloadName})`);
-    if (payloadID && payloadName) {
-      return payloadID.slice(0, 8) + `... (${payloadName})`;
-    }
-    return "";
-  };
+
   newInjection = event => {
     let injections = this.state.injections;
     injections.push({
@@ -222,7 +206,6 @@ export default class InjectionsList extends React.Component {
       content: this.state.newContent,
     });
     this.setState({ injections: injections });
-    this.updateInjections();
     axios
       .post(API_INJECTIONS, {
         name: this.state.newTitle,
@@ -245,77 +228,33 @@ export default class InjectionsList extends React.Component {
       <Container>
         <Grid container spacing={3}>
           <Grid item xs={6}>
-            <FormLabel>
-              <span class="input-text-label">Payload ID and/or alias:</span>
-              <Select onChange={this.setCurrentAlias}>
-                {this.state.aliasesOrPayloadsIDs.map(aop => {
-                  return (
-                    <option value={aop[0]}>
-                      {this.formatPayloadName(aop[0], aop[1])}
-                    </option>
-                  );
-                })}
-              </Select>
-            </FormLabel>
+            <PayloadSelector Payloads={["test?"]} Labels={["Test Labels 1"]}></PayloadSelector>
           </Grid>
           <Grid item xs={6}>
-            <FormLabel>
-              <span class="input-text-label">SRI Type:</span>
-              <Select onChange={this.setCurrentSRI}>
-                {SRIKinds.map(sri => {
-                  return <option value={sri}>{sri}</option>;
-                })}
-              </Select>
-            </FormLabel>
+            <SRISelector SRIKinds={SRIKinds} setCurrentSRI={this.setCurrentSRI}></SRISelector>
           </Grid>
           <Grid item xs={6}>
-            <FormLabel>
-              <span class="input-text-label">Crossorigin:</span>
-              <Select onChange={this.setCurrentCrossOrigin}>
-                {CROSSORIGIN.map(crossorigin => {
-                  return <option value={crossorigin}>{crossorigin}</option>;
-                })}
-              </Select>
-            </FormLabel>
+            <CrossOriginSelector CROSSORIGIN={CROSSORIGIN} setCurrentCrossOrigin={this.setCurrentCrossOrigin}></CrossOriginSelector>
           </Grid>
           <Grid item xs={6}>
-            <FormLabel>
-              <span class="input-text-label">Use subdomain:</span>
-              <Checkbox
-                value="useSubdomain"
-                inputProps={{ "aria-label": "Use Subdomain" }}
-                onChange={this.toggleSubdomain}
-                color="default"
-              />
-            </FormLabel>
+            <CustomCheckbox labelText={"Use subdomain"} onChange={this.toggleSubdomain}></CustomCheckbox>
           </Grid>
           <Grid item xs={6}>
-            <FormLabel>
-              <span class="input-text-label">Use HTTPS:</span>
-              <Checkbox
-                value="useHTTPS"
-                inputProps={{ "aria-label": "Use HTTPS" }}
-                onChange={this.toggleHTTPS}
-                color="default"
-                defaultChecked
-              />
-            </FormLabel>
+            <CustomCheckbox labelText={"Use HTTPS:"} onChange={this.toggleHTTPS} checked={true}></CustomCheckbox>
           </Grid>
           <Grid item xs={12}>
-          {
-            this.state.injections.length > 0 ?
-            <EnhancedTable
-              headCells={this.state.headCells}
-              data={this.state.injections}
-              isDeleteButtonEnabled={true}
-            ></EnhancedTable>
-            :
-            <center>
-              No injections found. <br/>
-              You can start using the app by creating a new injection.
-            </center>
-          }
-            
+            {this.state.injections.length > 0 ? (
+              <EnhancedTable
+                headCells={this.state.headCells}
+                data={this.state.injections}
+                isDeleteButtonEnabled={true}
+              ></EnhancedTable>
+            ) : (
+              <center>
+                No injections found. <br />
+                You can start using the app by creating a new injection.
+              </center>
+            )}
           </Grid>
           <Grid item xs={12}>
             <Button

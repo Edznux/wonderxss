@@ -32,32 +32,32 @@ export default class Profile extends React.Component {
   render() {
     return (
       <Container className="container profile-container">
-      <div class="profile-sidebar">
-        <div class="profile-sidebar-item">
-          <Link
-            to="/profile/info"
-            onClick={event =>
-              this.setState({ currentPage: event.target.pathname })
-            }
+        <div class="profile-sidebar">
+          <div class="profile-sidebar-item">
+            <Link
+              to="/profile/info"
+              onClick={event =>
+                this.setState({ currentPage: event.target.pathname })
+              }
             >
-            Info
-          </Link>
-        </div>
-        <div class="profile-sidebar-item">
-          <Link
-            to="/profile/otp"
-            onClick={event =>
-              this.setState({ currentPage: event.target.pathname })
-            }
+              Info
+            </Link>
+          </div>
+          <div class="profile-sidebar-item">
+            <Link
+              to="/profile/otp"
+              onClick={event =>
+                this.setState({ currentPage: event.target.pathname })
+              }
             >
-            Security & 2FA
-          </Link>
+              Security & 2FA
+            </Link>
+          </div>
         </div>
-      </div>
-      <div class="profile-body">
-        <h1>Profile</h1>
-        {this.selectPage()}
-      </div>
+        <div class="profile-body">
+          <h1>Profile</h1>
+          {this.selectPage()}
+        </div>
       </Container>
     );
   }

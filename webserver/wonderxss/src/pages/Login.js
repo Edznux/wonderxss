@@ -60,10 +60,9 @@ class Login extends React.Component {
               <span className="login-text">Username:</span>
               <TextField
                 className="login-field"
-                hintText="Enter your username"
-                floatingLabelText="login"
+                hinttext="Enter your username"
+                floatinglabeltext="login"
                 onChange={event => this.setState({ login: event.target.value })}
-                classes="login-field"
               />
             </InputLabel>
             <InputLabel className="login-field">
@@ -71,9 +70,8 @@ class Login extends React.Component {
               <TextField
                 className="login-field"
                 type="password"
-                hintText="Enter your password"
-                floatingLabelText="password"
-                classes="login-field"
+                hinttext="Enter your password"
+                floatinglabeltext="password"
                 onChange={event =>
                   this.setState({ password: event.target.value })
                 }
@@ -84,9 +82,8 @@ class Login extends React.Component {
             <TextField
               className="login-field"
               type="text"
-              hintText="Enter your OTP Token"
-              floatingLabelText="OTP Token"
-              classes="login-field"
+              hinttext="Enter your OTP Token"
+              floatinglabeltext="OTP Token"
               onChange={event => this.setState({ token: event.target.value })}
             />
             <input type="submit" value="Submit" className="login-field" />

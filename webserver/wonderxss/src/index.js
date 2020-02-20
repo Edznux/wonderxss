@@ -46,7 +46,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
 
 const routing = (
   <Router>
-    <div class="navigation">
+    <div className="navigation">
       <div id="menu">
         <Box flexGrow={1}>
           <Link to="/" style={{ width: "100%", display: "block" }}>

@@ -1,16 +1,14 @@
 import React from "react";
 import {
   Container,
-  TextField,
   Select,
-  InputLabel,
   Button,
   Grid,
   Input,
   Dialog,
   DialogTitle,
   DialogActions,
-  DialogContent
+  DialogContent,
 } from "@material-ui/core";
 
 import EnhancedTable from "../components/Table";
@@ -131,23 +129,22 @@ export default class Aliases extends React.Component {
     return (
       <Container className="container">
         <h1>Aliases</h1>
-        {
-          this.state.aliases.length > 0 ?
+        {this.state.aliases.length > 0 ? (
           <EnhancedTable
             headCells={this.state.headCells}
             data={this.state.aliases}
             isDeleteButtonEnabled={true}
           ></EnhancedTable>
-          : 
+        ) : (
           <div>No aliases found</div>
-        }
+        )}
         <Button
           className="submit-button"
           variant="outlined"
           color="primary"
           onClick={this.handleClickOpenClose}
         >
-        Create new alias
+          Create new alias
         </Button>
         <Dialog
           open={this.state.openDialog}
@@ -169,7 +166,10 @@ export default class Aliases extends React.Component {
                 ></Input>
               </Grid>
               <Grid item xs={12}>
-                <Select onChange={this.setCurrentPayload} style={{width:"100%"}}>
+                <Select
+                  onChange={this.setCurrentPayload}
+                  style={{ width: "100%" }}
+                >
                   {this.state.payloads.map(payload => {
                     return <option value={payload.id}>{payload.name}</option>;
                   })}

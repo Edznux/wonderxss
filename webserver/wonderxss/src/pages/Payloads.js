@@ -95,16 +95,15 @@ class Payloads extends React.Component {
       <Container className="container">
         <h1>Payloads</h1>
         <div className="Payloads">
-          {
-            this.state.payloads.length > 0 ?
+          {this.state.payloads.length > 0 ? (
             <EnhancedTable
               headCells={this.state.headCells}
               data={this.state.payloads}
               isDeleteButtonEnabled={true}
             ></EnhancedTable>
-            : 
+          ) : (
             <div>No payloads found</div>
-          }
+          )}
         </div>
       </Container>
     );

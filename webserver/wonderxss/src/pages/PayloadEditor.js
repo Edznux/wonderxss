@@ -1,9 +1,11 @@
 import React from "react";
 import AceEditor from "react-ace";
 import axios from "axios";
-import { Container, Input, Button } from "@material-ui/core";
+import { Container, Input, Button, TextField } from "@material-ui/core";
 import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/theme-github";
+
+import "./PayloadEditor.css";
 
 import { API_PAYLOADS, API_ALIASES } from "../helpers/constants";
 
@@ -85,15 +87,18 @@ class PayloadEditor extends React.Component {
             this.setState({ currentAlias: event.target.value });
           }}
         ></Input>
-        <Input
+        <TextField
+          className="input-text"
           type="text"
           placeholder="Content Type"
           onChange={event => {
             this.setState({ currentContentType: event.target.value });
           }}
-        ></Input>
+        ></TextField>
 
-        <Button onClick={this.createPayload}>Create paylaod</Button>
+        <Button onClick={this.createPayload} className="input-text">
+          Create payload
+        </Button>
       </Container>
     );
   }

@@ -38,8 +38,8 @@ export function getUserIDFromJWT() {
 }
 
 export function isLoggedIn() {
-  if(window.DEBUG){
-    return true
+  if (window.DEBUG) {
+    return true;
   }
   let jwt = localStorage.getItem("jwt");
   if (isTokenExpired(jwt)) {
