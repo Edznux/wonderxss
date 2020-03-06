@@ -9,11 +9,17 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/edznux/wonderxss/api/websocket"
+	"github.com/edznux/wonderxss/config"
 	"github.com/edznux/wonderxss/notification"
 	"github.com/edznux/wonderxss/webserver"
 	"github.com/gorilla/mux"
 
 	httpApi "github.com/edznux/wonderxss/api/http/server"
+)
+
+var (
+	httpPort  int16 = 80
+	httpsPort int16 = 443
 )
 
 func gracefulShutdown() {
@@ -26,7 +32,8 @@ func gracefulShutdown() {
 }
 
 func entrypoint() {
-
+	config.Current.HTTPPOrt	= int(httpPort)
+	config.Current.HTTPSPOrt= int(httpsPort)
 	notification.Setup()
 
 	router := mux.NewRouter()
@@ -55,4 +62,6 @@ var serveCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(serveCmd)
+	serveCmd.PersistentFlags().Int16Var(&httpPort, "http-port", 80, "HTTP Port")
+	serveCmd.PersistentFlags().Int16Var(&httpsPort, "https-port", 443, "HTTPS Port")
 }
