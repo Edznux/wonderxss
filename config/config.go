@@ -20,6 +20,9 @@ type Config struct {
 
 	// The domain this application should respond
 	Domain string `mapstructure:"domain"`
+	// 	listening_address is the listening "interface". 127.0.0.1 for localhost only, 0.0.0.0 for all.
+	// You will usualy use 127.0.0.1 behind a proxy and 0.0.0.0 for standalone.
+	ListeningAddress string `mapstructure:"listening_address"`
 	// DatabaseFile represents the filename of the storage system.
 	// It depends on your database type:
 	// It can be a connection string (postgres, mysql)

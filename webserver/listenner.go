@@ -17,8 +17,8 @@ func (ui *UI) Serve(router *mux.Router) {
 	cfg := config.Current
 	if cfg.StandaloneHTTPS {
 		go func() {
-			log.Println("Listening HTTPS on port :", cfg.HTTPSPOrt)
-			err := http.ListenAndServeTLS(":"+strconv.Itoa(cfg.HTTPSPOrt), "server.crt", "server.key", router)
+			log.Printf("Listening HTTPS on %s:%d\n", cfg.ListeningAddress, cfg.HTTPSPOrt)
+			err := http.ListenAndServeTLS(cfg.ListeningAddress+":"+strconv.Itoa(cfg.HTTPSPOrt), "server.crt", "server.key", router)
 			if err != nil {
 				log.Fatal("ListenAndServeTLS: ", err)
 			}
@@ -26,8 +26,8 @@ func (ui *UI) Serve(router *mux.Router) {
 	}
 
 	go func() {
-		log.Println("Listening HTTP on port :", cfg.HTTPPOrt)
-		err := http.ListenAndServe(":"+strconv.Itoa(cfg.HTTPPOrt), router)
+		log.Printf("Listening HTTP on on %s:%d\n", cfg.ListeningAddress, cfg.HTTPPOrt)
+		err := http.ListenAndServe(cfg.ListeningAddress+":"+strconv.Itoa(cfg.HTTPPOrt), router)
 
 		if err != nil {
 			log.Fatal("ListenAndServe: ", err)

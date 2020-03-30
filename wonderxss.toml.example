@@ -1,5 +1,8 @@
 # Domain to listen on. (Usefull only for sudomains paylaod aliases)
 domain = "localhost"
+# listening_address is the listening "interface". 127.0.0.1 for localhost only, 0.0.0.0 for all.
+# You will usualy use 127.0.0.1 behind a proxy and 0.0.0.0 for standalone.
+listening_address = "127.0.0.1"
 # Type of database
 database = "sqlite"
 # true will enable listening on HTTPS (without a reverse proxy). Disabled by default.
