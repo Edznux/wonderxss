@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
+	"strings"
 
 	"github.com/edznux/wonderxss/api"
 	"github.com/spf13/cobra"
@@ -127,7 +128,18 @@ func buildAliasesTable(aliases []api.Alias) [][]string {
 	for i, a := range aliases {
 		rows[i] = make([]string, 0)
 		for _, f := range fields {
-			rows[i] = append(rows[i], getFieldString(a, f))
+			fClean := strings.ReplaceAll(f," ", "")
+			fClean = strings.ToLower(fClean)
+			switch fClean {
+				case "createdat" :
+					t := a.CreatedAt.Format("2006-01-02 15:04:05")
+					rows[i] = append(rows[i], t)
+				case "modifiedat" :
+					t := a.ModifiedAt.Format("2006-01-02 15:04:05")
+					rows[i] = append(rows[i], t)
+				default:
+					rows[i] = append(rows[i], getFieldString(a, f))
+			}
 		}
 	}
 	return rows

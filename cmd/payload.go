@@ -179,15 +179,24 @@ func buildPayloadsTable(payloads []api.Payload) [][]string {
 		content := ""
 		rows[i] = make([]string, 0)
 		for _, f := range fields {
-			if f == "Content" {
-				if isReplace {
-					content = p.Content
-				} else {
-					content = replacePlaceholders(p.Content)
-				}
-				rows[i] = append(rows[i], content)
-			} else {
-				rows[i] = append(rows[i], getFieldString(p, f))
+			fClean := strings.ReplaceAll(f," ", "")
+			fClean = strings.ToLower(fClean)
+			switch fClean {
+				case "createdat" :
+					t := p.CreatedAt.Format("2006-01-02 15:04:05")
+					rows[i] = append(rows[i], t)
+				case "modifiedat" :
+					t := p.ModifiedAt.Format("2006-01-02 15:04:05")
+					rows[i] = append(rows[i], t)
+				case "content" :
+					if isReplace {
+						content = p.Content
+						} else {
+							content = replacePlaceholders(p.Content)
+						}
+						rows[i] = append(rows[i], content)
+				default:
+					rows[i] = append(rows[i], getFieldString(p, fClean))
 			}
 		}
 	}
