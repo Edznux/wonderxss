@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
+	"strings"
 
 	"github.com/edznux/wonderxss/api"
 	"github.com/spf13/cobra"
@@ -44,15 +45,61 @@ var createPayloadCmd = &cobra.Command{
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 
+		var format string
+		var ext string
+
 		path := args[0]
 		name := filepath.Base(path)
 		fmt.Printf("Adding payload: %s (%s)\n", name, path)
-		content, err := ioutil.ReadFile(path)
-		if err != nil {
-			fmt.Print(err)
+		splitted := strings.Split(name, ".")
+		if len(splitted) > 1 {
+			ext = splitted[1]
+		}
+		// apply automatically content type based on the extention on the file.
+		// It does not validate the file itself on purpose, so you can do javascript file as png for example.
+		switch ext {
+			case "js":
+				format = "application/javascript"
+			case "json":
+				format = "application/json"
+			case "png":
+				format = "image/png" 
+			case "gif":
+				format = "image/gif" 
+			case "jpeg":
+				format = "image/jpeg" 
+			case "tiff":
+				format = "image/tiff" 
+			case "svg":
+				format = "image/svg+xml" 
+			case "csv":
+				format = "text/csv" 
+			case "html":
+				format = "text/html" 
+			case "xml":
+				format = "text/xml" 
+			case "css":
+				format = "text/css" 
+			case "mpeg":
+				format = "video/mpeg" 
+			case "mp4":
+				format = "video/mp4" 
+			case "quicktime":
+				format = "video/quicktime" 
+			case "webm":
+				format = "video/webm" 
+			// Default to "text/plain" content type if no extention.
+			default:
+				format = "text/plain"
 		}
 
-		p, err := currentAPI.AddPayload(name, string(content), "application/javascript")
+		fmt.Printf("Using content type: %s\n", format)
+		content, err := ioutil.ReadFile(path)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		p, err := currentAPI.AddPayload(name, string(content), format)
 		if err != nil {
 			log.Fatal("Could not create payload ", err)
 		}
