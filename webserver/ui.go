@@ -57,7 +57,7 @@ func (ui *UI) HandleIndex(w http.ResponseWriter, req *http.Request) {
 	log.Debugln("req.URL.Path:", req.URL.Path)
 	log.Debugln("hostname:", hostname)
 	log.Debugln("Subdomain:", subdomain)
-	content, err := ui.api.ServePayload(subdomain)
+	payload, err := ui.api.GetPayload(subdomain)
 
 	// Index page, should return the UI
 	if subdomain == hostname {
@@ -75,7 +75,8 @@ func (ui *UI) HandleIndex(w http.ResponseWriter, req *http.Request) {
 		w.Write([]byte("Encountered an error :/"))
 		return
 	}
-	w.Write([]byte(content))
+	w.Header().Add("Content-Type", payload.ContentType)
+	w.Write([]byte(payload.Content))
 }
 
 // ServeUI render the React APP

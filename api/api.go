@@ -30,7 +30,6 @@ type API interface {
 	DeleteInjection(id string) error
 
 	GetPayloads() ([]Payload, error)
-	ServePayload(idOrAlias string) (string, error)
 	GetPayload(id string) (Payload, error)
 	AddPayload(name string, content string, contentType string) (Payload, error)
 	DeletePayload(id string) error

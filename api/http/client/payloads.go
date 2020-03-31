@@ -25,10 +25,6 @@ func (c *Client) GetPayloads() ([]api.Payload, error) {
 	return payloads, nil
 }
 
-func (c *Client) ServePayload(idOrAlias string) (string, error) {
-	return "", errors.New("Not implemented yet")
-}
-
 func (c *Client) GetPayload(id string) (api.Payload, error) {
 	var res api.Response
 	var payload api.Payload
