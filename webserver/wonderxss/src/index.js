@@ -13,6 +13,8 @@ import App from "./pages/App";
 import Payloads from "./pages/Payloads";
 import Login from "./pages/Login";
 import ProfilePage from "./pages/Profile";
+import Loots from './pages/Loots';
+import LootViewer from './pages/LootViewer';
 import Logout from "./pages/Logout";
 import PayloadEditor from "./pages/PayloadEditor";
 import NotFound from "./pages/NotFound";
@@ -51,6 +53,11 @@ const routing = (
         <Box flexGrow={1}>
           <Link to="/" style={{ width: "100%", display: "block" }}>
             Home
+          </Link>
+        </Box>
+        <Box flexGrow={1}>
+          <Link to="/loots">
+            Loots
           </Link>
         </Box>
         <Box flexGrow={1}>
@@ -98,6 +105,8 @@ const routing = (
       <PrivateRoute path="/editor" component={PayloadEditor} />
       <PrivateRoute path="/aliases" component={Aliases} />
       <PrivateRoute path="/logout" component={Logout} />
+      <PrivateRoute path="/loots/:id" component={LootViewer} />
+      <PrivateRoute path="/loots" component={Loots} />
       <Route component={NotFound} />
     </Switch>
   </Router>
