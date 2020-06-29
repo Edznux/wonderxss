@@ -23,7 +23,11 @@ var userCmd = &cobra.Command{
 
 var loginCmd = &cobra.Command{
 	Use:   "login",
-	Short: "Do all the operations on users.",
+	Short: "Login to the application",
+	Long: """
+	Login to the application.
+	It is useful to use the command line interface.
+	""",
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		user := args[0]
@@ -42,7 +46,6 @@ var loginCmd = &cobra.Command{
 		otp := string(byteOTP)
 
 		log.Debugln("trying to connect the user", user)
-		fmt.Println(password)
 		res, err := currentAPI.Login(user, password, otp)
 
 		if err != nil {
