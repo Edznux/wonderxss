@@ -8,9 +8,9 @@ APP_NAME="wonderxss"
 
 run_with_docker(){
     echo "Building docker container"
-    docker build -t edznux/$APP_NAME deploy/docker/
+    docker build -t edznux/$APP_NAME -f deploy/docker/Dockerfile .
     echo "Running docker container"
-    docker run -v $(pwd)/$APP_NAME.conf:/$APP_NAME.conf:ro -it edznux/$APP_NAME
+    docker run -v $(pwd)/$APP_NAME.toml:/etc/wonderxss/$APP_NAME.toml:ro -it edznux/$APP_NAME
 }
 
 run_with_docker

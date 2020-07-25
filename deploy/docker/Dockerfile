@@ -3,22 +3,17 @@
 
 FROM golang:1.13-alpine AS BUILDER
 RUN apk add --update ca-certificates git build-base
-RUN set -ex && \
-    git clone https://github.com/edznux/wonderxss && \
-    mkdir /etc/wonderxss && \
-    cd wonderxss && \
-    go build -v && \
-    mv wonderxss /usr/bin/wonderxss && \
-    mv wonderxss.toml.example /etc/wonderxss/wonderxss.toml
+COPY . /app
+WORKDIR /app
+RUN ls && go build -v
 
 FROM alpine
 RUN apk add --update ca-certificates && \
-    mkdir /etc/wonderxss
+    mkdir /etc/wonderxss/
 
 # Retrieve the binary from the previous stage
-COPY --from=BUILDER /usr/bin/wonderxss /usr/bin/wonderxss
-COPY --from=BUILDER /etc/wonderxss/wonderxss.toml /etc/wonderxss/wonderxss.toml
+COPY --from=BUILDER /app/wonderxss /app/wonderxss
 
 # Set the binary as the entrypoint of the container
-ENTRYPOINT [ "/usr/bin/wonderxss"]
+ENTRYPOINT [ "/app/wonderxss"]
 CMD ["serve"]

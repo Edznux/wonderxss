@@ -24,10 +24,10 @@ var userCmd = &cobra.Command{
 var loginCmd = &cobra.Command{
 	Use:   "login",
 	Short: "Login to the application",
-	Long: """
+	Long: `
 	Login to the application.
 	It is useful to use the command line interface.
-	""",
+	`,
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		user := args[0]

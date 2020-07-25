@@ -1,0 +1,8 @@
+.git
+.vscode
+vendor/
+wonderxss
+wonderxss.toml
+*.crt
+*.key
+db.sqlite
